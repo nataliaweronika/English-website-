@@ -165,6 +165,12 @@ const real=[["A1","Hotel check-in","Check in, ask about breakfast and solve a si
 .student-mode .main{max-width:1100px}
 .student-mode .nav button{opacity:.75}
 .student-mode .nav button[data-page="home"]{opacity:1}
+.student-polish-support{margin:18px 0;padding:18px;border-radius:18px;background:linear-gradient(135deg,#f7f3ff,#eef8ff);border:1px solid #e3def4}
+.student-polish-support h3{margin:0 0 8px}.student-polish-support .pl-note{color:var(--muted);font-size:13px;margin:0 0 14px}
+.student-polish-support .pl-item{padding:12px 0;border-top:1px solid rgba(100,90,150,.14)}
+.student-polish-support .pl-item:first-child{border-top:0}.student-polish-support .en{font-weight:700}.student-polish-support .pl{margin-top:4px;color:#4055b4}
+.student-instructions{margin:18px 0;padding:18px;border-radius:18px;background:#fff7e8;border:1px solid #f0dfbd}
+.student-instructions h3{margin:0 0 10px}.student-instructions li{margin:7px 0;color:#59657e}
 .lesson-tools{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
 .lesson-tools .btn{font-size:13px}
 .score-pill{display:inline-block;background:var(--mint);padding:6px 10px;border-radius:12px;font-weight:900;font-size:12px}
@@ -200,7 +206,17 @@ const real=[["A1","Hotel check-in","Check in, ask about breakfast and solve a si
       <div class="student-banner">
         <div class="eyebrow">YOUR LEARNING SPACE</div>
         <h2>Welcome to Everyday English!</h2>
-        <p>What would you like to practise today?</p>
+        <p>What would you like to practise today?<br><span style="color:var(--muted);font-size:13px">Co chcesz dziś ćwiczyć?</span></p>
+<div class="student-instructions">
+  <h3>📌 Jak korzystać z lekcji?</h3>
+  <ul>
+    <li>Wybierz swój poziom: A1, A2, B1, B2 lub C1.</li>
+    <li>Otwórz lekcję i najpierw przeczytaj angielskie zdania.</li>
+    <li>Skorzystaj z polskiego tłumaczenia, jeśli potrzebujesz pomocy.</li>
+    <li>Powtórz zdania na głos i spróbuj użyć ich w rozmowie.</li>
+    <li>Na końcu wykonaj ćwiczenia i zaznacz lekcję jako ukończoną.</li>
+  </ul>
+</div>
         <div class="student-levels" aria-label="Choose your level">
           <button class="student-level active" data-level="A1">A1</button>
           <button class="student-level" data-level="A2">A2</button>
@@ -212,12 +228,12 @@ const real=[["A1","Hotel check-in","Check in, ask about breakfast and solve a si
       </div>
       <h3 class="student-choice-title">Choose what you want to practise</h3>
       <div class="quick-grid">
-        <button class="quick" onclick="show('speaking')"><span class="quick-icon">🗣️</span><b>Speaking</b><small>Everyday conversations</small></button>
-        <button class="quick" onclick="show('vocabulary')"><span class="quick-icon">📚</span><b>Vocabulary</b><small>Useful words & phrases</small></button>
-        <button class="quick" onclick="show('grammar')"><span class="quick-icon">✏️</span><b>Grammar</b><small>Step-by-step practice</small></button>
-        <button class="quick" onclick="show('listening')"><span class="quick-icon">🎧</span><b>Listening</b><small>Listen and understand</small></button>
-        <button class="quick" onclick="show('library')"><span class="quick-icon">📖</span><b>Reading</b><small>Texts & questions</small></button>
-        <button class="quick" onclick="show('library')"><span class="quick-icon">⚡</span><b>Quick Practice</b><small>5-minute English</small></button>
+        <button class="quick" onclick="show('speaking')"><span class="quick-icon">🗣️</span><b>Speaking</b><small>Rozmowy na co dzień · Codzienne rozmowy</small></button>
+        <button class="quick" onclick="show('vocabulary')"><span class="quick-icon">📚</span><b>Vocabulary</b><small>Przydatne słowa i zwroty</small></button>
+        <button class="quick" onclick="show('grammar')"><span class="quick-icon">✏️</span><b>Grammar</b><small>Ćwiczenia krok po kroku</small></button>
+        <button class="quick" onclick="show('listening')"><span class="quick-icon">🎧</span><b>Listening</b><small>Słuchaj i rozumiej</small></button>
+        <button class="quick" onclick="show('library')"><span class="quick-icon">📖</span><b>Reading</b><small>Teksty i pytania</small></button>
+        <button class="quick" onclick="show('library')"><span class="quick-icon">⚡</span><b>Quick Practice</b><small>5 minut angielskiego</small></button>
       </div>
       <div class="continue-card">
         <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><div><b>My Progress</b><div style="color:var(--muted);font-size:13px">Keep building your English one lesson at a time.</div></div><span class="score-pill" id="studentProgressText">0%</span></div>
@@ -284,6 +300,35 @@ const real=[["A1","Hotel check-in","Check in, ask about breakfast and solve a si
       quiz.querySelector('.quiz-result').textContent='Not quite — look for independent transfer, not repetition.';
     });
     box.appendChild(quiz);
+
+    // Polish support for students: instructions + key sentence translations.
+    const oldSupport=box.querySelector('.student-polish-support');
+    if(oldSupport) oldSupport.remove();
+    const topicMap={
+      'introductions':'przedstawiania się','routines':'codziennych czynności','food and shopping':'jedzenia i zakupów',
+      'home and town':'domu i miasta','people':'ludzi','travel':'podróży','work and study':'pracy i nauki',
+      'health and wellbeing':'zdrowia i dobrego samopoczucia','free time':'czasu wolnego','technology':'technologii',
+      'communication':'komunikacji','relationships':'relacji','money':'pieniędzy','education':'edukacji',
+      'environment':'środowiska','media':'mediów','society':'społeczeństwa','future':'przyszłości'
+    };
+    const rawTopic=String(l.title||'').split(' — ')[0].trim();
+    const key=rawTopic.toLowerCase();
+    const topic=topicMap[key]||rawTopic.toLowerCase();
+    const support=document.createElement('div');
+    support.className='student-polish-support';
+    const listeningEN=String(l.listening||'').trim();
+    let listeningPL='Posłuchaj uważnie, najpierw ogólnie, a następnie zwróć uwagę na szczegóły.';
+    if(key==='introductions'||key==='routines'||key==='food and shopping'||key==='home and town'||key==='people'||key==='travel'||key==='work and study'||key==='health and wellbeing'||key==='free time'||key==='technology'||key==='communication'||key==='relationships'||key==='money'||key==='education'||key==='environment'||key==='media'||key==='society'||key==='future'){
+      listeningPL='Rozmawialiśmy o '+topic+', kiedy coś się zmieniło. Wyjaśniliśmy sytuację, rozważyliśmy możliwości i uzgodniliśmy następny krok. Najpierw określ główny sens, a następnie znajdź dwa szczegóły.';
+    }
+    const aimPL='Cel lekcji: używać języka z tej lekcji poprawnie i pewnie.';
+    support.innerHTML='<h3>🇵🇱 Pomoc dla ucznia</h3><p class="pl-note">Najpierw spróbuj zrozumieć angielski samodzielnie. Tłumaczenie możesz wykorzystać jako pomoc.</p>'+
+      '<div class="pl-item"><div class="en">Instructions · Polecenie</div><div class="pl">Przeczytaj zdanie, powtórz je na głos i spróbuj użyć go w nowej sytuacji.</div></div>'+
+      '<div class="pl-item"><div class="en">Lesson goal · Cel</div><div class="pl">'+aimPL+'</div></div>'+
+      (listeningEN?'<div class="pl-item"><div class="en">Sentence / Listening · Zdanie</div><div class="en">'+listeningEN.replace(/^Read twice at natural speed:\s*/,'')+'</div><div class="pl">🇵🇱 '+listeningPL+'</div></div>':'')+
+      '<div class="pl-item"><div class="en">Speaking · Mówienie</div><div class="pl">Mów przez 30–60 sekund. Spróbuj użyć dzisiejszych słów i zwrotów bez czytania.</div></div>'+
+      '<div class="pl-item"><div class="en">Homework · Praca domowa</div><div class="pl">Przygotuj krótką wypowiedź na temat lekcji i wybierz pięć przydatnych zwrotów do powtórzenia.</div></div>';
+    box.appendChild(support);
     showStudentHome();
   };
 
@@ -616,4 +661,92 @@ window.EverydayEnglishFinal={getProgress:load,summary:current};
 border:1px solid rgba(127,127,127,.18);font-size:.82rem;opacity:.78">
 <strong>Curriculum note:</strong> The lesson content and CEFR structure in this version are preserved from your original website.
 </div>
+
+<script id="ee-bilingual-student-only">
+(function(){
+  const LANG_KEY='ee_language';
+  const translations={
+    'Teacher':'Nauczyciel','Student':'Uczeń','Home':'Strona główna','Lesson Library':'Biblioteka lekcji','Listening':'Słuchanie','Grammar':'Gramatyka','Vocabulary':'Słownictwo','Real-life English':'Angielski w życiu codziennym','Teacher Progress':'Postępy nauczyciela','Search lessons...':'Szukaj lekcji...','Search topic, level or skill...':'Szukaj tematu, poziomu lub umiejętności...','Teach this lesson →':'Ucz się tej lekcji →','Study this lesson →':'Ucz się tej lekcji →','Choose what you want to practise':'Wybierz, czego chcesz się uczyć','My Progress':'Moje postępy','Keep building your English one lesson at a time.':'Rozwijaj swój angielski krok po kroku.','YOUR LEARNING SPACE':'TWOJA STREFA NAUKI','Welcome to Everyday English!':'Witaj w Everyday English!','What would you like to practise today?':'Czego chcesz się dziś uczyć?','Choose your level':'Wybierz swój poziom','Beginner':'Początkujący','Elementary':'Podstawowy','Intermediate':'Średnio zaawansowany','Upper Intermediate':'Wyższy średnio zaawansowany','Advanced':'Zaawansowany','Quick Practice':'Szybka praktyka','Reading':'Czytanie','Speaking':'Mówienie','Vocabulary':'Słownictwo','Grammar':'Gramatyka','Listening':'Słuchanie','5 minut angielskiego':'5 minut angielskiego','Texts and questions':'Teksty i pytania','Słuchaj i rozumiej':'Słuchaj i rozumiej','Ćwiczenia krok po kroku':'Ćwiczenia krok po kroku','Przydatne słowa i zwroty':'Przydatne słowa i zwroty','Rozmowy na co dzień · Codzienne rozmowy':'Rozmowy na co dzień · Codzienne rozmowy','Mark complete':'Oznacz jako ukończone','✓ Completed':'✓ Ukończono','Save lesson':'Zapisz lekcję','♥ Saved':'♥ Zapisano','Save notes':'Zapisz notatki','Teacher notes':'Notatki nauczyciela','Lesson tools':'Narzędzia lekcji','Print lesson':'Drukuj lekcję','Reset this lesson':'Zresetuj tę lekcję','Quick check':'Szybki test','Practice & Check':'Ćwicz i sprawdź','Complete lesson':'Ukończ lekcję','Reset practice':'Zresetuj ćwiczenia','Correct':'Poprawnie','Not quite':'Nie tym razem','Warm-up':'Rozgrzewka','Language Focus':'Skupienie na języku','Listening & Reading':'Słuchanie i czytanie','Vocabulary':'Słownictwo','Check':'Sprawdzenie','Reveal follow-up':'Pokaż dodatkowe pytanie','Reveal reading questions':'Pokaż pytania do tekstu','Yes — independently':'Tak — samodzielnie','Not yet':'Jeszcze nie','Lesson Library':'Biblioteka lekcji','← Home':'← Strona główna','← Lesson Library':'← Biblioteka lekcji'
+  };
+  const originalText=new WeakMap();
+  function translateText(root,pl){
+    if(!root)return;
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n=>{
+      if(!originalText.has(n)) originalText.set(n,n.nodeValue);
+      const en=originalText.get(n); const trimmed=en.trim();
+      if(!trimmed)return;
+      if(pl){
+        const t=translations[trimmed]; if(t)n.nodeValue=en.replace(trimmed,t);
+      }else n.nodeValue=en;
+    });
+    root.querySelectorAll('input[placeholder],textarea[placeholder]').forEach(el=>{
+      if(!el.dataset.enPlaceholder)el.dataset.enPlaceholder=el.placeholder;
+      const en=el.dataset.enPlaceholder;
+      if(pl) el.placeholder=translations[en]||el.placeholder; else el.placeholder=en;
+    });
+  }
+  function applyLanguage(lang){
+    const pl=lang==='pl';
+    document.documentElement.lang=pl?'pl':'en';
+    document.body.classList.toggle('pl-site',pl);
+    document.querySelectorAll('.ee-lang button').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+    translateText(document.body,pl);
+    const search=document.getElementById('search');
+    if(search)search.placeholder=pl?'⌕ Szukaj tematów, poziomów lub umiejętności...':'⌕ Search topic, level or skill...';
+    localStorage.setItem(LANG_KEY,lang);
+  }
+  function addLanguageSwitch(){
+    if(document.querySelector('.ee-lang'))return;
+    const bar=document.createElement('div');bar.className='ee-lang';
+    bar.innerHTML='<span>🌐</span><button data-lang="en">EN</button><button data-lang="pl">PL</button>';
+    document.body.appendChild(bar);
+    bar.querySelectorAll('button').forEach(b=>b.onclick=()=>applyLanguage(b.dataset.lang));
+  }
+  function studentCleanup(){
+    const student=document.body.classList.contains('student-mode');
+    document.body.classList.toggle('student-study-only',student);
+    if(!student){
+      document.querySelectorAll('.nav button[data-page="progress"]').forEach(x=>x.style.display='');
+      document.querySelectorAll('.card button[onclick*="openLesson"]').forEach(b=>b.textContent='Teach this lesson →');
+      return;
+    }
+    document.querySelectorAll('.nav button[data-page="progress"]').forEach(x=>x.style.display='none');
+    document.querySelectorAll('.card button[onclick*="openLesson"]').forEach(b=>b.textContent='Study this lesson →');
+    const box=document.getElementById('lessonContent');
+    if(!box)return;
+    box.querySelectorAll('textarea').forEach(x=>{if(x.id&&x.id.startsWith('note_')){const wrap=x.closest('.callout');if(wrap)wrap.remove();}});
+    [...box.querySelectorAll('p,.callout,.task,.ee-final-bar')].forEach(el=>{
+      const txt=(el.textContent||'').toLowerCase();
+      if(txt.includes('teacher move')||txt.includes('teacher notes')||txt.includes('teacher changes')||txt.includes('teacher and student')||txt.includes('ask the student')||txt.includes('for classroom discussion')){
+        if(el.classList.contains('ee-final-bar'))el.remove();
+        else if(txt.includes('teacher move')||txt.includes('teacher notes'))el.remove();
+      }
+    });
+    const first=box.querySelector('.lessonHead');
+    if(first){
+      first.querySelectorAll('button').forEach(b=>{if(/save lesson|saved/i.test(b.textContent))b.textContent=state.saved.includes(first.querySelector('.tag')?.textContent?.split(' · ')[0]||'')?'♥ Saved':'♡ Save lesson';});
+    }
+  }
+  const oldOpen=window.openLesson;
+  if(typeof oldOpen==='function'&&!oldOpen.__bilingualStudent){
+    const wrapped=function(){const r=oldOpen.apply(this,arguments);setTimeout(()=>{studentCleanup();applyLanguage(localStorage.getItem(LANG_KEY)||'en');},80);return r;};
+    wrapped.__bilingualStudent=true;window.openLesson=wrapped;
+  }
+  const style=document.createElement('style');
+  style.textContent=`
+    .ee-lang{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;gap:4px;align-items:center;padding:5px 7px;border:1px solid var(--line);border-radius:999px;background:#fff;box-shadow:0 8px 25px rgba(20,35,77,.12)}
+    .ee-lang button{border:0;background:transparent;border-radius:999px;padding:6px 9px;font-weight:800;cursor:pointer}.ee-lang button.active{background:var(--accent);color:#fff}
+    .student-study-only .nav button[data-page="progress"]{display:none!important}
+    .student-study-only #lessonContent .teacher-only,.student-study-only #lessonContent .teacher-notes{display:none!important}
+  `;
+  document.head.appendChild(style);
+  addLanguageSwitch();
+  const obs=new MutationObserver(()=>{studentCleanup();});
+  obs.observe(document.body,{childList:true,subtree:true});
+  document.addEventListener('click',e=>{const b=e.target.closest('#teacherMode,#studentMode');if(b)setTimeout(studentCleanup,80);});
+  window.addEventListener('load',()=>{applyLanguage(localStorage.getItem(LANG_KEY)||'en');studentCleanup();});
+})();
+</script>
 </body></html>
