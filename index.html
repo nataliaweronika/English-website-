@@ -12,7 +12,6 @@
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{padding:18px;border-radius:16px}.stat:nth-child(1){background:var(--mint)}.stat:nth-child(2){background:var(--yellow)}.stat:nth-child(3){background:var(--lav)}.stat:nth-child(4){background:var(--pink)}.stat b{font-size:25px}table{width:100%;border-collapse:collapse}td,th{padding:12px;border-bottom:1px solid var(--line);text-align:left}th{font-size:11px;color:var(--muted);text-transform:uppercase}
 @media(max-width:1000px){.side{width:72px}.brand b,.brand small,.teacher,.nav label{display:none}.nav button{text-align:center;font-size:20px}.main{margin-left:72px;width:calc(100% - 72px);padding:0 15px}.grid{grid-template-columns:repeat(2,1fr)}.levels{grid-template-columns:repeat(3,1fr)}.hero{grid-template-columns:1fr}.art{display:none}}@media(max-width:650px){.grid{grid-template-columns:1fr}.levels{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:1fr 1fr}.lessonHead{display:block}.heroText{padding:30px}.hero h1{font-size:40px}}
 </style>
-<style id="ee-performance-css">.extra-exercises{content-visibility:auto;contain-intrinsic-size:900px}</style>
 <style>
 .extra-exercises{margin:28px 0;padding:24px;border:1px solid #e5def4;border-radius:24px;background:linear-gradient(135deg,#faf8ff,#fff8fb)}
 .extra-exercises h3{margin:4px 0 18px;font-size:22px}.exercise-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
@@ -30,7 +29,7 @@ const EXTRA=[
 ['Real-Life Practice',[['Real-Life Task','You have 60 seconds to solve the situation. Explain what you would say, do and why.'],['Email Task','Write a short message to change plans. Include a reason, a new suggestion and a polite closing.'],['Decision Task','Choose between two options. Give three reasons and one disadvantage.'],['Mini Presentation','Give a one-minute presentation using at least five target words.']]]
 ];
 function addExtra(){const main=document.querySelector('main')||document.body;if(!main||main.dataset.extra==='1')return;main.dataset.extra='1';EXTRA.forEach(([title,items])=>{const s=document.createElement('section');s.className='extra-exercises';s.innerHTML='<div class="exercise-type">EXTRA PRACTICE</div><h3>'+title+'</h3><div class="exercise-grid"></div>';const g=s.querySelector('.exercise-grid');items.forEach(([type,prompt,opts,ans,fb])=>{const c=document.createElement('div');c.className='exercise-card';let h='<div class="exercise-type">'+type+'</div><p>'+prompt+'</p>';if(opts)h+='<div class="exercise-options">'+opts.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('')+'</div>';else h+='<textarea class="exercise-input" rows="3" placeholder="Write or plan your answer…"></textarea><br><button class="check-text">Save response</button>';h+='<div class="exercise-feedback"></div>';c.innerHTML=h;if(opts)c.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{let ok=+b.dataset.i===ans;c.querySelectorAll('button').forEach(x=>x.classList.remove('correct','incorrect'));b.classList.add(ok?'correct':'incorrect');c.querySelector('.exercise-feedback').textContent=ok?'✓ Correct! '+(fb||'Good choice.'):'Not quite. '+(fb||'Try again.')});else c.querySelector('.check-text').onclick=()=>c.querySelector('.exercise-feedback').textContent='✓ Response saved for classroom discussion.';g.appendChild(c)});main.appendChild(s)})}
-window.addEventListener('load',()=>{const run=()=>addExtra();if('requestIdleCallback' in window)requestIdleCallback(run,{timeout:1500});else setTimeout(run,800);});
+window.addEventListener('load',()=>setTimeout(addExtra,400));document.addEventListener('click',()=>setTimeout(()=>{const m=document.querySelector('main');if(m)m.dataset.extra='';addExtra()},500));
 </script>
 
 <style id="best-upgrade-css">
@@ -181,7 +180,7 @@ const real=[["A1","Hotel check-in","Check in, ask about breakfast and solve a si
 </style>
 
 <script id="ee-upgrade-js">
-(function(){
+document.addEventListener('DOMContentLoaded',function(){
   const body=document.body;
 
   const modebar=document.createElement('div');
@@ -355,7 +354,7 @@ const real=[["A1","Hotel check-in","Check in, ask about breakfast and solve a si
   }
 
   setMode(localStorage.getItem('ee_mode')||'teacher');
-})();
+});
 </script>
 
 
@@ -494,7 +493,6 @@ const real=[["A1","Hotel check-in","Check in, ask about breakfast and solve a si
     }
   }
   hook();
-  setInterval(hook,500);
 
   // Make progress from this upgrade available for future dashboard enhancements.
   window.EverydayEnglishBest={
@@ -601,7 +599,7 @@ function hook(){
   const o=window.openLesson;function w(id){const r=o.apply(this,arguments);setTimeout(()=>attach(id),120);return r}w.__eeComplete=true;window.openLesson=w;
  }
 }
-hook();setInterval(hook,500);
+hook();
 window.EverydayEnglishComplete={progress:getP};
 })();
 </script>
@@ -653,7 +651,7 @@ function hook(){
 }
 watchCompletion();
 hook();
-setInterval(hook,700);
+
 window.EverydayEnglishFinal={getProgress:load,summary:current};
 })();
 </script>
@@ -667,7 +665,7 @@ border:1px solid rgba(127,127,127,.18);font-size:.82rem;opacity:.78">
 (function(){
   const LANG_KEY='ee_language';
   const translations={
-    'Teacher':'Nauczyciel','Student':'Uczeń','Home':'Strona główna','Lesson Library':'Biblioteka lekcji','Listening':'Słuchanie','Grammar':'Gramatyka','Vocabulary':'Słownictwo','Real-life English':'Angielski w życiu codziennym','Teacher Progress':'Postępy nauczyciela','Search lessons...':'Szukaj lekcji...','Search topic, level or skill...':'Szukaj tematu, poziomu lub umiejętności...','Teach this lesson →':'Ucz się tej lekcji →','Study this lesson →':'Ucz się tej lekcji →','Choose what you want to practise':'Wybierz, czego chcesz się uczyć','My Progress':'Moje postępy','Keep building your English one lesson at a time.':'Rozwijaj swój angielski krok po kroku.','YOUR LEARNING SPACE':'TWOJA STREFA NAUKI','Welcome to Everyday English!':'Witaj w Everyday English!','What would you like to practise today?':'Czego chcesz się dziś uczyć?','Choose your level':'Wybierz swój poziom','Beginner':'Początkujący','Elementary':'Podstawowy','Intermediate':'Średnio zaawansowany','Upper Intermediate':'Wyższy średnio zaawansowany','Advanced':'Zaawansowany','Quick Practice':'Szybka praktyka','Reading':'Czytanie','Speaking':'Mówienie','Vocabulary':'Słownictwo','Grammar':'Gramatyka','Listening':'Słuchanie','5 minut angielskiego':'5 minut angielskiego','Texts and questions':'Teksty i pytania','Słuchaj i rozumiej':'Słuchaj i rozumiej','Ćwiczenia krok po kroku':'Ćwiczenia krok po kroku','Przydatne słowa i zwroty':'Przydatne słowa i zwroty','Rozmowy na co dzień · Codzienne rozmowy':'Rozmowy na co dzień · Codzienne rozmowy','Mark complete':'Oznacz jako ukończone','✓ Completed':'✓ Ukończono','Save lesson':'Zapisz lekcję','♥ Saved':'♥ Zapisano','Save notes':'Zapisz notatki','Teacher notes':'Notatki nauczyciela','Lesson tools':'Narzędzia lekcji','Print lesson':'Drukuj lekcję','Reset this lesson':'Zresetuj tę lekcję','Quick check':'Szybki test','Practice & Check':'Ćwicz i sprawdź','Complete lesson':'Ukończ lekcję','Reset practice':'Zresetuj ćwiczenia','Correct':'Poprawnie','Not quite':'Nie tym razem','Warm-up':'Rozgrzewka','Language Focus':'Skupienie na języku','Listening & Reading':'Słuchanie i czytanie','Vocabulary':'Słownictwo','Check':'Sprawdzenie','Reveal follow-up':'Pokaż dodatkowe pytanie','Reveal reading questions':'Pokaż pytania do tekstu','Yes — independently':'Tak — samodzielnie','Not yet':'Jeszcze nie','Lesson Library':'Biblioteka lekcji','← Home':'← Strona główna','← Lesson Library':'← Biblioteka lekcji'
+    'Teacher':'Nauczyciel','Student':'Uczeń','Home':'Strona główna','Lesson Library':'Biblioteka lekcji','Listening':'Słuchanie','Grammar':'Gramatyka','Vocabulary':'Słownictwo','Real-life English':'Angielski w życiu codziennym','Teacher Progress':'Postępy nauczyciela','Search lessons...':'Szukaj lekcji...','Search topic, level or skill...':'Szukaj tematu, poziomu lub umiejętności...','Teach this lesson →':'Ucz się tej lekcji →','Learn this lesson →':'Ucz się tej lekcji →','Study this lesson →':'Ucz się tej lekcji →','Choose what you want to practise':'Wybierz, czego chcesz się uczyć','My Progress':'Moje postępy','Keep building your English one lesson at a time.':'Rozwijaj swój angielski krok po kroku.','YOUR LEARNING SPACE':'TWOJA STREFA NAUKI','Welcome to Everyday English!':'Witaj w Everyday English!','What would you like to practise today?':'Czego chcesz się dziś uczyć?','Choose your level':'Wybierz swój poziom','Beginner':'Początkujący','Elementary':'Podstawowy','Intermediate':'Średnio zaawansowany','Upper Intermediate':'Wyższy średnio zaawansowany','Advanced':'Zaawansowany','Quick Practice':'Szybka praktyka','Reading':'Czytanie','Speaking':'Mówienie','Vocabulary':'Słownictwo','Grammar':'Gramatyka','Listening':'Słuchanie','5 minut angielskiego':'5 minut angielskiego','Texts and questions':'Teksty i pytania','Słuchaj i rozumiej':'Słuchaj i rozumiej','Ćwiczenia krok po kroku':'Ćwiczenia krok po kroku','Przydatne słowa i zwroty':'Przydatne słowa i zwroty','Rozmowy na co dzień · Codzienne rozmowy':'Rozmowy na co dzień · Codzienne rozmowy','Mark complete':'Oznacz jako ukończone','✓ Completed':'✓ Ukończono','Save lesson':'Zapisz lekcję','♥ Saved':'♥ Zapisano','Save notes':'Zapisz notatki','Teacher notes':'Notatki nauczyciela','Lesson tools':'Narzędzia lekcji','Print lesson':'Drukuj lekcję','Reset this lesson':'Zresetuj tę lekcję','Quick check':'Szybki test','Practice & Check':'Ćwicz i sprawdź','Complete lesson':'Ukończ lekcję','Reset practice':'Zresetuj ćwiczenia','Correct':'Poprawnie','Not quite':'Nie tym razem','Warm-up':'Rozgrzewka','Language Focus':'Skupienie na języku','Listening & Reading':'Słuchanie i czytanie','Vocabulary':'Słownictwo','Check':'Sprawdzenie','Reveal follow-up':'Pokaż dodatkowe pytanie','Reveal reading questions':'Pokaż pytania do tekstu','Yes — independently':'Tak — samodzielnie','Not yet':'Jeszcze nie','Lesson Library':'Biblioteka lekcji','← Home':'← Strona główna','← Lesson Library':'← Biblioteka lekcji'
   };
   const originalText=new WeakMap();
   function translateText(root,pl){
@@ -714,7 +712,7 @@ border:1px solid rgba(127,127,127,.18);font-size:.82rem;opacity:.78">
       return;
     }
     document.querySelectorAll('.nav button[data-page="progress"]').forEach(x=>x.style.display='none');
-    document.querySelectorAll('.card button[onclick*="openLesson"]').forEach(b=>b.textContent='Study this lesson →');
+    document.querySelectorAll('.card button[onclick*="openLesson"]').forEach(b=>b.textContent='Learn this lesson →');
     const box=document.getElementById('lessonContent');
     if(!box)return;
     box.querySelectorAll('textarea').forEach(x=>{if(x.id&&x.id.startsWith('note_')){const wrap=x.closest('.callout');if(wrap)wrap.remove();}});
@@ -737,17 +735,15 @@ border:1px solid rgba(127,127,127,.18);font-size:.82rem;opacity:.78">
   }
   const style=document.createElement('style');
   style.textContent=`
-    .ee-lang{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;gap:4px;align-items:center;padding:5px 7px;border:1px solid var(--line);border-radius:999px;background:#fff;box-shadow:0 8px 25px rgba(20,35,77,.12)}
+    .ee-lang{position:fixed;right:12px;top:124px;z-index:9999;display:flex;gap:4px;align-items:center;padding:5px 7px;border:1px solid var(--line);border-radius:999px;background:#fff;box-shadow:0 8px 25px rgba(20,35,77,.12)}
     .ee-lang button{border:0;background:transparent;border-radius:999px;padding:6px 9px;font-weight:800;cursor:pointer}.ee-lang button.active{background:var(--accent);color:#fff}
     .student-study-only .nav button[data-page="progress"]{display:none!important}
     .student-study-only #lessonContent .teacher-only,.student-study-only #lessonContent .teacher-notes{display:none!important}
   `;
   document.head.appendChild(style);
   addLanguageSwitch();
-  const obs=new MutationObserver(()=>{studentCleanup();});
-  obs.observe(document.body,{childList:true,subtree:true});
   document.addEventListener('click',e=>{const b=e.target.closest('#teacherMode,#studentMode');if(b)setTimeout(studentCleanup,80);});
-  window.addEventListener('load',()=>{applyLanguage(localStorage.getItem(LANG_KEY)||'en');studentCleanup();});
+  window.addEventListener('load',()=>{addLanguageSwitch();applyLanguage(localStorage.getItem(LANG_KEY)||'pl');studentCleanup();});
 })();
 </script>
 </body></html>
