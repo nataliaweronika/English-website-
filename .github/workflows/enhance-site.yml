@@ -1,0 +1,46 @@
+name: Enhance Everyday English
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  enhance-site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Enhance student practice
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '<!-- EVERYDAY-ENGLISH-ENHANCEMENTS -->'
+          if marker in s:
+              print('Enhancements already present; nothing to do.')
+              raise SystemExit(0)
+          extra = r'''<!-- EVERYDAY-ENGLISH-ENHANCEMENTS -->
+<style>
+.ee-enhance{margin-top:18px}.ee-pl{background:#fff8fc;border:1px dashed #e4bfd1;padding:12px 14px;border-radius:14px;color:#59657e}.ee-level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.ee-level-grid .card{height:100%}@media(max-width:720px){.ee-level-grid{grid-template-columns:1fr}}
+</style>
+<script>
+(function(){
+const speaking={A1:[['Daily life','What do you usually do at the weekend?','I usually… / I like… / On Saturday…','PL: Opowiedz o swojej rutynie. Dodaj jeden szczegół.'],['Describe a person','Describe a family member or friend.','He/She is… / He/She likes… / We often…','PL: Opisz osobę: wygląd, charakter, zainteresowania.'],['Café role-play','Order a drink and something to eat.','Can I have…? / I’d like… / How much is it?','PL: Zamów jedzenie lub napój i zapytaj o cenę.']],A2:[['Opinion','Is it better to live in a city or a small town?','I think… because… / For example…','PL: Podaj opinię, powód i przykład.'],['Everyday problem','Your friend is late. Call and ask what happened.','Are you OK? / What happened? / How long…?','PL: Wyjaśnij sytuację i zadawaj krótkie pytania.'],['Short story','Tell a story about last weekend.','First… / Then… / After that… / Finally…','PL: Opowiedz wydarzenia w kolejności.']],B1:[['Opinion','Should students have less homework?','In my opinion… / One reason is… / For instance…','PL: Podaj opinię, dwa powody i przykład.'],['Role-play','A hotel room is not as expected. Ask for a solution.','I’m afraid there is a problem… / Could you…?','PL: Wyjaśnij problem i poproś o rozwiązanie.'],['Compare','Compare two ways of learning English.','Both… / However… / I prefer… because…','PL: Porównaj dwie możliwości i uzasadnij wybór.']],B2:[['Discussion','What are the advantages and disadvantages of social media?','On the one hand… / On the other hand… / As a result…','PL: Przedstaw obie strony i wyciągnij wniosek.'],['Problem solving','Your team has a deadline but not enough time. Suggest a plan.','We could… / I suggest… / The priority is…','PL: Zaproponuj rozwiązanie i uzasadnij priorytety.'],['Matura-style opinion','Is technology making communication better?','While it is true that… / Nevertheless… / Overall…','PL: Odpowiedz jak na zadanie maturalne: teza, argumenty, przykład, wniosek.']],C1:[['Debate','Should university education be free?','It could be argued that… / Nevertheless…','PL: Zważ argumenty i zaznacz własne stanowisko.'],['Mini presentation','Give a 90-second presentation about a social issue.','Today I’d like to focus on… / To conclude…','PL: Wprowadź temat, rozwiń dwa punkty i zakończ.'],['Negotiation','Reach a compromise between two different solutions.','I see your point, but… / Perhaps we could…','PL: Zareaguj na drugą stronę i zaproponuj kompromis.']],C2:[['Abstract discussion','Can progress be measured only by economic growth?','At first glance… / A more nuanced view…','PL: Pokaż niuanse i ograniczenia argumentu.'],['Critical response','Challenge an argument without sounding aggressive.','I can see why… / However, this overlooks…','PL: Zakwestionuj argument rzeczowo i uprzejmie.'],['Extended answer','Speak for two minutes on a complex issue, then summarise it in one sentence.','To put it another way… / Ultimately…','PL: Rozwiń temat, a następnie podsumuj stanowisko.']]};
+const vocab={A1:[['make a decision','podjąć decyzję'],['take a break','zrobić przerwę'],['get ready','przygotować się'],['look for','szukać'],['have breakfast','jeść śniadanie'],['go shopping','iść na zakupy']],A2:[['find out','dowiedzieć się'],['look after','opiekować się'],['take part in','brać udział w'],['feel like','mieć ochotę'],['make plans','robić plany'],['get on with','dogadywać się']],B1:[['make progress','robić postępy'],['deal with a problem','radzić sobie z problemem'],['keep in touch','pozostawać w kontakcie'],['take responsibility','brać odpowiedzialność'],['come up with an idea','wpaść na pomysł'],['get used to','przyzwyczaić się do']],B2:[['reach an agreement','osiągnąć porozumienie'],['raise an issue','poruszyć kwestię'],['take into account','wziąć pod uwagę'],['have an impact on','mieć wpływ na'],['draw a conclusion','wyciągnąć wniosek'],['meet a deadline','dotrzymać terminu']],C1:[['play a crucial role','odgrywać kluczową rolę'],['address an issue','zająć się kwestią'],['bear in mind','mieć na uwadze'],['in the long run','w dłuższej perspektywie'],['from a broader perspective','z szerszej perspektywy'],['be highly likely','być wysoce prawdopodobnym']],C2:[['a compelling argument','przekonujący argument'],['a nuanced perspective','wyważona perspektywa'],['far-reaching consequences','daleko idące konsekwencje'],['to a certain extent','do pewnego stopnia'],['raise a pertinent question','postawić trafne pytanie'],['draw a distinction','dokonać rozróżnienia']]};
+const levels=['A1','A2','B1','B2','C1','C2']; const current=localStorage.getItem('eeLevel')||'B1';
+const speak=document.getElementById('speaking');
+if(speak){speak.innerHTML='<div class="lessonHead"><div><span class="tag">SPEAKING</span><h1>Speak more. Worry less.</h1><p>Short, practical speaking practice from A1 to C2. English prompts with Polish support.</p></div></div><div class="filters" id="eeSpeakFilters"></div><div id="eeSpeakContent"></div>';const sf=document.getElementById('eeSpeakFilters');sf.innerHTML=levels.map(l=>'<button class="'+(l===current?'active':'')+'" data-l="'+l+'">'+l+'</button>').join('');const render=l=>{document.getElementById('eeSpeakContent').innerHTML='<div class="panel"><h2>'+l+' speaking practice</h2><div class="ee-level-grid">'+speaking[l].map((x,i)=>'<article class="card"><span class="tag">TASK '+(i+1)+'</span><h3>'+x[0]+'</h3><p><b>'+x[1]+'</b></p><div class="phrase"><b>Useful English</b><div class="pl">'+x[2]+'</div></div><div class="ee-pl">'+x[3]+'</div><br><button class="btn primary" onclick="startTimer(this,'+(l==='A1'?30:l==='A2'?45:l==='B1'?60:l==='B2'?75:90)+')">Start speaking</button><p class="timer"></p></article>').join('')+'</div></div>'};sf.onclick=e=>{if(e.target.dataset.l){sf.querySelectorAll('button').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');render(e.target.dataset.l)}};render(current)}
+const voc=document.getElementById('vocabulary');
+if(voc){voc.innerHTML='<div class="lessonHead"><div><span class="tag">VOCABULARY</span><h1>Words you can actually use</h1><p>Useful phrases from A1 to C2 with Polish translations.</p></div></div><div class="filters" id="eeVocabFilters"></div><div class="grid" id="eeVocabGrid"></div>';const vf=document.getElementById('eeVocabFilters');vf.innerHTML=levels.map(l=>'<button class="'+(l===current?'active':'')+'" data-l="'+l+'">'+l+'</button>').join('');const renderV=l=>document.getElementById('eeVocabGrid').innerHTML=vocab[l].map(x=>'<div class="card"><span class="tag">'+l+' • PHRASE</span><h3>'+x[0]+'</h3><p>'+x[1]+'</p><button class="btn secondary" onclick="sayPhrase(\''+x[0].replace(/'/g,"\\'")+'\')">🔊 Practise aloud</button></div>').join('');vf.onclick=e=>{if(e.target.dataset.l){vf.querySelectorAll('button').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');renderV(e.target.dataset.l)}};renderV(current)}
+const w=document.getElementById('writingContent');if(w)w.insertAdjacentHTML('afterbegin','<div class="ee-enhance matura"><h3>Polish support</h3><div class="ee-pl">PL: Najpierw przeczytaj polecenie. Zaznacz, czego wymaga zadanie: opinia, argumenty, przykłady, porównanie lub formalny ton. Następnie napisz tekst i zrób krótki self-check.</div></div>');
+})();
+</script>''';
+          s=s.replace('</body>', extra+'\n</body>')
+          p.write_text(s,encoding='utf-8')
+          PY
+          git config user.name "ChatGPT"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Improve student speaking and vocabulary practice"
+          git push
