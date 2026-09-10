@@ -1,4 +1,4 @@
-name: Fix teacher and student mode
+name: Fix teacher and restore learning content
 
 on:
   push:
@@ -8,66 +8,79 @@ permissions:
   contents: write
 
 jobs:
-  fix-teacher-mode:
+  restore-learning-content:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Add mode switching
+      - name: Restore learning sections
         run: |
           python - <<'PY'
           from pathlib import Path
-          p = Path('index.html')
-          s = p.read_text(encoding='utf-8')
-          marker = 'TEACHER_MODE_FIX_V1'
-          if marker not in s:
-              js = '''
-<script>
-/* TEACHER_MODE_FIX_V1 */
-(function(){
-  function openPage(id){
-    document.querySelectorAll('.page').forEach(function(page){
-      page.classList.toggle('active', page.id === id);
-    });
-    document.querySelectorAll('.nav button').forEach(function(btn){
-      btn.classList.toggle('active', btn.dataset.page === id);
-    });
-  }
-  function setMode(mode){
-    var teacher = mode === 'teacher';
-    document.body.classList.toggle('teacher-mode', teacher);
-    document.body.classList.toggle('student-mode', !teacher);
-    var tm = document.getElementById('tm');
-    var sm = document.getElementById('sm');
-    if (tm) tm.classList.toggle('active', teacher);
-    if (sm) sm.classList.toggle('active', !teacher);
-    var teacherNav = document.querySelector('.nav button.teacher-only');
-    if (teacherNav) teacherNav.style.display = teacher ? '' : 'none';
-    openPage(teacher ? 'teacher' : 'home');
-  }
-  document.addEventListener('DOMContentLoaded', function(){
-    var tm = document.getElementById('tm');
-    var sm = document.getElementById('sm');
-    if (tm) tm.addEventListener('click', function(){ setMode('teacher'); });
-    if (sm) sm.addEventListener('click', function(){ setMode('student'); });
-    setMode('student');
-  });
-})();
-</script>
-'''
-              s = s.replace('</body>', js + '</body>', 1)
-              p.write_text(s, encoding='utf-8')
+          import re
+
+          p = Path('app.html')
+          html = p.read_text(encoding='utf-8')
+          grammar = Path('grammar-data.js').read_text(encoding='utf-8').strip()
+
+          reading = r'''const READ=[
+['A1','Everyday','A Morning at Home','Anna gets up at seven. She makes coffee and opens the window. Then she gets ready for work.','What does Anna do first?','PL: Poranna rutyna i czasowniki codziennych czynności.','What does she do after making coffee?',['She gets up.','She opens the window and gets ready.']],
+['A1','Information','My Neighbourhood','There is a small park near my flat. There are two shops and a bakery on the main street.','What is near the flat?','PL: Opis miejsca i podstawowe informacje.','How many shops are mentioned?',['A small park.','Two shops.']],
+['A1','Ideas & opinions','My Favourite Place','My favourite place is the local café. It is quiet, friendly and close to my home. I go there on Saturdays.','Why does the writer like the café?','PL: Proste uzasadnianie opinii.','When does the writer go there?',['Because it is quiet, friendly and close.','On Saturdays.']],
+['A2','Everyday','A Busy Saturday','Last Saturday, Marta went shopping, met a friend for lunch and then watched a film at home. She was tired but happy.','What did Marta do after shopping?','PL: Czytanie kolejności wydarzeń.','How did Marta feel?',['She had lunch with a friend.','Tired but happy.']],
+['A2','Information','Learning on the Bus','Many people use their journey to listen to podcasts or review vocabulary. Even ten minutes a day can become useful practice.','What can people do during a journey?','PL: Szukanie konkretnych informacji.','How much daily practice can help?',['Listen to podcasts or review vocabulary.','Even ten minutes.']],
+['A2','Ideas & opinions','A Better Weekend','I think weekends are better when you make one plan and leave the rest free. This gives you something to look forward to without making the day stressful.','What does the writer recommend?','PL: Rozpoznawanie opinii i powodu.','Why should the rest of the weekend be free?',['Make one plan and leave the rest free.','To avoid making the day stressful.']],
+['B1','Everyday','The New Routine','After changing jobs, Kuba started cycling to work. At first it was difficult, but after a few weeks he noticed that he had more energy during the day.','Why did Kuba start cycling?','PL: Zmiana nawyku i jej rezultat.','What did he notice later?',['He changed jobs and started a new routine.','He had more energy.']],
+['B1','Information','Why Short Breaks Help','Short breaks can improve concentration when people work for long periods. A useful break might involve walking, stretching or simply looking away from a screen.','What can a useful break involve?','PL: Informacje o nauce i pracy.','What can breaks improve?',['Walking, stretching or looking away from a screen.','Concentration.']],
+['B1','Ideas & opinions','Online or In Person?','Online lessons are convenient, but face-to-face classes can feel more interactive. The best choice depends on the learner, the subject and the goal.','What is one advantage of online lessons?','PL: Porównywanie dwóch możliwości.','What does the best choice depend on?',['They are convenient.','The learner, subject and goal.']],
+['B2','Everyday','A Delayed Flight','The flight was delayed for three hours. Rather than waiting at the gate, Lena found a quiet café and finished the report she had been working on.','How did Lena use the delay?','PL: Czytanie tekstu sytuacyjnego i wnioskowanie.','Why was the report already in progress?',['She finished her report.','She had been working on it before the delay.']],
+['B2','Information','City Transport','Cities that combine buses, trains and cycling routes can give residents more alternatives to driving. However, reliable connections and safe infrastructure are essential.','What can integrated transport provide?','PL: Tekst informacyjny z kontrastem.','What is essential?',['More alternatives to driving.','Reliable connections and safe infrastructure.']],
+['B2','Ideas & opinions','Four-Day Working Week','A four-day week could improve work-life balance, but its success would depend on the type of job and how productivity is measured.','What could improve?','PL: Ocena argumentu i warunku.','What would success depend on?',['Work-life balance.','The type of job and how productivity is measured.']],
+['C1','Everyday','The Unexpected Meeting','I had expected the meeting to be difficult. Instead, the discussion became constructive once everyone had clarified what they actually needed.','Why did the discussion improve?','PL: Zaawansowane czytanie i relacje przyczynowe.','What had the writer expected?',['Everyone clarified what they needed.','A difficult meeting.']],
+['C1','Information','Sleep and Performance','Research increasingly suggests that consistent sleep supports attention and decision-making. However, individual needs vary, so a single ideal number of hours may be misleading.','What does consistent sleep support?','PL: Język ostrożnych wniosków.','Why may one ideal number be misleading?',['Attention and decision-making.','Individual needs vary.']],
+['C1','Ideas & opinions','The Value of Failure','Failure can provide useful information when people examine what went wrong rather than simply moving on. In that sense, failure is not automatically evidence of poor ability.','What can failure provide?','PL: Argument, zastrzeżenie i wniosek.','What is failure not automatically evidence of?',['Useful information.','Poor ability.']],
+['C2','Everyday','A Strategic Change','The company had planned a rapid expansion, but weaker-than-expected demand prompted a more cautious approach. Management decided to test one market before committing further resources.','Why did the company change its plan?','PL: Precyzyjne czytanie decyzji i przyczyny.','What approach did management choose?',['Demand was weaker than expected.','Test one market first.']],
+['C2','Information','Evaluating Evidence','A strong argument depends not only on the amount of evidence but also on its quality, relevance and limitations. A large sample does not automatically eliminate bias.','What three qualities matter?','PL: Czytanie akademickie i analiza argumentu.','Does a large sample automatically eliminate bias?',['Quality, relevance and limitations.','No.']],
+['C2','Ideas & opinions','Technology and Choice','Technology can expand individual choice while simultaneously shaping the choices people notice. The important question is therefore not simply whether technology gives us options, but who designs the environment in which those options appear.','What tension does the writer identify?','PL: Krytyczne myślenie i niuanse znaczeniowe.','What deeper question does the writer ask?',['Technology expands choice but also shapes it.','Who designs the environment where options appear.']]
+];'''
+
+          vocab = r'''const VOC=[
+['A1','Daily life',['get ready — przygotować się','have breakfast — jeść śniadanie','go to work — iść do pracy','take the bus — jechać autobusem']],
+['A1','At home',['turn on the light — włączyć światło','make the bed — pościelić łóżko','tidy up — posprzątać','sit down — usiąść']],
+['A2','Travel',['book a ticket — zarezerwować bilet','miss the train — spóźnić się na pociąg','check in — odprawić się','get on the bus — wsiąść do autobusu']],
+['A2','Food & shopping',['try it on — przymierzyć','pay by card — zapłacić kartą','a good deal — dobra okazja','out of stock — brak w magazynie']],
+['B1','Work',['meet a deadline — dotrzymać terminu','take responsibility — wziąć odpowiedzialność','solve a problem — rozwiązać problem','work efficiently — pracować wydajnie']],
+['B1','Communication',['make a point — przedstawić argument','keep in touch — utrzymywać kontakt','bring up a topic — poruszyć temat','get the message across — jasno przekazać myśl']],
+['B2','Opinions',['from my perspective — z mojej perspektywy','raise a concern — zgłosić obawę','take into account — wziąć pod uwagę','there is no doubt that — nie ma wątpliwości, że']],
+['B2','Problem solving',['identify the cause — zidentyfikować przyczynę','find a solution — znaleźć rozwiązanie','weigh the options — rozważyć opcje','take a practical approach — przyjąć praktyczne podejście']],
+['C1','Academic & professional',['draw a conclusion — wyciągnąć wniosek','provide evidence — przedstawić dowody','address an issue — zająć się problemem','raise an important question — postawić ważne pytanie']],
+['C1','Nuance',['to some extent — do pewnego stopnia','arguably — można argumentować, że','a potential drawback — potencjalna wada','in practical terms — w praktyce']],
+['C2','Advanced argument',['underlying assumption — ukryte założenie','compelling evidence — przekonujące dowody','unintended consequence — niezamierzona konsekwencja','subject to debate — podlegający dyskusji']],
+['C2','Formal style',['nevertheless — niemniej jednak','whereas — podczas gdy','consequently — w konsekwencji','with regard to — w odniesieniu do']]
+];'''
+
+          if 'const READ=' not in html:
+              html = html.replace('const GRAM=[', reading + '\n' + vocab + '\nconst GRAM=[', 1)
+          if 'const VOC=' not in html:
+              html = html.replace('const GRAM=[', vocab + '\nconst GRAM=[', 1)
+
+          html = re.sub(r'const GRAM=\[.*?\];\nlet st=', grammar + '\nlet st=', html, count=1, flags=re.S)
+
+          new_render = r'''function renderG(f='All'){gram.innerHTML=GRAM.filter(x=>f==='All'||x[0]===f).map(x=>`<article class="topic"><span class="leveltag">${x[0]}</span><h2>${x[1]}</h2><p>${x[2]}</p><div class="pl">🇵🇱 ${x[3]}</div><div class="explain"><b>Real-life example:</b> ${x[4]}</div><div class="callout"><b>Where you use it:</b> ${x[5]}<br><span class="pl">${x[6]}</span></div><div class="explain"><b>Compare:</b> ${x[7]}</div><button class="btn secondary" onclick="this.nextElementSibling.classList.toggle('show');st.g++;st.a++;save()">Quick check / Szybkie ćwiczenie</button><div class="answer">Make your own sentence using <b>${x[1]}</b>. Then say it aloud twice.</div></article>`).join('')}filters('gf','renderG');renderG();'''
+          html = re.sub(r"function renderG\(f='All'\).*?filters\('gf','renderG'\);renderG\(\);", new_render, html, count=1, flags=re.S)
+
+          p.write_text(html, encoding='utf-8')
           PY
 
-      - name: Commit fix
+      - name: Commit restored content
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
+          git add app.html
           if git diff --cached --quiet; then
             echo "No changes needed"
           else
-            git commit -m "Fix Teacher and Student mode switching"
+            git commit -m "Restore reading samples and expanded grammar"
             git push
           fi
