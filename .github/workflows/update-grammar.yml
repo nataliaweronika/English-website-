@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Inject grammar library
+      - name: Inject grammar library and teacher mode fix
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -18,14 +18,52 @@ jobs:
           html=p.read_text(encoding='utf-8')
           data=Path('grammar-data.js').read_text(encoding='utf-8').strip()
           new=re.sub(r'const GRAM=\[.*?\];\nlet st=', data+'\nlet st=', html, count=1, flags=re.S)
-          if new==html:
-              raise SystemExit('GRAM block not found')
-          p.write_text(new,encoding='utf-8')
+          if new != html:
+              html = new
+
+          marker = 'TEACHER_MODE_FIX_V1'
+          if marker not in html:
+              js = '''
+<script>
+/* TEACHER_MODE_FIX_V1 */
+(function(){
+  function openPage(id){
+    document.querySelectorAll('.page').forEach(function(page){
+      page.classList.toggle('active', page.id === id);
+    });
+    document.querySelectorAll('.nav button').forEach(function(btn){
+      btn.classList.toggle('active', btn.dataset.page === id);
+    });
+  }
+  function setMode(mode){
+    var teacher = mode === 'teacher';
+    document.body.classList.toggle('teacher-mode', teacher);
+    document.body.classList.toggle('student-mode', !teacher);
+    var tm = document.getElementById('tm');
+    var sm = document.getElementById('sm');
+    if (tm) tm.classList.toggle('active', teacher);
+    if (sm) sm.classList.toggle('active', !teacher);
+    var teacherNav = document.querySelector('.nav button.teacher-only');
+    if (teacherNav) teacherNav.style.display = teacher ? '' : 'none';
+    openPage(teacher ? 'teacher' : 'home');
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    var tm = document.getElementById('tm');
+    var sm = document.getElementById('sm');
+    if (tm) tm.addEventListener('click', function(){ setMode('teacher'); });
+    if (sm) sm.addEventListener('click', function(){ setMode('student'); });
+    setMode('student');
+  });
+})();
+</script>
+'''
+              html = html.replace('</body>', js + '</body>', 1)
+          p.write_text(html,encoding='utf-8')
           PY
-      - name: Commit grammar update
+      - name: Commit update
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git diff --cached --quiet || git commit -m 'Expand grammar with real-life tense examples'
+          git diff --cached --quiet || git commit -m 'Fix Teacher and Student mode switching'
           git push
