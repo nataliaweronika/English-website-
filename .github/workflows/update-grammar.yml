@@ -1,0 +1,31 @@
+name: Update grammar section
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inject grammar library
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          html=p.read_text(encoding='utf-8')
+          data=Path('grammar-data.js').read_text(encoding='utf-8').strip()
+          new=re.sub(r'const GRAM=\[.*?\];\nlet st=', data+'\nlet st=', html, count=1, flags=re.S)
+          if new==html:
+              raise SystemExit('GRAM block not found')
+          p.write_text(new,encoding='utf-8')
+          PY
+      - name: Commit grammar update
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet || git commit -m 'Expand grammar with real-life tense examples'
+          git push
