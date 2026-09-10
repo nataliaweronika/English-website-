@@ -1,1 +1,1 @@
-This file triggers the automatic Teacher/Student mode fix workflow.
+Trigger restore of Reading samples, Vocabulary and expanded Grammar content.
