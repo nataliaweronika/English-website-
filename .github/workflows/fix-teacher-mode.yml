@@ -1,0 +1,73 @@
+name: Fix teacher and student mode
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix-teacher-mode:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add mode switching
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          marker = 'TEACHER_MODE_FIX_V1'
+          if marker not in s:
+              js = '''
+<script>
+/* TEACHER_MODE_FIX_V1 */
+(function(){
+  function openPage(id){
+    document.querySelectorAll('.page').forEach(function(page){
+      page.classList.toggle('active', page.id === id);
+    });
+    document.querySelectorAll('.nav button').forEach(function(btn){
+      btn.classList.toggle('active', btn.dataset.page === id);
+    });
+  }
+  function setMode(mode){
+    var teacher = mode === 'teacher';
+    document.body.classList.toggle('teacher-mode', teacher);
+    document.body.classList.toggle('student-mode', !teacher);
+    var tm = document.getElementById('tm');
+    var sm = document.getElementById('sm');
+    if (tm) tm.classList.toggle('active', teacher);
+    if (sm) sm.classList.toggle('active', !teacher);
+    var teacherNav = document.querySelector('.nav button.teacher-only');
+    if (teacherNav) teacherNav.style.display = teacher ? '' : 'none';
+    openPage(teacher ? 'teacher' : 'home');
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    var tm = document.getElementById('tm');
+    var sm = document.getElementById('sm');
+    if (tm) tm.addEventListener('click', function(){ setMode('teacher'); });
+    if (sm) sm.addEventListener('click', function(){ setMode('student'); });
+    setMode('student');
+  });
+})();
+</script>
+'''
+              s = s.replace('</body>', js + '</body>', 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No changes needed"
+          else
+            git commit -m "Fix Teacher and Student mode switching"
+            git push
+          fi
