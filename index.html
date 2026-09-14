@@ -32,6 +32,12 @@ iframe{display:block;width:100%;height:100%;border:0}
           var sp=d.createElement('script');
           sp.src='speaking-studio.js';
           sp.async=false;
+          sp.onload=function(){
+            var v=d.createElement('script');
+            v.src='vocabulary-section.js';
+            v.async=false;
+            d.head.appendChild(v);
+          };
           d.head.appendChild(sp);
         };
         d.head.appendChild(t);
