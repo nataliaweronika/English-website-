@@ -24,6 +24,12 @@ iframe{display:block;width:100%;height:100%;border:0}
       var r=d.createElement('script');
       r.src='reading-examples.js';
       r.async=false;
+      r.onload=function(){
+        var t=d.createElement('script');
+        t.src='teacher-reading.js';
+        t.async=false;
+        d.head.appendChild(t);
+      };
       d.head.appendChild(r);
     };
     d.head.appendChild(s);
