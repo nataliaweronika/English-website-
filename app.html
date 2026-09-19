@@ -35,9 +35,11 @@
   const logout=document.getElementById('ee-logout');
   function update(){
     const ok=localStorage.getItem('ee_auth')==='1';
-    gate.style.display=ok?'none':'flex';
-    logout.style.display=ok?'block':'none';
+    const teacher=document.body.classList.contains('teacher-mode');
+    gate.style.display=(ok||teacher)?'none':'flex';
+    logout.style.display=(ok&&!teacher)?'block':'none';
   }
+  window.eeUpdateLogin=update;
   async function digest(value){
     const bytes=new TextEncoder().encode(value);
     const hash=await crypto.subtle.digest('SHA-256',bytes);
@@ -87,5 +89,5 @@ function renderListen(f='All'){listen.innerHTML=LISTEN.filter(x=>f==='All'||x[0]
 function renderWrite(f='All'){write.innerHTML=WRITING.filter(x=>f==='All'||x[0]===f).map(x=>`<article class="topic"><span class="leveltag">${x[0]}</span><h2>✍️ ${x[1]}</h2><p>${x[2]}</p><div class="pl">${x[3]}</div><textarea class="textarea" placeholder="Write here / Napisz tutaj…" oninput="st.w=st.w||0"></textarea><button class="btn primary" onclick="st.w++;st.a++;save();this.textContent='Saved! / Zapisano!'">Save practice / Zapisz</button></article>`).join('')}filters('wf','renderWrite');renderWrite();
 function renderRead(f='All'){let data=READ;read.innerHTML=data.filter(x=>f==='All'||x[0]===f).map(x=>`<article class="topic"><span class="leveltag">${x[0]} · ${x[1]}</span><h2>${x[2]}</h2><div class="readtext">${x[3]}</div><p><b>${x[4]}</b></p><div class="pl">${x[5]}</div><button class="btn secondary" onclick="this.nextElementSibling.classList.toggle('show')">Show answer / Pokaż</button><div class="answer">${x[6]}<br>${(x[7]||[]).join('<br>')}</div></article>`).join('')}filters('rf','renderRead');renderRead();
 function renderV(f='All'){voc.innerHTML=(VOC||[]).filter(x=>f==='All'||x[0]===f).map(x=>`<article class="topic"><span class="leveltag">${x[0]}</span><h2>${x[1]}</h2>${x[2].map(v=>`<span class="pill">${v}</span>`).join('')}<div class="callout">Make a sentence with one phrase.<br><span class="pl">Ułóż zdanie z jednym wyrażeniem.</span></div></article>`).join('')}filters('vf','renderV');renderV();
-function progress(){a.textContent=st.a||0;c.textContent=st.c||0;w.textContent=st.w||0;s.textContent=st.s||0;pg.style.width=Math.min(100,(st.g||0)*3)+'%';ps.style.width=Math.min(100,(st.s||0)*5)+'%';pw.style.width=Math.min(100,(st.w||0)*8)+'%'}progress();function mode(m){document.body.className=m+'-mode';tm.classList.toggle('active',m==='teacher');sm.classList.toggle('active',m==='student');document.querySelector('.teacher-only').style.display=m==='teacher'?'':'none';show(m==='teacher'?'teacher':'home')}tm.onclick=()=>mode('teacher');sm.onclick=()=>mode('student');search.oninput=e=>{let q=e.target.value.toLowerCase().trim();if(!q)return;let x=GRAM.find(t=>t.join(' ').toLowerCase().includes(q));if(x){show('grammar');setF('gf',x[0]);renderG(x[0])}};mode('student');
+function progress(){a.textContent=st.a||0;c.textContent=st.c||0;w.textContent=st.w||0;s.textContent=st.s||0;pg.style.width=Math.min(100,(st.g||0)*3)+'%';ps.style.width=Math.min(100,(st.s||0)*5)+'%';pw.style.width=Math.min(100,(st.w||0)*8)+'%'}progress();function mode(m){document.body.className=m+'-mode';tm.classList.toggle('active',m==='teacher');sm.classList.toggle('active',m==='student');document.querySelector('.teacher-only').style.display=m==='teacher'?'':'none';show(m==='teacher'?'teacher':'home');if(window.eeUpdateLogin)window.eeUpdateLogin()}tm.onclick=()=>mode('teacher');sm.onclick=()=>mode('student');search.oninput=e=>{let q=e.target.value.toLowerCase().trim();if(!q)return;let x=GRAM.find(t=>t.join(' ').toLowerCase().includes(q));if(x){show('grammar');setF('gf',x[0]);renderG(x[0])}};mode('student');
 </script></body></html>
