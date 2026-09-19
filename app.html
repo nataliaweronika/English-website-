@@ -104,8 +104,8 @@
       const name=nameEl.value.trim();
       const {error:e}=await sb.auth.signUp({email,password,options:{data:{full_name:name}}});
       if(e){setMsg(e.message,true);return}
-      setMsg('Account created. Please verify your email if requested, then wait for approval.');
       signup=false;authMode();
+      setMsg('Account created successfully. Check your email to confirm your account, then wait for approval. / Konto utworzone. Sprawdź e-mail, aby potwierdzić konto.');
       return
     }
     const {error:e}=await sb.auth.signInWithPassword({email,password});
