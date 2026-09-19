@@ -97,18 +97,34 @@
     if(adminNav)adminNav.style.display=p.role==='admin'?'':'none';
     if(p.role==='admin')renderAdmin();
   }
+  async function withAuthRetry(fn){
+    let lastError=null;
+    for(let attempt=0;attempt<3;attempt++){
+      try{
+        const result=await fn();
+        if(!result?.error)return result;
+        lastError=result.error;
+        const msg=String(result.error.message||'');
+        if(!/fetch|network|gateway|jwt|401|timeout|503|502/i.test(msg))return result;
+      }catch(err){
+        lastError=err;
+      }
+      if(attempt<2)await new Promise(r=>setTimeout(r,700*(attempt+1)));
+    }
+    return {data:null,error:lastError};
+  }
   async function supabaseAuthSignup(email,password,name){
-    return await sb.auth.signUp({
+    return await withAuthRetry(()=>sb.auth.signUp({
       email,
       password,
       options:{
         data:{full_name:name},
         emailRedirectTo:location.origin+location.pathname
       }
-    });
+    }));
   }
   async function supabaseAuthLogin(email,password){
-    return await sb.auth.signInWithPassword({email,password});
+    return await withAuthRetry(()=>sb.auth.signInWithPassword({email,password}));
   }
   form.addEventListener('submit',async function(e){
     e.preventDefault();
@@ -142,7 +158,12 @@
       const {data,error:e}=await supabaseAuthLogin(email,password);
       if(e){
         console.error('Supabase sign-in error:',e);
-        setMsg(e.message||'Incorrect email or password. / Nieprawidłowy e-mail lub hasło.',true);
+        const m=String(e.message||'');
+        if(/fetch|network|gateway|timeout|503|502/i.test(m)){
+          setMsg('The login service is temporarily unavailable. Please try again shortly. / Usługa logowania jest chwilowo niedostępna. Spróbuj ponownie za chwilę.',true);
+        }else{
+          setMsg(e.message||'Incorrect email or password. / Nieprawidłowy e-mail lub hasło.',true);
+        }
         return;
       }
       if(data?.session){
@@ -152,7 +173,7 @@
       }
     }catch(err){
       console.error('Authentication error:',err);
-      setMsg('Connection error. Please refresh the page and try again. / Błąd połączenia. Odśwież stronę i spróbuj ponownie.',true);
+      setMsg('The login service is temporarily unavailable. Please try again in a moment. / Usługa logowania jest chwilowo niedostępna. Spróbuj ponownie za chwilę.',true);
     }finally{
       submit.disabled=false;
       submit.textContent=signup?'Request access →':'Sign in →';
