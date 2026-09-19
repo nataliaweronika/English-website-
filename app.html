@@ -29,8 +29,8 @@
       <input id="ee-email" type="email" autocomplete="email" placeholder="Email address / E-mail" required>
       <input id="ee-password" type="password" autocomplete="new-password" placeholder="Password / Hasło" required>
       <button id="ee-submit" type="submit">Request access →</button>
-      <button id="ee-forgot" class="switch" type="button">Forgot password?</button>
-      <button id="ee-switch" class="switch" type="button">Create an account / Utwórz konto</button>
+      <button id="ee-forgot" class="switch" type="button" onclick="window.eeForgot()">Forgot password?</button>
+      <button id="ee-switch" class="switch" type="button" onclick="window.eeToggleSignup(event)">Create an account / Utwórz konto</button>
       <div id="ee-error" class="error"></div>
       <div id="ee-notice" class="notice"></div>
     </form>
@@ -112,13 +112,13 @@
     if(e){setMsg('Incorrect email or password. / Nieprawidłowy e-mail lub hasło.',true);return}
     await applyAuth();
   });
-  forgot.addEventListener('click',async function(){
+  window.eeForgot=async function(){
     const email=emailEl.value.trim();
     if(!email){setMsg('Enter your email first. / Najpierw wpisz e-mail.',true);return}
     const {error:e}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
     setMsg(e?e.message:'If this email has an account, a password-reset email has been sent.');
-  });
-  sw.addEventListener('click',function(e){e.preventDefault();signup=!signup;authMode();nameEl.focus();});
+  };
+  window.eeToggleSignup=function(e){if(e)e.preventDefault();signup=!signup;authMode();if(signup)nameEl.focus();};
   logout.addEventListener('click',async()=>{await sb.auth.signOut();localStorage.removeItem('ee_auth');localStorage.removeItem('ee_email');location.reload()});
   sb.auth.onAuthStateChange((_event)=>{setTimeout(applyAuth,0)});
   window.eeUpdateLogin=applyAuth;
