@@ -97,20 +97,45 @@
     if(adminNav)adminNav.style.display=p.role==='admin'?'':'none';
     if(p.role==='admin')renderAdmin();
   }
+  async function supabaseAuth(path, body){
+    try{
+      const res=await fetch(SUPABASE_URL+'/auth/v1/'+path,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+        body:JSON.stringify(body)
+      });
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok) return {error:new Error(data.error_description||data.msg||data.message||'Supabase request failed.'),data};
+      return {error:null,data};
+    }catch(err){return {error:err,data:null}}
+  }
   form.addEventListener('submit',async function(e){
-    e.preventDefault();setMsg('');
+    e.preventDefault();
+    setMsg('');
+    submit.disabled=true;
+    submit.textContent='Please wait…';
     const email=emailEl.value.trim().toLowerCase(), password=passwordEl.value;
-    if(signup){
-      const name=nameEl.value.trim();
-      const {error:e}=await sb.auth.signUp({email,password,options:{data:{full_name:name}}});
-      if(e){setMsg(e.message,true);return}
-      signup=false;authMode();
-      setMsg('Account created successfully. Check your email to confirm your account, then wait for approval. / Konto utworzone. Sprawdź e-mail, aby potwierdzić konto.');
-      return
+    try{
+      if(signup){
+        const name=nameEl.value.trim();
+        if(!name||!email||!password){setMsg('Please complete all fields. / Uzupełnij wszystkie pola.',true);return}
+        const r=await supabaseAuth('signup',{email,password,data:{full_name:name}});
+        if(r.error){setMsg(r.error.message,true);return}
+        signup=false;
+        authMode();
+        setMsg('Account created successfully. Check your email to confirm your account, then wait for approval. / Konto utworzone. Sprawdź e-mail, aby potwierdzić konto.');
+        return;
+      }
+      const r=await supabaseAuth('token?grant_type=password',{email,password});
+      if(r.error){setMsg('Incorrect email or password. / Nieprawidłowy e-mail lub hasło.',true);return}
+      if(r.data?.access_token){
+        await sb.auth.setSession({access_token:r.data.access_token,refresh_token:r.data.refresh_token});
+      }
+      await applyAuth();
+    }finally{
+      submit.disabled=false;
+      if(signup)submit.textContent='Request access →'; else submit.textContent='Sign in →';
     }
-    const {error:e}=await sb.auth.signInWithPassword({email,password});
-    if(e){setMsg('Incorrect email or password. / Nieprawidłowy e-mail lub hasło.',true);return}
-    await applyAuth();
   });
   window.eeForgot=async function(){
     const email=emailEl.value.trim();
