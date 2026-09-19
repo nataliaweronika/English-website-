@@ -40,6 +40,8 @@
 <button id="ee-logout" type="button" style="display:none">Log out</button>
 <script>
 (function(){
+  // Public-access bypass: keep the existing Supabase auth code below so it can be re-enabled later.
+  const PUBLIC_ACCESS=true;
   const SUPABASE_URL='https://ynwumcchbdlejsvwvse.supabase.co';
   const SUPABASE_KEY='sb_publishable_NbLZobLWm-uzdAONUPsbNA_pHrhYVf6';
   const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
@@ -80,6 +82,17 @@
   }
   function showGate(show){gate.style.display=show?'flex':'none';logout.style.display=show?'none':'block'}
   async function applyAuth(){
+    if(PUBLIC_ACCESS){
+      showGate(false);
+      logout.style.display='none';
+      localStorage.removeItem('ee_auth');
+      localStorage.removeItem('ee_email');
+      const teacherButton=document.getElementById('tm');
+      if(teacherButton)teacherButton.style.display='none';
+      const adminNav=document.getElementById('adminNav');
+      if(adminNav)adminNav.style.display='none';
+      return;
+    }
     const p=await loadProfile();
     if(!p){showGate(true);return}
     if(p.status!=='approved'){
