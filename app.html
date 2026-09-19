@@ -97,17 +97,18 @@
     if(adminNav)adminNav.style.display=p.role==='admin'?'':'none';
     if(p.role==='admin')renderAdmin();
   }
-  async function supabaseAuth(path, body){
-    try{
-      const res=await fetch(SUPABASE_URL+'/auth/v1/'+path,{
-        method:'POST',
-        headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
-        body:JSON.stringify(body)
-      });
-      const data=await res.json().catch(()=>({}));
-      if(!res.ok) return {error:new Error(data.error_description||data.msg||data.message||'Supabase request failed.'),data};
-      return {error:null,data};
-    }catch(err){return {error:err,data:null}}
+  async function supabaseAuthSignup(email,password,name){
+    return await sb.auth.signUp({
+      email,
+      password,
+      options:{
+        data:{full_name:name},
+        emailRedirectTo:location.origin+location.pathname
+      }
+    });
+  }
+  async function supabaseAuthLogin(email,password){
+    return await sb.auth.signInWithPassword({email,password});
   }
   form.addEventListener('submit',async function(e){
     e.preventDefault();
@@ -118,30 +119,60 @@
     try{
       if(signup){
         const name=nameEl.value.trim();
-        if(!name||!email||!password){setMsg('Please complete all fields. / Uzupełnij wszystkie pola.',true);return}
-        const r=await supabaseAuth('signup',{email,password,data:{full_name:name}});
-        if(r.error){setMsg(r.error.message,true);return}
+        if(!name||!email||!password){
+          setMsg('Please complete all fields. / Uzupełnij wszystkie pola.',true);
+          return;
+        }
+        const {data,error:e}=await supabaseAuthSignup(email,password,name);
+        if(e){
+          console.error('Supabase signup error:',e);
+          setMsg(e.message||'Unable to create the account right now. Please try again.',true);
+          return;
+        }
         signup=false;
         authMode();
-        setMsg('Account created successfully. Check your email to confirm your account, then wait for approval. / Konto utworzone. Sprawdź e-mail, aby potwierdzić konto.');
+        setMsg(
+          data?.session
+            ? 'Account created. Your request is now waiting for approval. / Konto utworzone. Twoja prośba czeka na zatwierdzenie.'
+            : 'Account created successfully. Check your email to confirm your account, then wait for approval. / Konto utworzone. Sprawdź e-mail, aby potwierdzić konto.'
+        );
         return;
       }
-      const r=await supabaseAuth('token?grant_type=password',{email,password});
-      if(r.error){setMsg('Incorrect email or password. / Nieprawidłowy e-mail lub hasło.',true);return}
-      if(r.data?.access_token){
-        await sb.auth.setSession({access_token:r.data.access_token,refresh_token:r.data.refresh_token});
+
+      const {data,error:e}=await supabaseAuthLogin(email,password);
+      if(e){
+        console.error('Supabase sign-in error:',e);
+        setMsg(e.message||'Incorrect email or password. / Nieprawidłowy e-mail lub hasło.',true);
+        return;
       }
-      await applyAuth();
+      if(data?.session){
+        await applyAuth();
+      }else{
+        setMsg('Please confirm your email before signing in. / Potwierdź swój e-mail przed zalogowaniem.',true);
+      }
+    }catch(err){
+      console.error('Authentication error:',err);
+      setMsg('Connection error. Please refresh the page and try again. / Błąd połączenia. Odśwież stronę i spróbuj ponownie.',true);
     }finally{
       submit.disabled=false;
-      if(signup)submit.textContent='Request access →'; else submit.textContent='Sign in →';
+      submit.textContent=signup?'Request access →':'Sign in →';
     }
   });
   window.eeForgot=async function(){
-    const email=emailEl.value.trim();
-    if(!email){setMsg('Enter your email first. / Najpierw wpisz e-mail.',true);return}
-    const {error:e}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
-    setMsg(e?e.message:'If this email has an account, a password-reset email has been sent.');
+    const email=emailEl.value.trim().toLowerCase();
+    if(!email){
+      setMsg('Enter your email first. / Najpierw wpisz e-mail.',true);
+      return;
+    }
+    const {error:e}=await sb.auth.resetPasswordForEmail(email,{
+      redirectTo:location.origin+location.pathname
+    });
+    if(e){
+      console.error('Supabase password reset error:',e);
+      setMsg(e.message||'Unable to send the reset email right now.',true);
+      return;
+    }
+    setMsg('If this email has an account, a password-reset email has been sent. / Jeśli konto istnieje, wysłaliśmy wiadomość do resetowania hasła.');
   };
   window.eeToggleSignup=function(e){if(e)e.preventDefault();signup=!signup;authMode();if(signup)nameEl.focus();};
   logout.addEventListener('click',async()=>{await sb.auth.signOut();localStorage.removeItem('ee_auth');localStorage.removeItem('ee_email');location.reload()});
