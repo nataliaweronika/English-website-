@@ -90,11 +90,11 @@
     showGate(false);
     localStorage.setItem('ee_auth','1');
     localStorage.setItem('ee_email',p.email||'');
-    if(p.role==='admin'){
-      const adminNav=document.getElementById('adminNav');
-      if(adminNav)adminNav.style.display='';
-      renderAdmin();
-    }
+    const teacherButton=document.getElementById('tm');
+    if(teacherButton)teacherButton.style.display=(p.role==='teacher'||p.role==='admin')?'':'none';
+    const adminNav=document.getElementById('adminNav');
+    if(adminNav)adminNav.style.display=p.role==='admin'?'':'none';
+    if(p.role==='admin')renderAdmin();
   }
   form.addEventListener('submit',async function(e){
     e.preventDefault();setMsg('');
