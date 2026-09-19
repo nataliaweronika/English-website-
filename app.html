@@ -16,10 +16,11 @@
   <div class="box">
     <div class="brand">everydayenglish</div>
     <h1>Welcome back</h1>
-    <p>Enter your password to access the learning library.</p>
+    <p>Enter your email and the password provided to access Everyday English.</p>
     <form id="ee-login-form">
-      <input id="ee-password" type="password" autocomplete="current-password" placeholder="Password" required>
-      <button type="submit">Log in →</button>
+      <input id="ee-email" type="email" autocomplete="email" placeholder="Your email address / Twój e-mail" required>
+      <input id="ee-password" type="password" autocomplete="current-password" placeholder="Password / Hasło" required>
+      <button type="submit">Sign in →</button>
       <div id="ee-error" class="error"></div>
     </form>
     <div class="pl">🇵🇱 Wpisz hasło, aby uzyskać dostęp do materiałów.</div>
@@ -35,9 +36,8 @@
   const logout=document.getElementById('ee-logout');
   function update(){
     const ok=localStorage.getItem('ee_auth')==='1';
-    const teacher=document.body.classList.contains('teacher-mode');
-    gate.style.display=(ok||teacher)?'none':'flex';
-    logout.style.display=(ok&&!teacher)?'block':'none';
+    gate.style.display=ok?'none':'flex';
+    logout.style.display=ok?'block':'none';
   }
   window.eeUpdateLogin=update;
   async function digest(value){
@@ -48,9 +48,16 @@
   form.addEventListener('submit',async function(e){
     e.preventDefault();
     error.textContent='';
+    const email=document.getElementById('ee-email').value.trim();
     const value=document.getElementById('ee-password').value;
+    if(!email){
+      error.textContent='Please enter your email. / Wpisz swój e-mail.';
+      return;
+    }
     if((await digest(value))===HASH){
       localStorage.setItem('ee_auth','1');
+      localStorage.setItem('ee_email',email);
+      document.getElementById('ee-email').value='';
       document.getElementById('ee-password').value='';
       update();
     }else{
