@@ -117,7 +117,7 @@
     const {error:e}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
     setMsg(e?e.message:'If this email has an account, a password-reset email has been sent.');
   });
-  sw.addEventListener('click',()=>{signup=!signup;authMode()});
+  sw.addEventListener('click',function(e){e.preventDefault();signup=!signup;authMode();nameEl.focus();});
   logout.addEventListener('click',async()=>{await sb.auth.signOut();localStorage.removeItem('ee_auth');localStorage.removeItem('ee_email');location.reload()});
   sb.auth.onAuthStateChange((_event)=>{setTimeout(applyAuth,0)});
   window.eeUpdateLogin=applyAuth;
