@@ -1,4 +1,4 @@
--- Everyday English approval system
+-- WordBloom approval system
 -- Run this once in Supabase -> SQL Editor.
 -- After your own account is created, replace YOUR_ADMIN_EMAIL below
 -- with the email you used for your owner account and run that final UPDATE.
@@ -76,11 +76,10 @@ grant select, update on public.profiles to authenticated;
 revoke all on public.profiles from anon;
 
 -- IMPORTANT:
--- First create your owner account through the Everyday English login screen.
+-- First create your owner account through the WordBloom login screen.
 -- Then replace YOUR_ADMIN_EMAIL below with YOUR email and run this statement.
 -- This makes your account the only initial administrator.
 --
 -- update public.profiles
 -- set status = 'approved', role = 'admin', approved_at = now()
 -- where lower(email) = lower('YOUR_ADMIN_EMAIL');
-
