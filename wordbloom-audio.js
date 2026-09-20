@@ -1,0 +1,16 @@
+(function(){
+'use strict';
+var active=null, repeats=0;
+function esc(s){return String(s||'').trim()}
+function voices(){var vs=speechSynthesis.getVoices();return vs.filter(function(v){return /^en[-_]/i.test(v.lang)}).sort(function(a,b){return Number(b.localService)-Number(a.localService)})}
+function stop(){speechSynthesis.cancel();active=null;document.querySelectorAll('.wb-audio-play').forEach(function(b){b.textContent='▶ Play twice / Odtwórz 2×'})}
+function speak(text,rate,twice,btn){stop();active=btn;repeats=twice?2:1;btn.textContent='■ Stop / Zatrzymaj';function run(){if(!repeats){btn.textContent='▶ Play twice / Odtwórz 2×';active=null;return}repeats--;var u=new SpeechSynthesisUtterance(text);var vs=voices();u.voice=vs[0]||null;u.lang='en-GB';u.rate=rate;u.onend=run;u.onerror=run;speechSynthesis.speak(u)}run()}
+function controls(text){var wrap=document.createElement('div');wrap.className='wb-audio';wrap.innerHTML='<button type="button" class="wb-audio-play">▶ Play twice / Odtwórz 2×</button><label>Speed / Tempo <select><option value="0.8">0.8×</option><option value="0.95" selected>0.95×</option><option value="1.1">1.1×</option></select></label><button type="button" class="wb-audio-once">Play once / Odtwórz 1×</button>';
+ var play=wrap.querySelector('.wb-audio-play'),once=wrap.querySelector('.wb-audio-once'),sel=wrap.querySelector('select');play.onclick=function(){if(active===play){stop()}else speak(text,+sel.value,true,play)};once.onclick=function(){speak(text,+sel.value,false,play)};return wrap}
+function add(){
+ document.querySelectorAll('#listen article.topic').forEach(function(a,i){if(a.querySelector('.wb-audio'))return;var ps=a.querySelectorAll('p');var text=ps.length>1?ps[1].textContent:ps[0]&&ps[0].textContent;if(text)a.insertBefore(controls(esc(text)),a.querySelector('button'))});
+ document.querySelectorAll('.mhx-task').forEach(function(a){if(a.querySelector('.wb-audio'))return;var d=Array.from(a.querySelectorAll('details')).find(function(x){return /Recording script/i.test(x.textContent)});var p=d&&d.querySelector('p');if(p)d.parentNode.insertBefore(controls(esc(p.textContent)),d)});
+ document.querySelectorAll('#listening .mx-script').forEach(function(s){var a=s.closest('article');if(a&&!a.querySelector('.wb-audio'))a.insertBefore(controls(esc(s.textContent)),s)});
+}
+var st=document.createElement('style');st.textContent='.wb-audio{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#e0f0ff;border-radius:12px;padding:10px;margin:10px 0}.wb-audio button,.wb-audio select{border:0;border-radius:18px;padding:8px 11px;font-weight:800;background:#fff;color:#17244b;cursor:pointer}.wb-audio label{font-size:12px;font-weight:800;color:#59657e}';document.head.appendChild(st);add();new MutationObserver(add).observe(document.body,{childList:true,subtree:true});window.addEventListener('beforeunload',stop)
+})();
