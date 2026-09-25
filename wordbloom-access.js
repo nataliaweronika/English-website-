@@ -79,7 +79,7 @@ document.addEventListener('click',function(e){if(state.unlocked)return;var t=e.t
  if(mb){e.preventDefault();e.stopImmediatePropagation();pending=function(){mb.click();};showGate();return;}
 },true);
 /* safety net: lesson pages opened some other way (home cards, search) */
-setInterval(function(){if(state.unlocked)return;
+setInterval(function(){document.body.classList.toggle('wb-locked',!state.unlocked);if(state.unlocked)return;
  var a=document.querySelector('.page.active');
  if(a&&isLockedPage(a.id)){goHome();if(!pending){var id=a.id;pending=function(){var b=document.querySelector('.nav button[data-page="'+id+'"]');if(b)b.click();};}showGate();}
  var mm=document.getElementById('eeMaturaModal');
@@ -155,6 +155,7 @@ function verifyClient(){var code=ls(LS.code);if(!code){setUnlocked(false);return
  rpc('wb_check_code',{p_code:code}).then(function(r){if(r&&r.ok){ls(LS.ok,String(Date.now()));ls(LS.name,r.name||'');setUnlocked(true,false,r.name);}
   else if(r&&r.reason!=='too_many'){ls(LS.code,null);ls(LS.name,null);ls(LS.ok,null);setUnlocked(false);var a=document.querySelector('.page.active');if(a&&isLockedPage(a.id)){goHome();}showGate(r.reason==='inactive'?'Your code has been switched off. Please contact Natalia. / Twój kod jest nieaktywny.':'');hideGateIfPublic(r.reason);}
  }).catch(function(){});}
+setInterval(function(){if(state.unlocked&&!state.admin)verifyClient();},15*60*1000);
 function hideGateIfPublic(reason){if(reason!=='inactive')hideGate();}
 function init(){if(!document.body||!document.querySelector('.nav')){setTimeout(init,200);return;}css();document.body.classList.add('wb-locked');markNav();updateNav();verify();
  if(/[?&#]admin\b/.test(String((window.parent||window).location.href)))setTimeout(openAdmin,300);}
