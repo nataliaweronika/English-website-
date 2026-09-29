@@ -18,6 +18,18 @@ iframe{display:block;width:100%;height:100%;border:0}
   frame.addEventListener('load',function(){
     var d=frame.contentDocument;
     if(!d||!d.head)return;
+    // Keep Materials public and separate from the student lesson access gate.
+    var nav=d.querySelector('.nav');
+    if(nav&&!d.getElementById('wbMaterialsNav')){
+      var materials=d.createElement('button');
+      materials.id='wbMaterialsNav';
+      materials.type='button';
+      materials.innerHTML='📎 <label>Materials / Materiały</label>';
+      materials.setAttribute('aria-label','Materials / Materiały');
+      materials.onclick=function(){window.location.href='materials.html';};
+      nav.appendChild(materials);
+    }
+
     var ac=d.createElement('script');
     ac.src='wordbloom-access.js';
     ac.async=false;
