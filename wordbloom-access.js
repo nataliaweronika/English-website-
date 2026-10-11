@@ -7,7 +7,7 @@
 if(window.__wbAccess)return;window.__wbAccess=true;
 var URL='https://ynwumcchbhdlejsvwlse.supabase.co/rest/v1/rpc/';
 var KEY='sb_publishable_NbLZobLWm-uzdAONUPsbNA_pHrhYVf6';
-var SITE='https://everydayenglish.vercel.app/';
+var SITE='https://wordbloom.ca/';
 var PUBLIC_PAGES={home:1,teacher:1,'study-with-me':1};
 var GRACE_MS=3*24*3600*1000;
 var LS={code:'wbClientCode',name:'wbClientName',ok:'wbClientOkAt',admin:'wbAdminToken'};
