@@ -40,6 +40,15 @@ iframe{display:block;width:100%;height:100%;border:0}
       nav.insertBefore(poetry,m0?m0.nextSibling:nav.firstChild);
     }
 
+    if(nav&&!d.getElementById('wbAboutNav')){
+      var about=d.createElement('button');
+      about.id='wbAboutNav';about.type='button';
+      about.innerHTML='🌱 <label>About me / O mnie</label>';
+      about.setAttribute('aria-label','About me / O mnie');
+      about.onclick=function(){window.location.href='about-me.html';};
+      nav.insertBefore(about,nav.querySelector('[data-page="home"]'));
+    }
+
     var ac=d.createElement('script');
     ac.src='wordbloom-access.js';
     ac.async=false;
