@@ -257,6 +257,12 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .reveal .card{flex-shrink:0;overflow-wrap:anywhere}
 .reveal .actions{flex-shrink:0;flex-wrap:wrap}
 @media(max-height:700px){.reveal{justify-content:flex-start;padding-top:64px}}
+
+.image-save{position:fixed;inset:0;z-index:100000;background:var(--board);color:var(--text);overflow-y:auto;padding:24px 20px calc(32px + env(safe-area-inset-bottom,0px));text-align:center}
+.image-save h2{font:400 26px Fraunces,Georgia,serif;margin:12px 0}
+.image-save p{font-size:14px;line-height:1.5;margin:12px auto;max-width:34ch}
+.image-save img{display:block;width:min(100%,360px);height:auto;margin:20px auto;box-shadow:0 8px 24px var(--shadow);-webkit-touch-callout:default;user-select:auto}
+.image-save a{color:var(--text);display:inline-flex;min-height:44px;align-items:center;text-underline-offset:4px}
 </style>
 </head>
 <body>
@@ -341,6 +347,14 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   <div class="wall-grid" id="wallGrid"></div>
 </div>
 
+<div class="image-save" id="imageSave" role="dialog" aria-modal="true" aria-labelledby="imageSaveTitle" hidden>
+  <button id="imageSaveClose">Back to my poem</button>
+  <h2 id="imageSaveTitle">Keep your poem</h2>
+  <p>Touch and hold the image, then choose "Save Image" or "Download image".</p>
+  <img id="imageSavePreview" alt="Your finished poem, ready to save">
+  <a id="imageSaveDownload" download="my-poem.png">Download image</a>
+  <p>If it opens in a new tab, touch and hold it there to save it.</p>
+</div>
 <script>
 (function(){
   // Featured poems. Each: { topic: "Night", lines: ["...", "..."], by: "@name" }
@@ -929,12 +943,29 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     ctx.fillText("Write your own poem", W/2, H - 270);
     return new Promise(res => c.toBlob(res, "image/png"));
   }
+  let imageSaveURL = null;
+  const imageSave = document.getElementById("imageSave");
+  function closeImageSave(){
+    imageSave.hidden = true;
+    document.getElementById("save").focus();
+  }
+  document.getElementById("imageSaveClose").addEventListener("click", closeImageSave);
+  document.addEventListener("keydown", e => { if(e.key === "Escape" && !imageSave.hidden) closeImageSave(); });
   const downloadsReady = window.claude && window.claude.use ? window.claude.use("downloads").catch(() => null) : Promise.resolve(null);
   document.getElementById("save").addEventListener("click", async e => {
     const btn = e.currentTarget;
     const blob = await makeImage();
     if (!blob){ btn.textContent = "Write a poem first"; return; }
     const name = "my-poem.png";
+    if (window.matchMedia("(pointer: coarse)").matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      if (imageSaveURL) URL.revokeObjectURL(imageSaveURL);
+      imageSaveURL = URL.createObjectURL(blob);
+      document.getElementById("imageSavePreview").src = imageSaveURL;
+      document.getElementById("imageSaveDownload").href = imageSaveURL;
+      imageSave.hidden = false;
+      document.getElementById("imageSaveClose").focus();
+      return;
+    }
     const downloads = await downloadsReady;
     if (downloads){
       try { await downloads.save({ filename: name, data: blob }); btn.textContent = "Saved"; }
