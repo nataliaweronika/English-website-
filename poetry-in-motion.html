@@ -266,7 +266,7 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .image-save a{color:var(--text);display:inline-flex;min-height:44px;align-items:center;text-underline-offset:4px}
 
 /* WordBloom homepage palette: lavender, blue, blush and navy. */
-:root,:root[data-theme="light"],:root[data-theme="dark"]{
+:root,:root:not([data-theme="light"]),:root[data-theme="light"],:root[data-theme="dark"]{
   color-scheme:light;
   --board:#f7f8fc;--text:#17244b;--muted:#68738d;--tile:#fff;
   --tile-ink:#17244b;--accent:#5968e8;--on-accent:#fff;
