@@ -29,6 +29,16 @@ iframe{display:block;width:100%;height:100%;border:0}
       materials.onclick=function(){window.location.href='materials.html';};
       nav.insertBefore(materials,nav.firstChild);
     }
+    if(nav&&!d.getElementById('wbPoetryNav')){
+      var poetry=d.createElement('button');
+      poetry.id='wbPoetryNav';
+      poetry.type='button';
+      poetry.innerHTML='✍️ <label>Poetry in Motion</label>';
+      poetry.setAttribute('aria-label','Poetry in Motion');
+      poetry.onclick=function(){window.location.href='poetry-in-motion.html';};
+      var m0=d.getElementById('wbMaterialsNav');
+      nav.insertBefore(poetry,m0?m0.nextSibling:nav.firstChild);
+    }
 
     var ac=d.createElement('script');
     ac.src='wordbloom-access.js';
