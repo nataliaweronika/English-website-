@@ -40,7 +40,7 @@ function css(){if(document.getElementById('wbAccessStyle'))return;var s=document
 '.wbTop{display:flex;justify-content:space-between;align-items:center;gap:10px}'+
 '.nav button.wbNavAccess{margin-top:14px;border-top:1px solid #e5e8f1;padding-top:12px}'+
 'body.wb-locked .nav button[data-wb-locked]::after{content:" \\1F512";font-size:12px;opacity:.7}';
-document.head.appendChild(s);}
+s.textContent+='body.wb-locked .nav button[data-wb-sample]::after{content:" Free sample";font-size:10px;font-weight:700;color:#4055db;opacity:1}';document.head.appendChild(s);}
 
 /* ---------- client gate ---------- */
 var pending=null;
@@ -69,7 +69,7 @@ rpc('wb_check_code',{p_code:v}).then(function(r){
 
 function setUnlocked(on,admin,name){state.unlocked=!!on;state.admin=!!admin;state.name=name||'';document.body.classList.toggle('wb-locked',!state.unlocked);markNav();updateNav();}
 function isLockedPage(id){return id&&!PUBLIC_PAGES[id];}
-function markNav(){document.querySelectorAll('.nav button[data-page]').forEach(function(b){if(isLockedPage(b.getAttribute('data-page')))b.setAttribute('data-wb-locked','1');});}
+function markNav(){document.querySelectorAll('.nav button[data-page]').forEach(function(b){if(isLockedPage(b.getAttribute('data-page')))b.setAttribute('data-wb-locked','1');if(SAMPLE_PAGES[b.getAttribute('data-page')]){b.setAttribute('data-wb-sample','1');b.title='Try a free sample';}});}
 
 
 /* One public taster per skill; full lessons still require a client code. */
