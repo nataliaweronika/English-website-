@@ -71,17 +71,49 @@ function setUnlocked(on,admin,name){state.unlocked=!!on;state.admin=!!admin;stat
 function isLockedPage(id){return id&&!PUBLIC_PAGES[id];}
 function markNav(){document.querySelectorAll('.nav button[data-page]').forEach(function(b){if(isLockedPage(b.getAttribute('data-page')))b.setAttribute('data-wb-locked','1');});}
 
+
+/* One public taster per skill; full lessons still require a client code. */
+var SAMPLE_PAGES={speaking:'Speaking',listening:'Listening',writing:'Writing',reading:'Reading',grammar:'Grammar',vocab:'Vocabulary'};
+var sampleTimer=null;
+function closeSample(){var m=document.getElementById('wbSample');if(m)m.remove();if(sampleTimer)clearInterval(sampleTimer);sampleTimer=null;if(window.speechSynthesis)speechSynthesis.cancel();}
+function showSample(id,continueAction){
+ closeSample();hideGate();
+ var title=SAMPLE_PAGES[id];if(!title){showGate();return;}
+ var content={
+ speaking:'<h3>At the market</h3><p>Ask for two fruits and say how many you want.</p><div class="pl">Poproś o dwa owoce i powiedz, ile ich chcesz.</div><ol><li>What fruit do you need?</li><li>How many do you want?</li><li>How do you thank the seller?</li></ol><div class="callout"><b>Useful language</b><br>I would like… · Two apples, please. · Thank you!</div><p>Practise both the customer and seller roles.</p><button class="wbBtn" id="wbSampleTimer">Start 60-second practice</button><p id="wbSampleClock" aria-live="polite"></p><details><summary>Speaking self-check</summary><p>Did you answer in full sentences, give a reason or example, and use the useful language? Repeat and improve one sentence.</p></details>',
+ listening:'<h3>Morning</h3><p>Listen, then answer the question. The audio uses your browser\'s English voice.</p><button class="wbBtn" id="wbSampleListen">Play audio</button> <button class="wbBtn light" id="wbSampleStop">Stop</button><label style="display:block;margin-top:12px">Speed <select id="wbSampleSpeed"><option value="1">Normal</option><option value="0.75">Slower</option></select></label><p id="wbSampleAudioStatus" aria-live="polite"></p><details><summary>Read the transcript</summary><p>Anna gets up at seven, makes coffee and walks to work.</p></details><h4>What does Anna do after making coffee?</h4><button class="wbBtn light" data-sample-answer="wrong">She goes shopping.</button> <button class="wbBtn light" data-sample-answer="right">She walks to work.</button><p class="wbSampleFeedback" aria-live="polite"></p>',
+ writing:'<h3>A short message</h3><p>Write a message inviting a friend for coffee.</p><div class="pl">Napisz wiadomość z zaproszeniem znajomego na kawę.</div><label for="wbSampleWriting" style="display:block;margin-top:16px">Try it here</label><textarea id="wbSampleWriting" rows="5" placeholder="Hi… Would you like to…?" style="width:100%;padding:14px;border:1px solid #dfe3ee;border-radius:14px;font:inherit;box-sizing:border-box"></textarea><details><summary>Check your message</summary><ul><li>Did you invite your friend clearly?</li><li>Did you suggest a time and place?</li><li>Did you include a friendly ending?</li></ul></details><p class="pl">This is a practice space. Copy your text before closing; it is not saved or sent.</p>',
+ reading:'<h3>A Morning at Home</h3><div class="callout">Anna gets up at seven. She has breakfast and makes a cup of tea. Then she gets dressed and leaves home at eight. She walks to work because her office is near her flat.</div><h4>What time does Anna get up?</h4><button class="wbBtn light" data-sample-answer="right">At 7:00.</button> <button class="wbBtn light" data-sample-answer="wrong">At 8:00.</button> <button class="wbBtn light" data-sample-answer="wrong">At 9:00.</button><p class="wbSampleFeedback" aria-live="polite"></p><details><summary>Polish support / Pomoc po polsku</summary><p>Anna wstaje o siódmej. Je śniadanie i robi herbatę. Potem ubiera się i wychodzi z domu o ósmej. Idzie do pracy pieszo, ponieważ jej biuro jest blisko mieszkania.</p></details>',
+ grammar:'<h3>Present simple</h3><p>Use for routines, habits, facts and generally true situations.</p><div class="pl">Używamy do rutyny, nawyków i faktów.</div><div class="callout">I work every day.<br>She works in a café.</div><p>Use it to describe your normal day, work, hobbies and habits.</p><h4>Choose: I ___ to work every day.</h4><button class="wbBtn light" data-sample-answer="right">go</button> <button class="wbBtn light" data-sample-answer="wrong">am going</button> <button class="wbBtn light" data-sample-answer="wrong">went</button><p class="wbSampleFeedback" aria-live="polite"></p>',
+ vocab:'<h3>Daily life</h3><ul><li><b>get up</b> - wstawać</li><li><b>get ready</b> - przygotować się</li><li><b>have breakfast</b> - jeść śniadanie</li><li><b>go to work</b> - iść do pracy</li><li><b>take the bus</b> - jechać autobusem</li></ul><p>Make a sentence with one phrase.</p><label for="wbSampleSentence">Your sentence</label><textarea id="wbSampleSentence" rows="2" style="width:100%;padding:14px;border:1px solid #dfe3ee;border-radius:14px;font:inherit;box-sizing:border-box"></textarea><details><summary>Example</summary><p>I get up at seven and have breakfast at home.</p></details>'
+ }[id];
+ var m=document.createElement('div');m.id='wbSample';m.style.cssText='position:fixed;inset:0;z-index:2147483099;background:rgba(23,36,75,.35);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;color:#17244b;font-family:Inter,system-ui,sans-serif';
+ m.innerHTML='<div class="wbBox wide" role="dialog" aria-modal="true" aria-labelledby="wbSampleTitle" style="width:min(700px,100%);padding:clamp(18px,4vw,30px)"><div class="wbTop"><span class="wbBrand">WordBloom</span><button class="wbBtn light sm" id="wbSampleClose" aria-label="Close sample">Close ✕</button></div><div class="wbPill on" style="margin-top:14px">Free sample · A1 · No code needed</div><h2 id="wbSampleTitle">'+title+'</h2><p>Try one activity before joining the full lesson library.</p><div class="pl">Wypróbuj jedno ćwiczenie bez kodu dostępu.</div><div style="margin:20px 0;text-align:left">'+content+'</div><hr style="border:0;border-top:1px solid #e5e8f1"><button class="wbBtn" id="wbSampleFull">Open full '+title.toLowerCase()+' library →</button><p class="pl" style="margin-top:10px">The rest of the library needs a personal code from Natalia. / Pozostałe lekcje wymagają kodu od Natalii.</p></div>';
+ document.body.appendChild(m);
+ m.querySelector('#wbSampleClose').onclick=closeSample;
+ m.querySelector('#wbSampleFull').onclick=function(){closeSample();pending=continueAction;showGate();};
+ m.querySelectorAll('[data-sample-answer]').forEach(function(b){b.onclick=function(){var right=b.dataset.sampleAnswer==='right';var f=m.querySelector('.wbSampleFeedback');f.textContent=right?'Correct! / Dobrze!':'Try again. / Spróbuj jeszcze raz.';f.style.color=right?'#1c6b3f':'#b4233d';};});
+ if(id==='speaking')m.querySelector('#wbSampleTimer').onclick=function(){if(sampleTimer)clearInterval(sampleTimer);var n=60,clock=m.querySelector('#wbSampleClock');clock.textContent='60 seconds - start speaking!';sampleTimer=setInterval(function(){n--;clock.textContent=n>0?n+' seconds left':'Time! Check your speaking goals.';if(n<=0){clearInterval(sampleTimer);sampleTimer=null;}},1000);};
+ if(id==='listening'){
+ var status=m.querySelector('#wbSampleAudioStatus');
+ m.querySelector('#wbSampleListen').onclick=function(){if(!window.speechSynthesis){status.textContent='Audio is unavailable in this browser. Open the transcript below.';return;}speechSynthesis.cancel();var u=new SpeechSynthesisUtterance('Anna gets up at seven, makes coffee and walks to work.');u.lang='en-GB';u.rate=+m.querySelector('#wbSampleSpeed').value;u.onstart=function(){status.textContent='Playing…';};u.onend=function(){status.textContent='Finished. You can play it again.';};u.onerror=function(){status.textContent='Audio could not play. Use the transcript below.';};speechSynthesis.speak(u);};
+ m.querySelector('#wbSampleStop').onclick=function(){if(window.speechSynthesis)speechSynthesis.cancel();status.textContent='Stopped.';};
+ }
+ m.querySelector('#wbSampleClose').focus();
+}
+document.addEventListener('keydown',function(e){var m=document.getElementById('wbSample');if(!m)return;if(e.key==='Escape'){closeSample();return;}if(e.key==='Tab'){var all=Array.from(m.querySelectorAll('button,input,textarea,select,summary,a[href]')).filter(function(n){return n.getClientRects().length&&!n.disabled;});var first=all[0],last=all[all.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
+
 /* intercept navigation to lessons while locked */
 document.addEventListener('click',function(e){if(state.unlocked)return;var t=e.target;if(!t||!t.closest)return;
  var nb=t.closest('.nav button[data-page]');
- if(nb&&isLockedPage(nb.getAttribute('data-page'))){e.preventDefault();e.stopImmediatePropagation();pending=function(){nb.click();};showGate();return;}
+ if(nb&&isLockedPage(nb.getAttribute('data-page'))){e.preventDefault();e.stopImmediatePropagation();pending=function(){nb.click();};if(SAMPLE_PAGES[nb.getAttribute('data-page')])showSample(nb.getAttribute('data-page'),pending);else showGate();return;}
  var mb=t.closest('#eeMaturaBtn');
  if(mb){e.preventDefault();e.stopImmediatePropagation();pending=function(){mb.click();};showGate();return;}
 },true);
 /* safety net: lesson pages opened some other way (home cards, search) */
 setInterval(function(){document.body.classList.toggle('wb-locked',!state.unlocked);if(state.unlocked)return;
  var a=document.querySelector('.page.active');
- if(a&&isLockedPage(a.id)){goHome();if(!pending){var id=a.id;pending=function(){var b=document.querySelector('.nav button[data-page="'+id+'"]');if(b)b.click();};}showGate();}
+ if(a&&isLockedPage(a.id)){var id=a.id;goHome();pending=function(){var b=document.querySelector('.nav button[data-page="'+id+'"]');if(b)b.click();};if(SAMPLE_PAGES[id])showSample(id,pending);else showGate();}
  var mm=document.getElementById('eeMaturaModal');
  if(mm&&mm.style.display!=='none'&&getComputedStyle(mm).display!=='none'){mm.style.display='none';document.documentElement.style.overflow='';pending=function(){var b=document.getElementById('eeMaturaBtn');if(b)b.click();};showGate();}
 },400);
