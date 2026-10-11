@@ -233,7 +233,7 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
 /* Craft polish: paper, tape and ink instead of clip-art */
 :root{--tile:#FBF7EC}
-.glyph,.ambient,.motif{display:none!important}
+/* Word drawings stay visible alongside the paper-and-tape finish. */
 .stage::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(0,0,0,.16) 100%)}
 .intro h1{font-weight:300;letter-spacing:-.025em;font-variation-settings:"opsz" 144,"SOFT" 100}
 .intro p{line-height:1.65;letter-spacing:.005em}
@@ -677,6 +677,7 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
       el.classList.remove("lifted");
       if (moved) { history.push(before); place(t); if (snap(t)) spark(t); }
       else if (t.blank) openWordPop(t);
+      else spark(t);
       el.removeEventListener("pointermove", move);
       el.removeEventListener("pointerup", up);
       el.removeEventListener("pointercancel", up);
@@ -692,7 +693,7 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     if (!el) return;
     if (e.key === "Enter" || e.key === " "){
       const bt = tiles.find(x => x.el === el);
-      if (bt && bt.blank){ e.preventDefault(); openWordPop(bt); }
+      if (bt){ e.preventDefault(); if(bt.blank) openWordPop(bt); else spark(bt); }
       return;
     }
     const d = { ArrowLeft:[-1,0], ArrowRight:[1,0], ArrowUp:[0,-1], ArrowDown:[0,1] }[e.key];
@@ -888,7 +889,6 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
   // ---- Save the poem card as a story-sized image ----
   function poemDrawingImage(k, color){
-    return Promise.resolve(null);
     return new Promise(res => {
       const svg = drawing(k).replace('stroke="currentColor"', 'stroke="' + color + '"').replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" ');
       const img = new Image();
