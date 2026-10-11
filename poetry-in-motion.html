@@ -248,6 +248,15 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .card .poem{line-height:1.32;font-weight:350;letter-spacing:-.005em}
 .card-date{font-family:Fraunces,Georgia,serif;font-style:italic;font-size:14px;margin-top:2em;padding-top:1em;border-top:1px solid color-mix(in srgb,var(--tile-ink) 14%,transparent)}
 .primary{box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 6px 16px rgba(0,0,0,.18)}
+
+/* An optional, private invitation to the curated wall. */
+.wall-invite{margin-top:20px;padding-top:14px;border-top:1px solid rgba(58,45,27,.14);font-family:Figtree,system-ui,sans-serif}
+.wall-send{display:inline-flex;align-items:center;min-height:44px;color:var(--tile-ink);font-size:14px;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+.wall-send:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.wall-invite p{margin:3px 0 0;font-size:12px;line-height:1.55;color:color-mix(in srgb,var(--tile-ink) 75%,var(--tile));max-width:44ch}
+.reveal .card{flex-shrink:0;overflow-wrap:anywhere}
+.reveal .actions{flex-shrink:0;flex-wrap:wrap}
+@media(max-height:700px){.reveal{justify-content:flex-start;padding-top:64px}}
 </style>
 </head>
 <body>
@@ -257,7 +266,6 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     <h1>Poetry in Motion</h1>
     <p>Play with words to make your own poem</p>
     <p>Drag words onto the board to write a few lines. When it feels right, read your poem.</p>
-    <button class="today" id="today" hidden></button>
   </header>
   <button class="wall-btn" id="wallBtn">Poem wall</button>
   <div class="rules" id="rules" aria-hidden="true"></div>
@@ -312,6 +320,10 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     <h2 class="card-title" id="cardTitle"></h2>
     <p class="poem" id="poem"></p>
     <p class="card-date" id="cardDate"></p>
+    <div class="wall-invite" id="wallInvite" hidden>
+      <a class="wall-send" id="sendToWall" aria-describedby="wallSendNote">Send to wall <span aria-hidden="true">&nbsp;↗</span></a>
+      <p id="wallSendNote">Optional. Opens your email app with your poem. Add the name you'd like shown, or stay anonymous. Natalia chooses what appears here; sending doesn't publish it.</p>
+    </div>
   </article>
   <div class="actions">
     <button id="save">Save image</button>
@@ -325,7 +337,7 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     <h2>Poem wall</h2>
     <button id="wallClose">Back to the board</button>
   </div>
-  <p class="wall-note"><span>Favorite poems written on this board. Save yours as an image, share it on Instagram and tag me to be featured here.</span></p>
+  <p class="wall-note"><span>A little collection of poems written on this board, chosen by Natalia. Want to share yours? Read your poem, then choose &quot;Send to wall&quot;. It opens an email for you to review and send. Featuring is optional, never automatic.</span></p>
   <div class="wall-grid" id="wallGrid"></div>
 </div>
 
@@ -707,6 +719,15 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   function openReveal(){
     lastFocus = document.activeElement;
     const lines = composeLines();
+    const poemText = lines.map(words => words.join(" ")).join("\n");
+    const invite = document.getElementById("wallInvite");
+    const sendToWall = document.getElementById("sendToWall");
+    invite.hidden = !poemText.trim();
+    if (poemText.trim()) {
+      sendToWall.href = "mailto:rduchnatalia@gmail.com?subject=" + encodeURIComponent("Poetry in Motion - for the poem wall") + "&body=" + encodeURIComponent(poemText);
+    } else {
+      sendToWall.removeAttribute("href");
+    }
     poemEl.innerHTML = "";
     poemEl.classList.toggle("empty", !lines.length);
     document.getElementById("copy").hidden = !lines.length;
@@ -967,11 +988,7 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   const now = new Date();
   const dayNumber = Math.floor((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
   const TODAY = ORDER[dayNumber % ORDER.length];
-  const todayBtn = document.getElementById("today");
-  const todayName = document.querySelector('.pack[data-pack="' + TODAY + '"]').textContent;
-  todayBtn.textContent = "Today's topic: " + todayName;
-  todayBtn.hidden = false;
-  todayBtn.addEventListener("click", () => selectPack(TODAY));
+
 
   document.querySelectorAll(".grp").forEach(g => g.addEventListener("click", () => {
     document.querySelectorAll(".grp").forEach(b => b.setAttribute("aria-pressed", String(b === g)));
