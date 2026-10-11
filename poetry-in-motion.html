@@ -389,7 +389,7 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   const PUNCT = [",", ".", "!", "?", ";", ":", "\u2026", "-"];
   const PUNCT_NAME = { ",":"comma", ".":"full stop", "!":"exclamation mark", "?":"question mark", ";":"semicolon", ":":"colon", "\u2026":"ellipsis", "-":"hyphen" };
   const isPunct = w => PUNCT.includes(w);
-  const isSmall = w => GLUE.has(w) || w.startsWith("-");
+  const isSmall = w => GLUE.has(w) || w.startsWith("-") || w === "'s";
 
   // Small line drawings: one per topic, and for words that have one
   const MOTIFS = {
@@ -602,6 +602,7 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
         ...words.filter(w => w === "-s" || w === "-ing")
       ];
     }
+    words.push("'s");
     words.push(...(r.width < 600 ? [",", ".", "!", "?", "-"] : PUNCT));
     words.push("+ your word");
     words.forEach(word => {
@@ -722,6 +723,7 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
         const w = p.t.word;
         if (w === "-") { if (words.length) words[words.length-1] += "-"; }
         else if (/^[,.!?;:\u2026]$/.test(w)) { if (words.length) words[words.length-1] += w; }
+        else if (w === "'s" && words.length) words[words.length-1] += w;
         else if (/^-(?:s|ing|ed)$/.test(w) && words.length) words[words.length-1] += w.slice(1);
         else if (words.length && words[words.length-1].endsWith("-")) words[words.length-1] += w;
         else words.push(w.replace(/^-/, ""));
