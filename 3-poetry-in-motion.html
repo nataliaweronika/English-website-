@@ -1,0 +1,937 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Poetry in Motion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* First light */
+  --board:#DCE6EE;
+  --text:#2A3542;
+  --muted:#566676;
+  --tile:#FFFFFF;
+  --tile-ink:#2A3542;
+  --accent:#B5676B;
+  --on-accent:#FFFFFF;
+  --veil:rgba(220,230,238,.96);
+  --shadow:rgba(30,45,60,.18);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  height:100%;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    /* Night water */
+    --board:#1F3B4D;
+    --text:#ECF1EE;
+    --muted:#A3B7C2;
+    --tile:#FDFBF2;
+    --tile-ink:#1F3B4D;
+    --accent:#E8D9A8;
+    --on-accent:#1F3B4D;
+    --veil:rgba(22,44,58,.97);
+    --shadow:rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --board:#1F3B4D;
+  --text:#ECF1EE;
+  --muted:#A3B7C2;
+  --tile:#FDFBF2;
+  --tile-ink:#1F3B4D;
+  --accent:#E8D9A8;
+  --on-accent:#1F3B4D;
+  --veil:rgba(22,44,58,.97);
+  --shadow:rgba(0,0,0,.35);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;height:100%;
+  background:var(--board);color:var(--text);
+  font-family:Figtree,system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.stage{position:relative;height:100%;min-height:480px;overflow:hidden;background:var(--board)}
+.stage::before{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .09 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px;pointer-events:none;z-index:0}
+
+.intro{
+  position:absolute;top:0;left:0;z-index:0;
+  padding:clamp(20px,4vw,48px);
+  max-width:min(760px,100%);pointer-events:none;
+}
+.intro h1{
+  margin:0 0 .35em;
+  font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:350;
+  font-variation-settings:"opsz" 144;
+  font-size:clamp(34px,5.5vw,68px);line-height:1;letter-spacing:-.01em;
+}
+.intro p{margin:0;max-width:44ch;color:var(--muted);font-size:clamp(15px,1.3vw,17px);line-height:1.5;transition:opacity .6s ease}
+.stage.writing .intro p{opacity:.45}
+.hint{position:absolute;left:clamp(20px,4vw,48px);margin:0;font-family:Fraunces,Georgia,serif;font-style:italic;font-size:clamp(15px,1.4vw,18px);color:color-mix(in srgb,var(--text) 45%,transparent);pointer-events:none;z-index:0;transition:opacity .4s ease}
+.stage.writing .hint{opacity:0}
+.tile.leaving{transition:transform .55s cubic-bezier(.5,0,.75,0),opacity .45s ease;opacity:0;pointer-events:none}
+
+/* Tiles */
+.tile{position:absolute;left:0;top:0;z-index:1;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;outline:none}
+.tile.settle{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.tile .float{display:block;animation:bob var(--d,4s) ease-in-out var(--delay,0s) infinite alternate;filter:drop-shadow(0 1px 0 var(--shadow)) drop-shadow(0 4px 5px var(--shadow));transition:filter .18s ease}
+.tile .paper{
+  display:block;padding:.3em .6em;
+  background-color:var(--tile);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .09 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  color:var(--tile-ink);
+  font-family:Fraunces,Georgia,serif;font-weight:400;font-variation-settings:"opsz" 24;
+  font-size:clamp(16px,1.55vw,20px);line-height:1.2;white-space:nowrap;
+  border-radius:2px;
+  transform:rotate(var(--r,0deg));
+  transition:transform .18s ease;
+}
+.tile.placed .paper{box-shadow:inset 3px 0 0 var(--accent)}
+.tile.lifted{cursor:grabbing}
+.tile.lifted .float{animation-play-state:paused}
+.tile.lifted .paper{transform:rotate(0deg) scale(1.12)}
+.tile.lifted .float{filter:drop-shadow(0 2px 0 var(--shadow)) drop-shadow(0 16px 14px var(--shadow))}
+@media (hover:hover){.tile:not(.lifted):hover .paper{transform:rotate(var(--r,0deg)) translateY(-2px)}}
+.tile:focus-visible .float{outline:2px solid var(--accent);outline-offset:3px}
+.tile.small .paper{font-size:clamp(13px,1.2vw,16px);padding:.28em .5em;color:color-mix(in srgb,var(--tile-ink) 72%,var(--tile))}
+.tile.snap{transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.rules{position:absolute;inset:0;z-index:0;pointer-events:none}
+.rule{position:absolute;left:clamp(20px,4vw,48px);right:clamp(20px,4vw,48px);border-top:1.5px solid color-mix(in srgb,var(--text) 18%,transparent)}
+.glyph{position:absolute;left:0;top:0;width:24px;height:24px;color:var(--accent);pointer-events:none;z-index:4000;animation:glyph 1.5s ease-out forwards}
+.glyph svg,.motif svg{width:100%;height:100%;display:block}
+@keyframes glyph{0%{opacity:0;transform:translateY(6px) scale(.6)}25%{opacity:1;transform:translateY(-4px) scale(1)}100%{opacity:0;transform:translateY(-28px) scale(.9)}}
+.ambient{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;color:var(--text)}
+.ambient svg{position:absolute;opacity:.16;animation:amb var(--d,8s) ease-in-out var(--delay,0s) infinite alternate}
+@keyframes amb{from{transform:translate(0,0) rotate(-8deg)}to{transform:translate(14px,-36px) rotate(8deg)}}
+.motif{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:18px;justify-content:center;color:var(--accent)}
+.motif svg{width:56px;height:56px;flex:0 0 auto}
+.motif:empty{display:none}
+.motif svg *{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.3s var(--dd,.15s) ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.reveal .actions{position:relative;z-index:1}
+.card{position:relative;z-index:1;width:min(560px,100%);padding:clamp(28px,5vw,48px);border-radius:3px;background-color:var(--tile);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .09 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");color:var(--tile-ink);box-shadow:0 2px 0 var(--shadow),0 24px 48px var(--shadow);transform:translateY(18px) rotate(-1deg);transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.reveal.open .card{transform:rotate(-1deg)}
+.card .motif{justify-content:flex-start;gap:14px;margin-bottom:22px;color:color-mix(in srgb,var(--tile-ink) 80%,var(--tile))}
+.card .motif svg{width:40px;height:40px}
+.card-title{margin:0 0 .7em;font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:400;font-size:clamp(18px,2vw,22px);color:color-mix(in srgb,var(--tile-ink) 65%,var(--tile))}
+.card-title:empty,.card-date:empty{display:none}
+.card .poem{max-width:none;color:var(--tile-ink);font-size:clamp(26px,4.4vw,44px)}
+.card .poem.empty{color:color-mix(in srgb,var(--tile-ink) 70%,var(--tile))}
+.card-date{margin:1.6em 0 0;font-size:14px;color:color-mix(in srgb,var(--tile-ink) 62%,var(--tile))}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(calc(var(--amp,5px) * -1))}}
+
+/* Today's topic, tools, own word, wall */
+.today{pointer-events:auto;margin-top:12px;min-height:36px;padding:0 1em;font-size:14px;border-color:color-mix(in srgb,var(--accent) 75%,transparent);transition:opacity .6s ease}
+.stage.writing .today{opacity:.45}
+.tools{position:absolute;right:clamp(12px,3vw,40px);z-index:2;display:flex;gap:2px}
+.tools button{min-height:36px;padding:0 .8em;font-size:14px;border-color:transparent;color:var(--muted)}
+.tools button:hover{color:var(--text);border-color:transparent}
+.wall-btn{position:absolute;top:clamp(20px,4vw,48px);right:clamp(16px,4vw,48px);z-index:3;min-height:40px;font-size:14px}
+.tile.blank .paper{background:transparent;border:1.5px dashed color-mix(in srgb,var(--text) 55%,transparent);color:var(--text);clip-path:none!important}
+.tile.blank .float{filter:none}
+.wordpop{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:8000;width:min(340px,90%);display:flex;flex-direction:column;gap:10px;padding:18px;background:var(--tile);color:var(--tile-ink);border-radius:6px;box-shadow:0 18px 40px var(--shadow)}
+.wordpop label{font-size:14px}
+.wordpop input{min-height:44px;padding:0 12px;font:400 20px Fraunces,Georgia,serif;color:var(--tile-ink);background:transparent;border:1px solid color-mix(in srgb,var(--tile-ink) 35%,transparent);border-radius:6px}
+.wordpop input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wordpop .row{display:flex;gap:8px;justify-content:flex-end}
+.wordpop .ghost{color:var(--tile-ink);border-color:color-mix(in srgb,var(--tile-ink) 35%,transparent)}
+.wordpop .err{margin:0;font-size:13px;color:#9E3434}
+.wordpop .err:empty{display:none}
+.wall{position:fixed;inset:0;z-index:9500;overflow-y:auto;background:var(--board);padding:calc(env(safe-area-inset-top,0px) + clamp(20px,4vw,48px)) clamp(20px,4vw,48px) calc(env(safe-area-inset-bottom,0px) + 48px);opacity:0;visibility:hidden;transition:opacity .35s ease,visibility 0s linear .35s}
+.wall.open{opacity:1;visibility:visible;transition:opacity .35s ease}
+.wall-head{display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:1100px;margin:0 auto}
+.wall-head h2{margin:0;font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:350;font-size:clamp(30px,4vw,48px)}
+.wall-note{max-width:1100px;margin:10px auto 30px;color:var(--muted);line-height:1.5}
+.wall-note span{display:block;max-width:52ch}
+.wall-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:24px}
+.wall-card{margin:0;padding:24px;background-color:var(--tile);color:var(--tile-ink);border-radius:3px;box-shadow:0 2px 0 var(--shadow),0 14px 28px var(--shadow);transform:rotate(-.7deg)}
+.wall-card:nth-child(even){transform:rotate(.6deg)}
+.wall-card .t{margin:0 0 .6em;font-family:Fraunces,Georgia,serif;font-style:italic;font-size:16px;color:color-mix(in srgb,var(--tile-ink) 65%,var(--tile))}
+.wall-card .p{margin:0;font-family:Fraunces,Georgia,serif;font-size:24px;line-height:1.25}
+.wall-card .p span{display:block}
+.wall-card .by{margin:.9em 0 0;font-size:13px;color:color-mix(in srgb,var(--tile-ink) 62%,var(--tile))}
+.wall-empty{grid-column:1/-1;margin:24px 0;max-width:30ch;font-family:Fraunces,Georgia,serif;font-style:italic;font-size:22px;line-height:1.4;color:var(--muted)}
+
+/* Controls */
+.controls{
+  position:absolute;left:0;right:0;bottom:0;z-index:5000;
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
+  padding:clamp(14px,3vw,32px);pointer-events:none;
+}
+.controls > *{pointer-events:auto}
+.packs{display:flex;gap:6px;align-items:center;flex-wrap:nowrap;flex:1 1 auto;min-width:0;overflow-x:auto;scrollbar-width:none;padding:4px 3px;-webkit-overflow-scrolling:touch}
+.packs::-webkit-scrollbar{display:none}
+.packs{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 24px),transparent)}
+.packs > *{flex:0 0 auto}
+.packs span{color:var(--muted);font-size:14px;margin-right:4px}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+button{
+  font:500 15px/1 Figtree,system-ui,sans-serif;
+  min-height:44px;padding:0 1.15em;border-radius:999px;white-space:nowrap;
+  border:1px solid color-mix(in srgb,var(--text) 35%,transparent);
+  background:transparent;color:var(--text);cursor:pointer;
+  transition:background .2s,color .2s,border-color .2s,transform .1s;
+}
+button:hover{border-color:var(--text)}
+button:active{transform:scale(.97)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.pack{position:relative;border-color:transparent;color:var(--muted);padding:0 .7em}
+.pack:hover{border-color:transparent;color:var(--text)}
+.pack[aria-pressed="true"]{color:var(--text)}
+.pack[aria-pressed="true"]::after{content:"";position:absolute;left:.7em;right:.7em;bottom:7px;height:2px;border-radius:2px;background:var(--accent)}
+.pickers{display:flex;align-items:center;gap:10px;flex:1 1 auto;min-width:0}
+.switch{display:flex;flex:0 0 auto;padding:3px;gap:2px;border-radius:999px;border:1px solid color-mix(in srgb,var(--text) 35%,transparent)}
+.switch button{min-height:38px;border:0;padding:0 .9em;font-size:14px}
+button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.grp[aria-pressed="true"]{background:var(--text);color:var(--board)}
+[hidden]{display:none!important}
+.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.primary:hover{border-color:var(--accent);filter:brightness(1.05)}
+
+/* Reveal */
+.reveal{
+  position:fixed;inset:0;z-index:9000;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:32px;
+  padding:calc(env(safe-area-inset-top,0px) + 32px) 24px calc(env(safe-area-inset-bottom,0px) + 32px);
+  background:var(--veil);opacity:0;visibility:hidden;
+  transition:opacity .45s ease,visibility 0s linear .45s;overflow-y:auto;
+}
+.reveal.open{opacity:1;visibility:visible;transition:opacity .45s ease}
+.poem{
+  margin:0;max-width:22ch;
+  font-family:Fraunces,Georgia,serif;font-weight:330;font-variation-settings:"opsz" 144;
+  font-size:clamp(30px,5.2vw,60px);line-height:1.22;letter-spacing:-.01em;
+}
+.poem .line{display:block}
+.poem .w{display:inline-block;opacity:0;transform:translateY(.35em);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+.poem .w.in{opacity:1;transform:none}
+.poem.empty{font-size:clamp(22px,3vw,30px);font-style:italic;max-width:26ch;color:var(--muted)}
+.reveal .actions{justify-content:center}
+
+@media (prefers-reduced-motion: reduce){
+  .tile .float{animation:none}
+  .tile.settle,.tile.snap{transition:none}
+  .glyph{display:none}
+  .ambient svg{animation:none}
+  .motif svg *{animation:none;stroke-dashoffset:0}
+  .poem .w{transition:none}
+  .reveal,.reveal.open,.card,.wall,.wall.open{transition:none}
+}
+@media (max-width:600px){
+  .controls{flex-direction:column;align-items:stretch;flex-wrap:nowrap}
+  .pickers{width:100%}
+  .actions{justify-content:center}
+  .actions button{flex:1}
+}
+</style>
+</head>
+<body>
+<a href="/" style="position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:99999;font:500 13px Figtree,system-ui,sans-serif;color:var(--text);background:var(--veil);padding:6px 14px;border-radius:999px;text-decoration:none;box-shadow:0 2px 8px var(--shadow)">&larr; WordBloom</a>
+<main class="stage" id="stage">
+  <header class="intro">
+    <h1>Poetry in Motion</h1>
+    <p>Drag words onto the board to write a few lines. When it feels right, read your poem.</p>
+    <button class="today" id="today" hidden></button>
+  </header>
+  <button class="wall-btn" id="wallBtn">Poem wall</button>
+  <div class="rules" id="rules" aria-hidden="true"></div>
+  <div class="tools" id="tools">
+    <button id="undo" hidden>Undo</button>
+    <button id="clear" hidden>Clear lines</button>
+  </div>
+  <div class="wordpop" id="wordpop" role="dialog" aria-label="Add your own word" hidden>
+    <label for="wordInput">Your own word</label>
+    <input id="wordInput" maxlength="18" autocomplete="off" placeholder="wander">
+    <p class="err" id="wordErr" role="alert"></p>
+    <div class="row">
+      <button class="ghost" id="wordCancel">Cancel</button>
+      <button class="primary" id="wordOk">Add word</button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="pickers">
+      <div class="switch" role="group" aria-label="Topic group">
+        <button class="grp" data-group="places" aria-pressed="true">Places</button>
+        <button class="grp" data-group="feelings" aria-pressed="false">Feelings</button>
+      </div>
+      <div class="packs" role="group" aria-label="Word set">
+        <button class="pack" data-group="places" data-pack="night" aria-pressed="true">Night</button>
+        <button class="pack" data-group="places" data-pack="sea" aria-pressed="false">Sea</button>
+        <button class="pack" data-group="places" data-pack="seasons" aria-pressed="false">Seasons</button>
+        <button class="pack" data-group="places" data-pack="space" aria-pressed="false">Space</button>
+        <button class="pack" data-group="places" data-pack="rain" aria-pressed="false">Rain</button>
+        <button class="pack" data-group="places" data-pack="city" aria-pressed="false">City</button>
+        <button class="pack" data-group="places" data-pack="forest" aria-pressed="false">Forest</button>
+        <button class="pack" data-group="feelings" data-pack="heart" aria-pressed="false" hidden>Heart</button>
+        <button class="pack" data-group="feelings" data-pack="moments" aria-pressed="false" hidden>Moments</button>
+        <button class="pack" data-group="feelings" data-pack="loss" aria-pressed="false" hidden>Loss</button>
+        <button class="pack" data-group="feelings" data-pack="love" aria-pressed="false" hidden>Love</button>
+        <button class="pack" data-group="feelings" data-pack="longing" aria-pressed="false" hidden>Longing</button>
+        <button class="pack" data-group="feelings" data-pack="happiness" aria-pressed="false" hidden>Happiness</button>
+        <button class="pack" data-group="feelings" data-pack="hope" aria-pressed="false" hidden>Hope</button>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="scatter">Scatter words</button>
+      <button id="read" class="primary">Read my poem</button>
+    </div>
+  </div>
+</main>
+
+<div class="reveal" id="reveal" role="dialog" aria-modal="true" aria-label="Your poem">
+  <div class="ambient" id="ambient" aria-hidden="true"></div>
+  <article class="card">
+    <div class="motif" id="motif" aria-hidden="true"></div>
+    <h2 class="card-title" id="cardTitle"></h2>
+    <p class="poem" id="poem"></p>
+    <p class="card-date" id="cardDate"></p>
+  </article>
+  <div class="actions">
+    <button id="save">Save image</button>
+    <button id="copy">Copy poem</button>
+    <button id="close" class="primary">Keep writing</button>
+  </div>
+</div>
+
+<div class="wall" id="wall" role="dialog" aria-modal="true" aria-label="Poem wall">
+  <div class="wall-head">
+    <h2>Poem wall</h2>
+    <button id="wallClose">Back to the board</button>
+  </div>
+  <p class="wall-note"><span>Favorite poems written on this board. Save yours as an image, share it on Instagram and tag me to be featured here.</span></p>
+  <div class="wall-grid" id="wallGrid"></div>
+</div>
+
+<script>
+(function(){
+  // Featured poems. Each: { topic: "Night", lines: ["...", "..."], by: "@name" }
+  const WALL = [];
+  const PACKS = {
+    night:   "the a and of to my your I you we is in under like moon hums softly quiet light leans toward morning silver dark hold still breathe dream star slow wild -s -ing -ed",
+    sea:     "the a and of to my your I you we is in under like salt wave pulls blue tide drift far shore deep return wash open slow carry home -s -ing -ed",
+    heart:   "the a and of to my your I you we is in like when love ache bright tender burn keep almost hands warm stay here gold whisper heart soft -s -ing -ed",
+    seasons: "the a and of to my your I you we is in like when spring bloom green summer gold slow autumn falls leaves turn winter snow quiet bare return warm -s -ing -ed",
+    space:   "the a and of to my your I you we is in like through stars orbit drift dark silence comet moon far light years float gravity pull home dust glow -s -ing -ed",
+    rain:    "the a and of to my your I you we is in like on rain falls soft window grey puddle drum cloud wet streets wash slow listen storm clear -s -ing -ed",
+    city:    "the a and of to my your I you we is in like at city lights neon street late train hum crowd alone window rooftop noise run midnight bright home -s -ing -ed",
+    forest:  "the a and of to my your I you we is in like under forest moss roots tall green whisper path deep fern shade wild breathe hidden old trees grow -s -ing -ed",
+    moments:   "the a and of to my your I you we is in like when this one small morning coffee laugh light brief now pause notice tiny breath here gone wait -s -ing -ed",
+    loss:      "the a and of to my your I you we is in like when gone empty chair echo goodbye last remember after once quiet absence still fade letters keep held without -s -ing -ed",
+    love:      "the a and of to my your I you we is in like when kiss close hold always yours mine sweet touch fall forever slow dance tender together choose stay -s -ing -ed",
+    longing:   "the a and of to my your I you we is in like when far wish someday ache distance wait return almost miss window road dream away reach still -s -ing -ed",
+    happiness: "the a and of to my your I you we is in like when sun laugh bright dance joy sing glow light free run warm golden smile bloom yes -s -ing -ed",
+    hope:      "the a and of to my your I you we is in like when hope rise dawn begin again open door small seed grow tomorrow brave carry wings light still -s -ing -ed"
+  };
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const stage = document.getElementById("stage");
+  const reveal = document.getElementById("reveal");
+  const poemEl = document.getElementById("poem");
+  let tiles = [], z = 10, lastFocus = null;
+
+  const rnd = (a,b) => a + Math.random()*(b-a);
+  const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+  const setPos = (t,x,y) => { t.x=x; t.y=y; t.el.style.transform = `translate(${x}px,${y}px)`; };
+
+  const GLUE = new Set(["the","a","an","and","of","to","my","your","I","you","we","is","in","under","like","when","on","at","through"]);
+  const isSmall = w => GLUE.has(w) || w.startsWith("-");
+
+  // Small line drawings: one per topic, and for words that have one
+  const MOTIFS = {
+    moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+    star: '<path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z"/>',
+    comet: '<circle cx="16" cy="8" r="3"/><path d="M13.8 10.2L4 20M12.6 7L6 13.6M17 11.4L10.4 18"/>',
+    planet: '<circle cx="12" cy="12" r="5"/><ellipse cx="12" cy="12" rx="10.5" ry="3.2" transform="rotate(-20 12 12)"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+    sunrise: '<path d="M3 18h18M7 18a5 5 0 0 1 10 0M12 8v3M5.6 11.6l1.8 1.8M18.4 11.6l-1.8 1.8M6 21h12"/>',
+    cloud: '<path d="M7 18h10a4 4 0 0 0 .5-8 6 6 0 0 0-11.4 1.5A3.3 3.3 0 0 0 7 18z"/>',
+    rain: '<path d="M7 14h10a3.5 3.5 0 0 0 .4-7 5.5 5.5 0 0 0-10.5 1.3A2.9 2.9 0 0 0 7 14z"/><path d="M8 17l-1 3M12 17l-1 3M16 17l-1 3"/>',
+    storm: '<path d="M7 14h10a3.5 3.5 0 0 0 .4-7 5.5 5.5 0 0 0-10.5 1.3A2.9 2.9 0 0 0 7 14z"/><path d="M12.5 14l-2 4h3l-2 4"/>',
+    puddle: '<path d="M12 3c1.5 2 2.5 3.3 2.5 4.5a2.5 2.5 0 0 1-5 0C9.5 6.3 10.5 5 12 3z"/><ellipse cx="12" cy="17" rx="9" ry="3"/><ellipse cx="12" cy="17" rx="4" ry="1.2"/>',
+    window: '<rect x="5" y="3" width="14" height="18" rx="1"/><path d="M12 3v18M5 12h14"/>',
+    snow: '<path d="M12 2v20M3.3 7l17.4 10M3.3 17l17.4-10M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/>',
+    leaf: '<path d="M5 19C5 10 11 5 20 4c0 9-5 15-14 15z"/><path d="M5 19c4-4 7-7 10-10"/>',
+    fern: '<path d="M12 21C12 13 13 7 17 3"/><path d="M12.4 15l-4-2M12.6 12l-3.8-2.4M13.4 9l-3-2.6M12.6 15.4l4.2-1.2M13 12.4l4-1.6M13.8 9.4l3.6-1.8"/>',
+    flower: '<circle cx="12" cy="5" r="2"/><circle cx="15" cy="8" r="2"/><circle cx="12" cy="11" r="2"/><circle cx="9" cy="8" r="2"/><path d="M12 13v8M12 18c-2 0-3.5-1-4.5-2.5 2 0 3.5 1 4.5 2.5z"/>',
+    tree: '<path d="M12 3l6 9h-3l4 6H5l4-6H6z"/><path d="M12 18v3"/>',
+    seed: '<path d="M12 21v-9"/><path d="M12 12c0-4-3-6-7-6 0 4 3 6 7 6z"/><path d="M12 14c0-3 2.5-5 6-5 0 3-2.5 5-6 5z"/>',
+    wave: '<path d="M2 12c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3"/><path d="M2 17c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3"/>',
+    heart: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+    city: '<path d="M4 21V9h6v12M10 21V4h7v17M2 21h20M13 8h1M13 12h1M13 16h1M6.5 13h1M6.5 17h1"/>',
+    train: '<rect x="6" y="3" width="12" height="14" rx="3"/><path d="M6 10h12M9 13.5h.01M15 13.5h.01M8 21l2-4M16 21l-2-4"/>',
+    house: '<path d="M3 11l9-7 9 7M5 9.5V20h14V9.5M10 20v-6h4v6"/>',
+    cup: '<path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 10h2a2.5 2.5 0 0 1 0 5h-2M8 3c-1 1 1 2 0 3M12 3c-1 1 1 2 0 3"/>',
+    clock: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
+    envelope: '<rect x="3" y="6" width="18" height="13" rx="1"/><path d="M3 7l9 6 9-6"/>',
+    chair: '<path d="M7 3v18M7 13h10v8M17 13v-2H7"/>',
+    door: '<path d="M6 21V3h12v18M3 21h18M15 12h.01"/>',
+    road: '<path d="M9 3L5 21M15 3l4 18M12 5v2M12 10v2M12 15v3"/>',
+    feather: '<path d="M20 4C12 4 6 10 6 18l-2 2"/><path d="M20 4c0 8-6 12-12 12"/><path d="M10 14l4-4"/>',
+    bird: '<path d="M2 9c3-1 6 0 10 5 4-5 7-6 10-5"/>',
+    smile: '<circle cx="12" cy="12" r="9"/><path d="M8 14c1 1.5 2.4 2.2 4 2.2s3-.7 4-2.2M9 9.5h.01M15 9.5h.01"/>',
+    note: '<path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>'
+  };
+  const PACK_MOTIF = { night:"moon", sea:"wave", heart:"heart", seasons:"leaf", space:"planet", rain:"rain", city:"city", forest:"tree", moments:"clock", loss:"feather", love:"heart", longing:"bird", happiness:"sun", hope:"seed" };
+  // Only words a drawing truly shows (plus the usual season and love symbols)
+  const WORD_MOTIF = {};
+  Object.entries({
+    moon: "moon", star: "star stars", comet: "comet", planet: "orbit",
+    sun: "sun summer", sunrise: "morning dawn",
+    cloud: "cloud", rain: "rain", storm: "storm", puddle: "puddle", window: "window",
+    snow: "snow winter", leaf: "leaf leaves autumn", fern: "fern", flower: "bloom spring",
+    tree: "tree trees forest", seed: "seed grow",
+    wave: "wave tide", heart: "heart love",
+    city: "city", train: "train", house: "home rooftop",
+    cup: "coffee", envelope: "letters", chair: "chair", door: "door", road: "road path",
+    bird: "wings", smile: "smile laugh", note: "sing"
+  }).forEach(([k, list]) => list.split(" ").forEach(w => { WORD_MOTIF[w] = k; }));
+  const drawing = k => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + MOTIFS[k] + '</svg>';
+  let currentPack = "night";
+  // Slightly uneven paper edges, different for every tile
+  function torn(){
+    const j = m => +(Math.random()*m).toFixed(1);
+    return `polygon(0% ${j(9)}%, 25% ${j(5)}%, 50% ${j(9)}%, 75% ${j(5)}%, 100% ${j(9)}%, ${100-j(2.5)}% 50%, 100% ${100-j(9)}%, 75% ${100-j(5)}%, 50% ${100-j(9)}%, 25% ${100-j(5)}%, 0% ${100-j(9)}%, ${j(2.5)}% 50%)`;
+  }
+
+  // A tiny drawing rises from a word when it lands on a line
+  function spark(t){
+    const k = WORD_MOTIF[t.word];
+    if (!k || reduce) return;
+    const g = document.createElement("span");
+    g.className = "glyph";
+    g.innerHTML = drawing(k);
+    g.style.left = (t.x + t.el.offsetWidth - 10) + "px";
+    g.style.top = (t.y - 18) + "px";
+    stage.appendChild(g);
+    setTimeout(() => g.remove(), 1600);
+  }
+
+  // The finished poem shows drawings of the words in it
+  function motifFor(w){
+    w = w.toLowerCase();
+    return WORD_MOTIF[w] || WORD_MOTIF[w.replace(/(ing|ed|s)$/, "")] || null;
+  }
+  function paintScene(lines){
+    const motif = document.getElementById("motif");
+    const amb = document.getElementById("ambient");
+    motif.innerHTML = ""; amb.innerHTML = "";
+    if (!lines.length) return;
+    const keys = [];
+    lines.flat().forEach(w => { const k = motifFor(w); if (k && !keys.includes(k)) keys.push(k); });
+    if (!keys.length && PACK_MOTIF[currentPack]) keys.push(PACK_MOTIF[currentPack]);
+    const show = keys.slice(0, 4);
+    show.forEach((k, i) => {
+      const holder = document.createElement("div");
+      holder.innerHTML = drawing(k);
+      const svg = holder.firstChild;
+      svg.style.setProperty("--dd", (0.15 + i*0.35).toFixed(2) + "s");
+      svg.querySelectorAll("path,circle,ellipse,rect").forEach(p => p.setAttribute("pathLength", "1"));
+      motif.appendChild(svg);
+    });
+    for (let i=0;i<12;i++){
+      const holder = document.createElement("div");
+      holder.innerHTML = drawing(show[i % show.length]);
+      const s = holder.firstChild, size = rnd(16, 32);
+      s.style.width = s.style.height = size + "px";
+      s.style.left = rnd(3, 93) + "%";
+      s.style.top = rnd(5, 90) + "%";
+      s.style.setProperty("--d", rnd(6, 11).toFixed(1) + "s");
+      s.style.setProperty("--delay", (-rnd(0, 10)).toFixed(1) + "s");
+      amb.appendChild(s);
+    }
+  }
+
+  // Writing lines under the title, words scattered below them
+  function zones(){
+    const r = stage.getBoundingClientRect();
+    const intro = document.querySelector(".intro");
+    const ib = intro.getBoundingClientRect();
+    const cb = document.querySelector(".controls").getBoundingClientRect();
+    const big = tiles.find(t => !t.el.classList.contains("small"));
+    const h = big ? big.el.offsetHeight : 40;
+    const gap = Math.round(h + (r.width < 600 ? 12 : 18));
+    const top = ib.bottom - r.top - parseFloat(getComputedStyle(intro).paddingBottom) + 14;
+    const tilesBottom = cb.top - r.top - 6;
+    let n = 4;
+    while (n > 2 && tilesBottom - (top + n*gap + 52) < h*4) n--;
+    return { top, gap, n, w: r.width, tilesTop: top + n*gap + 52, tilesBottom };
+  }
+
+  function drawRules(Z){
+    const box = document.getElementById("rules");
+    box.innerHTML = "";
+    for (let i=0;i<Z.n;i++){
+      const d = document.createElement("div");
+      d.className = "rule";
+      d.style.top = (Z.top + (i+1)*Z.gap - 4) + "px";
+      box.appendChild(d);
+    }
+    const hint = document.createElement("p");
+    hint.className = "hint";
+    hint.textContent = "Drop words on a line";
+    hint.style.top = (Z.top + Z.gap - 34) + "px";
+    box.appendChild(hint);
+    document.getElementById("tools").style.top = (Z.top + Z.n*Z.gap + 6) + "px";
+  }
+
+  function freeSpot(t, taken, Z){
+    const w = t.el.offsetWidth, h = t.el.offsetHeight;
+    const yMin = Z.tilesTop, yMax = Math.max(Z.tilesTop, Z.tilesBottom - h);
+    let best = null;
+    for (let i=0;i<20;i++){
+      const s = { x: rnd(12, Math.max(12, Z.w - w - 12)), y: rnd(yMin, yMax), w, h };
+      const hit = taken.some(o => s.x < o.x+o.w+6 && s.x+w+6 > o.x && s.y < o.y+o.h+6 && s.y+h+6 > o.y);
+      best = s;
+      if (!hit) break;
+    }
+    taken.push(best);
+    return best;
+  }
+
+  function scatter(){
+    const taken = [];
+    stage.classList.remove("writing");
+    history.length = 0;
+    setTimeout(updateTools, 0);
+    const Z = zones();
+    drawRules(Z);
+    tiles.forEach((t,i) => {
+      t.placed = false; t.el.classList.remove("placed");
+      if (!reduce){ t.el.classList.add("settle"); t.el.style.transitionDelay = (i*18)+"ms"; }
+      const s = freeSpot(t, taken, Z);
+      setPos(t, s.x, s.y);
+    });
+    setTimeout(() => tiles.forEach(t => { t.el.classList.remove("settle"); t.el.style.transitionDelay = ""; }), 1700);
+  }
+
+  // A word dropped near a writing line settles onto it
+  function snap(t){
+    const Z = zones();
+    const h = t.el.offsetHeight;
+    const cy = t.y + h/2;
+    if (cy < Z.top - Z.gap*0.3 || cy > Z.top + Z.n*Z.gap + Z.gap*0.3) return false;
+    const i = clamp(Math.floor((cy - Z.top) / Z.gap), 0, Z.n - 1);
+    if (!reduce){ t.el.classList.add("snap"); setTimeout(() => t.el.classList.remove("snap"), 320); }
+    t.el.style.setProperty("--r", rnd(-1.2,1.2).toFixed(1)+"deg");
+    setPos(t, t.x, Z.top + (i+1)*Z.gap - 6 - h);
+    return true;
+  }
+
+  function build(pack){
+    currentPack = pack;
+    tiles.forEach(t => t.el.remove());
+    tiles = [];
+    const r = stage.getBoundingClientRect();
+    let words = PACKS[pack].split(/\s+/);
+    if (r.width < 600){
+      // Phones: fewer words, keeping the most useful small ones
+      const keep = ["the","a","and","of","to","my","you","I","is","in","like"];
+      words = [
+        ...words.filter(w => keep.includes(w)),
+        ...words.filter(w => !isSmall(w)).slice(0, 13),
+        ...words.filter(w => w === "-s" || w === "-ing")
+      ];
+    }
+    words.push("+ your word");
+    words.forEach(word => {
+      const el = document.createElement("div");
+      el.className = "tile" + (isSmall(word) ? " small" : "");
+      el.tabIndex = 0;
+      el.setAttribute("role","button");
+      el.setAttribute("aria-label", `${word}. Use arrow keys to move.`);
+      el.innerHTML = '<span class="float"><span class="paper"></span></span>';
+      el.querySelector(".paper").textContent = word;
+      el.style.setProperty("--r", rnd(-4,4).toFixed(1)+"deg");
+      el.style.setProperty("--d", rnd(3,6).toFixed(2)+"s");
+      el.style.setProperty("--delay", (-rnd(0,6)).toFixed(2)+"s");
+      el.style.setProperty("--amp", rnd(3,6).toFixed(1)+"px");
+      el.querySelector(".paper").style.clipPath = torn();
+      stage.appendChild(el);
+      const blank = word === "+ your word";
+      if (blank){ el.classList.add("blank"); el.setAttribute("aria-label", "Add your own word. Press Enter to type it."); }
+      tiles.push({ el, word, x:0, y:0, placed:false, blank });
+    });
+    // One orchestrated moment: words bloom out from the centre
+    tiles.forEach(t => setPos(t, r.width/2 - t.el.offsetWidth/2, r.height*0.55));
+    void stage.offsetHeight;
+    scatter();
+  }
+
+  function place(t){ t.placed = true; t.el.classList.add("placed"); stage.classList.add("writing"); updateTools(); }
+
+  // Changing topic: the old words sink away before the new ones bloom
+  let switchToken = 0;
+  function switchTo(pack){
+    const token = ++switchToken;
+    if (reduce || !tiles.length){ build(pack); return; }
+    const old = tiles; tiles = [];
+    old.forEach((t,i) => {
+      t.el.classList.remove("settle");
+      t.el.classList.add("leaving");
+      t.el.style.transitionDelay = (i*12) + "ms";
+      t.el.style.transform = `translate(${t.x}px,${t.y + 70}px)`;
+    });
+    setTimeout(() => {
+      old.forEach(t => t.el.remove());
+      if (token === switchToken) build(pack);
+    }, 620);
+  }
+
+  // Dragging
+  stage.addEventListener("pointerdown", e => {
+    const el = e.target.closest(".tile");
+    if (!el) return;
+    const t = tiles.find(x => x.el === el);
+    if (!t) return;
+    e.preventDefault();
+    const before = snapshot([t]);
+    el.setPointerCapture(e.pointerId);
+    el.classList.remove("settle");
+    el.classList.add("lifted");
+    if (navigator.vibrate) navigator.vibrate(8);
+    el.style.zIndex = ++z;
+    const ox = e.clientX - t.x, oy = e.clientY - t.y, sx = e.clientX, sy = e.clientY;
+    let moved = false;
+    const move = ev => {
+      if (Math.abs(ev.clientX-sx) + Math.abs(ev.clientY-sy) > 4) moved = true;
+      const r = stage.getBoundingClientRect();
+      setPos(t, clamp(ev.clientX-ox, 0, r.width-el.offsetWidth), clamp(ev.clientY-oy, 0, r.height-el.offsetHeight));
+    };
+    const up = () => {
+      el.classList.remove("lifted");
+      if (moved) { history.push(before); place(t); if (snap(t)) spark(t); }
+      else if (t.blank) openWordPop(t);
+      el.removeEventListener("pointermove", move);
+      el.removeEventListener("pointerup", up);
+      el.removeEventListener("pointercancel", up);
+    };
+    el.addEventListener("pointermove", move);
+    el.addEventListener("pointerup", up);
+    el.addEventListener("pointercancel", up);
+  });
+
+  // Keyboard moving
+  stage.addEventListener("keydown", e => {
+    const el = e.target.closest(".tile");
+    if (!el) return;
+    if (e.key === "Enter" || e.key === " "){
+      const bt = tiles.find(x => x.el === el);
+      if (bt && bt.blank){ e.preventDefault(); openWordPop(bt); }
+      return;
+    }
+    const d = { ArrowLeft:[-1,0], ArrowRight:[1,0], ArrowUp:[0,-1], ArrowDown:[0,1] }[e.key];
+    if (!d) return;
+    e.preventDefault();
+    const t = tiles.find(x => x.el === el);
+    if (!t) return;
+    if (!e.repeat) history.push(snapshot([t]));
+    const step = e.shiftKey ? 40 : 12;
+    const r = stage.getBoundingClientRect();
+    el.style.zIndex = ++z;
+    setPos(t, clamp(t.x+d[0]*step, 0, r.width-el.offsetWidth), clamp(t.y+d[1]*step, 0, r.height-el.offsetHeight));
+    place(t);
+  });
+
+  // Reading order: top to bottom, then left to right
+  function composeLines(){
+    const placed = tiles.filter(t => t.placed && !t.blank).map(t => ({ t, cy: t.y + t.el.offsetHeight/2, h: t.el.offsetHeight }));
+    placed.sort((a,b) => a.cy - b.cy);
+    const lines = [];
+    placed.forEach(p => {
+      const line = lines[lines.length-1];
+      if (line && Math.abs(p.cy - line.cy) < p.h*0.7){ line.items.push(p); line.cy = (line.cy + p.cy)/2; }
+      else lines.push({ cy:p.cy, items:[p] });
+    });
+    return lines.map(l => {
+      const words = [];
+      l.items.sort((a,b) => a.t.x - b.t.x).forEach(p => {
+        const w = p.t.word;
+        if (w.startsWith("-") && words.length) words[words.length-1] += w.slice(1);
+        else words.push(w.replace(/^-/, ""));
+      });
+      return words;
+    });
+  }
+
+  function openReveal(){
+    lastFocus = document.activeElement;
+    const lines = composeLines();
+    poemEl.innerHTML = "";
+    poemEl.classList.toggle("empty", !lines.length);
+    document.getElementById("copy").hidden = !lines.length;
+    if (!lines.length){
+      poemEl.textContent = "Your board is still empty. Drag a few words into place, then come back to read your poem.";
+    } else {
+      const spans = [];
+      lines.forEach(words => {
+        const line = document.createElement("span");
+        line.className = "line";
+        words.forEach((w,i) => {
+          const s = document.createElement("span");
+          s.className = "w";
+          s.textContent = w;
+          line.appendChild(s);
+          if (i < words.length-1) line.appendChild(document.createTextNode(" "));
+          spans.push(s);
+        });
+        poemEl.appendChild(line);
+      });
+      spans.forEach((s,i) => reduce ? s.classList.add("in") : setTimeout(() => s.classList.add("in"), 250 + i*110));
+    }
+    const btn = document.querySelector('.pack[data-pack="' + currentPack + '"]');
+    document.getElementById("cardTitle").textContent = lines.length && btn ? btn.textContent : "";
+    document.getElementById("cardDate").textContent = lines.length ? "Written " + new Date().toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }) : "";
+    paintScene(lines);
+    reveal.classList.add("open");
+    document.getElementById("close").focus();
+  }
+  function closeReveal(){
+    reveal.classList.remove("open");
+    document.getElementById("copy").textContent = "Copy poem";
+    document.getElementById("save").textContent = "Save image";
+    if (lastFocus) lastFocus.focus();
+  }
+
+  document.getElementById("read").addEventListener("click", openReveal);
+  document.getElementById("close").addEventListener("click", closeReveal);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && reveal.classList.contains("open")) closeReveal(); });
+  document.getElementById("scatter").addEventListener("click", scatter);
+
+  document.getElementById("copy").addEventListener("click", async e => {
+    const text = composeLines().map(l => l.join(" ")).join("\n");
+    try { await navigator.clipboard.writeText(text); e.target.textContent = "Copied"; }
+    catch {
+      const range = document.createRange(); range.selectNodeContents(poemEl);
+      const sel = getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      e.target.textContent = "Selected, press copy";
+    }
+  });
+
+  document.querySelectorAll(".pack").forEach(btn => btn.addEventListener("click", () => selectPack(btn.dataset.pack)));
+
+  function selectPack(pack, first){
+    const btn = document.querySelector('.pack[data-pack="' + pack + '"]');
+    if (!btn) return;
+    const group = btn.dataset.group;
+    document.querySelectorAll(".grp").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.group === group)));
+    document.querySelectorAll(".pack").forEach(p => { p.hidden = p.dataset.group !== group; p.setAttribute("aria-pressed", String(p === btn)); });
+    btn.scrollIntoView({ block: "nearest", inline: "center" });
+    if (first) build(pack); else switchTo(pack);
+  }
+
+  // ---- Undo and clear ----
+  const history = [];
+  function snapshot(list){ return list.map(t => ({ t, x: t.x, y: t.y, placed: t.placed, r: t.el.style.getPropertyValue("--r") })); }
+  function updateTools(){
+    document.getElementById("undo").hidden = !history.length;
+    document.getElementById("clear").hidden = !tiles.some(t => t.placed);
+  }
+  function restore(states){
+    states.forEach(st => {
+      if (!tiles.includes(st.t)) return;
+      if (!reduce){ st.t.el.classList.add("snap"); setTimeout(() => st.t.el.classList.remove("snap"), 320); }
+      st.t.el.style.setProperty("--r", st.r);
+      setPos(st.t, st.x, st.y);
+      st.t.placed = st.placed;
+      st.t.el.classList.toggle("placed", st.placed);
+    });
+    stage.classList.toggle("writing", tiles.some(t => t.placed));
+    updateTools();
+  }
+  document.getElementById("undo").addEventListener("click", () => { const last = history.pop(); if (last) restore(last); });
+  document.getElementById("clear").addEventListener("click", () => {
+    const placed = tiles.filter(t => t.placed);
+    if (!placed.length) return;
+    history.push(snapshot(placed));
+    const Z = zones();
+    const taken = tiles.filter(t => !t.placed).map(t => ({ x: t.x, y: t.y, w: t.el.offsetWidth, h: t.el.offsetHeight }));
+    placed.forEach((t,i) => {
+      if (!reduce){ t.el.classList.add("settle"); t.el.style.transitionDelay = (i*25) + "ms"; }
+      const sp = freeSpot(t, taken, Z);
+      t.placed = false; t.el.classList.remove("placed");
+      setPos(t, sp.x, sp.y);
+    });
+    setTimeout(() => placed.forEach(t => { t.el.classList.remove("settle"); t.el.style.transitionDelay = ""; }), 1400);
+    stage.classList.remove("writing");
+    updateTools();
+  });
+
+  // ---- One word of your own ----
+  const pop = document.getElementById("wordpop"), wordInput = document.getElementById("wordInput"), wordErr = document.getElementById("wordErr");
+  let popTile = null;
+  function openWordPop(t){
+    popTile = t;
+    wordErr.textContent = "";
+    wordInput.value = t.blank ? "" : t.word;
+    pop.hidden = false;
+    wordInput.focus();
+  }
+  function closeWordPop(){ pop.hidden = true; if (popTile) popTile.el.focus(); popTile = null; }
+  function acceptWord(){
+    const w = wordInput.value.trim();
+    if (!w){ wordErr.textContent = "Type a word first."; return; }
+    if (!/^[\p{L}'’-]{1,18}$/u.test(w)){ wordErr.textContent = "Use one word, letters only."; return; }
+    const t = popTile;
+    t.word = w; t.blank = false;
+    t.el.classList.remove("blank");
+    t.el.querySelector(".paper").textContent = w;
+    t.el.querySelector(".paper").style.clipPath = torn();
+    t.el.setAttribute("aria-label", w + ". Use arrow keys to move.");
+    closeWordPop();
+  }
+  document.getElementById("wordOk").addEventListener("click", acceptWord);
+  document.getElementById("wordCancel").addEventListener("click", closeWordPop);
+  wordInput.addEventListener("input", () => { wordErr.textContent = ""; });
+  wordInput.addEventListener("keydown", e => { if (e.key === "Enter") acceptWord(); if (e.key === "Escape") closeWordPop(); });
+
+  // ---- Save the poem card as a story-sized image ----
+  function poemDrawingImage(k, color){
+    return new Promise(res => {
+      const svg = drawing(k).replace('stroke="currentColor"', 'stroke="' + color + '"').replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" ');
+      const img = new Image();
+      img.onload = () => res(img); img.onerror = () => res(null);
+      img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    });
+  }
+  function wrapLines(ctx, text, max){
+    const out = []; let cur = "";
+    text.split(" ").forEach(w => { const test = cur ? cur + " " + w : w; if (ctx.measureText(test).width > max && cur){ out.push(cur); cur = w; } else cur = test; });
+    if (cur) out.push(cur);
+    return out;
+  }
+  async function makeImage(){
+    const lines = composeLines();
+    if (!lines.length) return null;
+    const css = getComputedStyle(document.documentElement);
+    const col = n => css.getPropertyValue(n).trim();
+    const W = 1080, H = 1920, c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    const ctx = c.getContext("2d");
+    ctx.fillStyle = col("--board"); ctx.fillRect(0, 0, W, H);
+    const cardW = 860, pad = 76, maxText = cardW - pad*2;
+    ctx.font = '400 66px Fraunces, Georgia, serif';
+    const poemLines = lines.flatMap(l => wrapLines(ctx, l.join(" "), maxText));
+    const keys = [];
+    lines.flat().forEach(w => { const k = motifFor(w); if (k && !keys.includes(k)) keys.push(k); });
+    if (!keys.length && PACK_MOTIF[currentPack]) keys.push(PACK_MOTIF[currentPack]);
+    const show = keys.slice(0, 4);
+    const lineH = 84, cardH = pad + 72 + 26 + 54 + poemLines.length*lineH + 30 + 40 + pad;
+    const x = (W - cardW)/2, y = Math.max(220, (H - cardH)/2 - 60);
+    ctx.save();
+    ctx.translate(W/2, y + cardH/2); ctx.rotate(-1 * Math.PI/180); ctx.translate(-W/2, -(y + cardH/2));
+    ctx.shadowColor = "rgba(0,0,0,.28)"; ctx.shadowBlur = 60; ctx.shadowOffsetY = 24;
+    ctx.fillStyle = col("--tile"); ctx.fillRect(x, y, cardW, cardH);
+    ctx.shadowColor = "transparent";
+    const ink = col("--tile-ink");
+    let cy = y + pad;
+    const imgs = await Promise.all(show.map(k => poemDrawingImage(k, ink)));
+    imgs.forEach((img, i) => { if (img) ctx.drawImage(img, x + pad + i*92, cy, 72, 72); });
+    cy += 72 + 26;
+    const title = (document.querySelector('.pack[data-pack="' + currentPack + '"]') || {}).textContent || "";
+    ctx.fillStyle = ink; ctx.globalAlpha = .65;
+    ctx.font = 'italic 400 38px Fraunces, Georgia, serif'; ctx.textBaseline = "top";
+    ctx.fillText(title, x + pad, cy);
+    ctx.globalAlpha = 1;
+    cy += 54;
+    ctx.font = '400 66px Fraunces, Georgia, serif';
+    poemLines.forEach(l => { ctx.fillText(l, x + pad, cy); cy += lineH; });
+    cy += 30;
+    ctx.globalAlpha = .62; ctx.font = '400 30px Figtree, system-ui, sans-serif';
+    ctx.fillText(document.getElementById("cardDate").textContent, x + pad, cy);
+    ctx.restore();
+    ctx.globalAlpha = 1; ctx.fillStyle = col("--text"); ctx.textAlign = "center";
+    ctx.font = 'italic 400 44px Fraunces, Georgia, serif';
+    ctx.fillText("Poetry in Motion", W/2, H - 330);
+    ctx.globalAlpha = .7; ctx.font = '400 30px Figtree, system-ui, sans-serif';
+    ctx.fillText("Write your own poem", W/2, H - 270);
+    return new Promise(res => c.toBlob(res, "image/png"));
+  }
+  const downloadsReady = window.claude && window.claude.use ? window.claude.use("downloads").catch(() => null) : Promise.resolve(null);
+  document.getElementById("save").addEventListener("click", async e => {
+    const btn = e.currentTarget;
+    const blob = await makeImage();
+    if (!blob){ btn.textContent = "Write a poem first"; return; }
+    const name = "my-poem.png";
+    const downloads = await downloadsReady;
+    if (downloads){
+      try { await downloads.save({ filename: name, data: blob }); btn.textContent = "Saved"; }
+      catch (err){ btn.textContent = err && err.code === "declined" ? "Save image" : "Couldn't save here"; }
+      return;
+    }
+    try {
+      const file = new File([blob], name, { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })){ await navigator.share({ files: [file], title: "My poem" }); btn.textContent = "Shared"; return; }
+    } catch (err){ if (err && err.name === "AbortError") return; }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    btn.textContent = "Saved";
+  });
+
+  // ---- Poem wall ----
+  const wall = document.getElementById("wall");
+  function renderWall(){
+    const grid = document.getElementById("wallGrid");
+    grid.innerHTML = "";
+    if (!WALL.length){
+      const p = document.createElement("p");
+      p.className = "wall-empty";
+      p.textContent = "The first featured poems will appear here soon. Yours could be one of them.";
+      grid.appendChild(p);
+      return;
+    }
+    WALL.slice().reverse().forEach(item => {
+      const card = document.createElement("figure");
+      card.className = "wall-card";
+      const t = document.createElement("p"); t.className = "t"; t.textContent = item.topic || "";
+      const body = document.createElement("p"); body.className = "p";
+      (item.lines || []).forEach(l => { const s = document.createElement("span"); s.textContent = l; body.appendChild(s); });
+      card.appendChild(t); card.appendChild(body);
+      if (item.by){ const by = document.createElement("p"); by.className = "by"; by.textContent = item.by; card.appendChild(by); }
+      grid.appendChild(card);
+    });
+  }
+  let wallFocus = null;
+  document.getElementById("wallBtn").addEventListener("click", () => {
+    wallFocus = document.activeElement; renderWall(); wall.classList.add("open"); document.getElementById("wallClose").focus();
+  });
+  function closeWall(){ wall.classList.remove("open"); if (wallFocus) wallFocus.focus(); }
+  document.getElementById("wallClose").addEventListener("click", closeWall);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && wall.classList.contains("open")) closeWall(); });
+
+  // ---- Today's topic ----
+  const ORDER = ["night","sea","heart","seasons","space","rain","city","forest","moments","loss","love","longing","happiness","hope"];
+  const now = new Date();
+  const dayNumber = Math.floor((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
+  const TODAY = ORDER[dayNumber % ORDER.length];
+  const todayBtn = document.getElementById("today");
+  const todayName = document.querySelector('.pack[data-pack="' + TODAY + '"]').textContent;
+  todayBtn.textContent = "Today's topic: " + todayName;
+  todayBtn.hidden = false;
+  todayBtn.addEventListener("click", () => selectPack(TODAY));
+
+  document.querySelectorAll(".grp").forEach(g => g.addEventListener("click", () => {
+    document.querySelectorAll(".grp").forEach(b => b.setAttribute("aria-pressed", String(b === g)));
+    document.querySelectorAll(".pack").forEach(p => { p.hidden = p.dataset.group !== g.dataset.group; });
+    document.querySelector(".packs").scrollLeft = 0;
+  }));
+
+  window.addEventListener("resize", () => {
+    drawRules(zones());
+    const r = stage.getBoundingClientRect();
+    tiles.forEach(t => setPos(t, clamp(t.x, 0, r.width - t.el.offsetWidth), clamp(t.y, 0, r.height - t.el.offsetHeight)));
+  });
+
+  const start = () => selectPack(TODAY, true);
+  (document.fonts && document.fonts.ready) ? document.fonts.ready.then(start) : window.addEventListener("load", start);
+})();
+</script>
+</body>
+</html>
