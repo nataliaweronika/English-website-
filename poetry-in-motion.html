@@ -284,6 +284,13 @@ button{border-color:#aeb8d1}
 .card::after{background:#ffddea}
 .wall{background:#f7f8fc}
 .wall-card{background-color:#fff}
+
+.poem-palette{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:-14px;color:var(--text)}
+.poem-palette .palette-label{font:400 12px Figtree,system-ui,sans-serif;margin-right:4px}
+.poem-palette button{min-height:40px;width:40px;padding:6px;border:1px solid #aeb8d1;border-radius:50%;display:grid;place-items:center;background:transparent}
+.poem-palette button span{width:24px;height:24px;border-radius:50%;background:var(--swatch);box-shadow:inset 0 0 0 1px rgba(23,36,75,.15)}
+.poem-palette button[aria-pressed="true"]{outline:2px solid #5968e8;outline-offset:2px}
+.card .wall-invite{border-top-color:color-mix(in srgb,var(--tile-ink) 18%,transparent)}
 </style>
 </head>
 <body>
@@ -352,6 +359,14 @@ button{border-color:#aeb8d1}
       <p id="wallSendNote">Optional. Opens your email app with your poem. Add the name you'd like shown, or stay anonymous. Natalia chooses what appears here; sending doesn't publish it.</p>
     </div>
   </article>
+  <div class="poem-palette" role="group" aria-label="Poem card colors">
+    <span class="palette-label">Paper color</span>
+    <button type="button" data-poem-color="white" aria-label="Original white" title="Original white" aria-pressed="true" style="--swatch:#fff"><span aria-hidden="true"></span></button>
+    <button type="button" data-poem-color="cream" aria-label="Classic cream" title="Classic cream" aria-pressed="false" style="--swatch:#fff1bd"><span aria-hidden="true"></span></button>
+    <button type="button" data-poem-color="blush" aria-label="Blush pink" title="Blush pink" aria-pressed="false" style="--swatch:#ffddea"><span aria-hidden="true"></span></button>
+    <button type="button" data-poem-color="blue" aria-label="Soft blue" title="Soft blue" aria-pressed="false" style="--swatch:#e0f0ff"><span aria-hidden="true"></span></button>
+    <button type="button" data-poem-color="navy" aria-label="Deep navy" title="Deep navy" aria-pressed="false" style="--swatch:#17244b"><span aria-hidden="true"></span></button>
+  </div>
   <div class="actions">
     <button id="save">Save image</button>
     <button id="copy">Copy poem</button>
@@ -907,6 +922,23 @@ button{border-color:#aeb8d1}
   wordInput.addEventListener("input", () => { wordErr.textContent = ""; });
   wordInput.addEventListener("keydown", e => { if (e.key === "Enter") acceptWord(); if (e.key === "Escape") closeWordPop(); });
 
+  const POEM_COLORS = {
+    white: {paper:"#ffffff",ink:"#17244b"},
+    cream: {paper:"#fff1bd",ink:"#17244b"},
+    blush: {paper:"#ffddea",ink:"#17244b"},
+    blue: {paper:"#e0f0ff",ink:"#17244b"},
+    navy: {paper:"#17244b",ink:"#f7f8fc"}
+  };
+  let poemColor = "white";
+  document.querySelectorAll("[data-poem-color]").forEach(button => button.addEventListener("click", () => {
+    poemColor = button.dataset.poemColor;
+    const color = POEM_COLORS[poemColor];
+    const card = document.querySelector("#reveal .card");
+    card.style.setProperty("--tile", color.paper);
+    card.style.setProperty("--tile-ink", color.ink);
+    document.querySelectorAll("[data-poem-color]").forEach(b => b.setAttribute("aria-pressed", String(b === button)));
+  }));
+
   // ---- Save the poem card as a story-sized image ----
   function poemDrawingImage(k, color){
     return new Promise(res => {
@@ -943,9 +975,9 @@ button{border-color:#aeb8d1}
     ctx.save();
     ctx.translate(W/2, y + cardH/2); ctx.rotate(-1 * Math.PI/180); ctx.translate(-W/2, -(y + cardH/2));
     ctx.shadowColor = "rgba(0,0,0,.28)"; ctx.shadowBlur = 60; ctx.shadowOffsetY = 24;
-    ctx.fillStyle = col("--tile"); ctx.fillRect(x, y, cardW, cardH);
+    ctx.fillStyle = POEM_COLORS[poemColor].paper; ctx.fillRect(x, y, cardW, cardH);
     ctx.shadowColor = "transparent";
-    const ink = col("--tile-ink");
+    const ink = POEM_COLORS[poemColor].ink;
     let cy = y + pad;
     const imgs = await Promise.all(show.map(k => poemDrawingImage(k, ink)));
     imgs.forEach((img, i) => { if (img) ctx.drawImage(img, x + pad + i*92, cy, 72, 72); });
