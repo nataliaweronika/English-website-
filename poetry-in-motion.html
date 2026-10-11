@@ -762,7 +762,7 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     updateTools();
   });
 
-  // ---- One word of your own ----
+  // ---- Add as many words of your own as you like ----
   const pop = document.getElementById("wordpop"), wordInput = document.getElementById("wordInput"), wordErr = document.getElementById("wordErr");
   let popTile = null;
   function openWordPop(t){
@@ -778,11 +778,21 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     if (!w){ wordErr.textContent = "Type a word first."; return; }
     if (!/^[\p{L}'’-]{1,18}$/u.test(w)){ wordErr.textContent = "Use one word, letters only."; return; }
     const t = popTile;
+    if (!t || !tiles.includes(t)) return;
+    const nextEl = t.el.cloneNode(true);
+    nextEl.classList.remove("placed", "lifted", "settle", "snap");
+    nextEl.style.transitionDelay = "";
+    const next = { el: nextEl, word: "+ your word", x:0, y:0, placed:false, blank:true };
     t.word = w; t.blank = false;
     t.el.classList.remove("blank");
     t.el.querySelector(".paper").textContent = w;
     t.el.querySelector(".paper").style.clipPath = torn();
     t.el.setAttribute("aria-label", w + ". Use arrow keys to move.");
+    stage.appendChild(nextEl);
+    const taken = tiles.map(tile => ({ x: tile.x, y: tile.y, w: tile.el.offsetWidth, h: tile.el.offsetHeight }));
+    const spot = freeSpot(next, taken, zones());
+    setPos(next, spot.x, spot.y);
+    tiles.push(next);
     closeWordPop();
   }
   document.getElementById("wordOk").addEventListener("click", acceptWord);
