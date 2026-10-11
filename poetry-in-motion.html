@@ -122,7 +122,7 @@ body{
 .card .motif svg{width:40px;height:40px}
 .card-title{margin:0 0 .7em;font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:400;font-size:clamp(18px,2vw,22px);color:color-mix(in srgb,var(--tile-ink) 65%,var(--tile))}
 .card-title:empty,.card-date:empty{display:none}
-.card .poem{max-width:none;color:var(--tile-ink);font-size:clamp(26px,4.4vw,44px)}
+.card .poem{max-width:none;color:var(--tile-ink);font-size:clamp(19px,3.2vw,32px)}
 .card .poem.empty{color:color-mix(in srgb,var(--tile-ink) 70%,var(--tile))}
 .card-date{margin:1.6em 0 0;font-size:14px;color:color-mix(in srgb,var(--tile-ink) 62%,var(--tile))}
 @keyframes bob{from{transform:translateY(0)}to{transform:translateY(calc(var(--amp,5px) * -1))}}
@@ -932,13 +932,13 @@ button{border-color:#aeb8d1}
     const ctx = c.getContext("2d");
     ctx.fillStyle = col("--board"); ctx.fillRect(0, 0, W, H);
     const cardW = 860, pad = 76, maxText = cardW - pad*2;
-    ctx.font = '400 66px Fraunces, Georgia, serif';
+    ctx.font = '400 48px Fraunces, Georgia, serif';
     const poemLines = lines.flatMap(l => wrapLines(ctx, l.join(" "), maxText));
     const keys = [];
     lines.flat().forEach(w => { const k = motifFor(w); if (k && !keys.includes(k)) keys.push(k); });
     if (!keys.length && PACK_MOTIF[currentPack]) keys.push(PACK_MOTIF[currentPack]);
     const show = keys.slice(0, 4);
-    const lineH = 84, cardH = pad + 72 + 26 + 54 + poemLines.length*lineH + 30 + 40 + pad;
+    const lineH = 64, cardH = pad + 72 + 26 + 54 + poemLines.length*lineH + 30 + 40 + pad;
     const x = (W - cardW)/2, y = Math.max(220, (H - cardH)/2 - 60);
     ctx.save();
     ctx.translate(W/2, y + cardH/2); ctx.rotate(-1 * Math.PI/180); ctx.translate(-W/2, -(y + cardH/2));
@@ -956,7 +956,7 @@ button{border-color:#aeb8d1}
     ctx.fillText(title, x + pad, cy);
     ctx.globalAlpha = 1;
     cy += 54;
-    ctx.font = '400 66px Fraunces, Georgia, serif';
+    ctx.font = '400 48px Fraunces, Georgia, serif';
     poemLines.forEach(l => { ctx.fillText(l, x + pad, cy); cy += lineH; });
     cy += 30;
     ctx.globalAlpha = .62; ctx.font = '400 30px Figtree, system-ui, sans-serif';
