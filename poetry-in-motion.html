@@ -264,6 +264,26 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .image-save p{font-size:14px;line-height:1.5;margin:12px auto;max-width:34ch}
 .image-save img{display:block;width:min(100%,360px);height:auto;margin:20px auto;box-shadow:0 8px 24px var(--shadow);-webkit-touch-callout:default;user-select:auto}
 .image-save a{color:var(--text);display:inline-flex;min-height:44px;align-items:center;text-underline-offset:4px}
+
+/* WordBloom homepage palette: lavender, blue, blush and navy. */
+:root,:root[data-theme="light"],:root[data-theme="dark"]{
+  color-scheme:light;
+  --board:#f7f8fc;--text:#17244b;--muted:#68738d;--tile:#fff;
+  --tile-ink:#17244b;--accent:#5968e8;--on-accent:#fff;
+  --veil:rgba(247,248,252,.95);--shadow:rgba(23,36,75,.13);
+}
+body{background:#f7f8fc}
+.stage{background:linear-gradient(115deg,#dfedff,#fae5f0)}
+.stage::after{background:radial-gradient(120% 90% at 50% 40%,transparent 65%,rgba(89,104,232,.05) 100%)}
+.primary{background:#ff9fc8;border-color:#ff9fc8;color:#17244b}
+.primary:hover{border-color:#ff9fc8}
+button{border-color:#aeb8d1}
+.grp[aria-pressed="true"]{background:#ebe9ff;color:#17244b}
+.switch{border-color:#aeb8d1}
+.card::before{background:#fff1bd}
+.card::after{background:#ffddea}
+.wall{background:#f7f8fc}
+.wall-card{background-color:#fff}
 </style>
 </head>
 <body>
