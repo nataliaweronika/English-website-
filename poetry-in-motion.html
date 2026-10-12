@@ -380,7 +380,7 @@ button{border-color:#aeb8d1}
     <button id="wallClose">Back to the board</button>
   </div>
   <p class="wall-note"><span>A little collection of poems written on this board, chosen by Natalia. Want to share yours? Read your poem, then choose &quot;Send to wall&quot;. It opens an email for you to review and send. Featuring is optional, never automatic.</span></p>
-  <div class="wall-grid" id="wallGrid"></div>
+  <div class="wall-grid" id="wallGrid"></div><p style="text-align:center;font:14px Inter,sans-serif"><a href="poem-wall-admin.html">Owner sign-in</a></p>
 </div>
 
 <div class="image-save" id="imageSave" role="dialog" aria-modal="true" aria-labelledby="imageSaveTitle" hidden>
@@ -397,7 +397,7 @@ button{border-color:#aeb8d1}
 <script>
 (function(){
   // Featured poems. Each: { topic: "Night", lines: ["...", "..."], by: "@name" }
-  const WALL = [];
+  let WALL = [];
   const PACKS = {
     night:   "the a and of to my your I you we is in under like moon hums softly quiet light leans toward morning silver dark hold still breathe dream star slow wild -s -ing -ed",
     sea:     "the a and of to my your I you we is in under like salt wave pulls blue tide drift far shore deep return wash open slow carry home -s -ing -ed",
@@ -1032,9 +1032,15 @@ button{border-color:#aeb8d1}
     }
   });
 
+
+  const WALL_API="https://ynwumcchbhdlejsvwlse.supabase.co/rest/v1/rpc/";
+  const WALL_KEY="sb_publishable_NbLZobLWm-uzdAONUPsbNA_pHrhYVf6";
+  async function wallRpc(name,body){const r=await fetch(WALL_API+name,{method:"POST",headers:{apikey:WALL_KEY,Authorization:"Bearer "+WALL_KEY,"Content-Type":"application/json"},body:JSON.stringify(body)});const j=await r.json();if(!r.ok)throw new Error(j.message||"Request failed");return j;}
+
   // ---- Poem wall ----
   const wall = document.getElementById("wall");
-  function renderWall(){
+  async function renderWall(){
+    try { WALL = await wallRpc("wb_wall_public", {}); } catch(err) { const grid=document.getElementById("wallGrid");grid.textContent="The poem wall could not load. Please try again shortly.";return; }
     const grid = document.getElementById("wallGrid");
     grid.innerHTML = "";
     if (!WALL.length){
@@ -1044,14 +1050,14 @@ button{border-color:#aeb8d1}
       grid.appendChild(p);
       return;
     }
-    WALL.slice().reverse().forEach(item => {
+    WALL.forEach(item => {
       const card = document.createElement("figure");
       card.className = "wall-card";
       const t = document.createElement("p"); t.className = "t"; t.textContent = item.topic || "";
       const body = document.createElement("p"); body.className = "p";
       (item.lines || []).forEach(l => { const s = document.createElement("span"); s.textContent = l; body.appendChild(s); });
       card.appendChild(t); card.appendChild(body);
-      if (item.by){ const by = document.createElement("p"); by.className = "by"; by.textContent = item.by; card.appendChild(by); }
+      if (item.credit){ const by = document.createElement("p"); by.className = "by"; by.textContent = item.credit; card.appendChild(by); }
       grid.appendChild(card);
     });
   }
@@ -1088,4 +1094,3 @@ button{border-color:#aeb8d1}
 </script>
 </body>
 </html>
-
