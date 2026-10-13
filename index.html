@@ -40,6 +40,16 @@ iframe{display:block;width:100%;height:100%;border:0}
       nav.insertBefore(poetry,m0?m0.nextSibling:nav.firstChild);
     }
 
+    if(nav&&!d.getElementById('wbShopNav')){
+      var shop=d.createElement('button');
+      shop.id='wbShopNav';shop.type='button';
+      shop.innerHTML='🛍️ <label>Shop / Sklep</label>';
+      shop.setAttribute('aria-label','Shop / Sklep');
+      shop.onclick=function(){window.location.href='shop.html';};
+      var materialsNav=d.getElementById('wbMaterialsNav');
+      nav.insertBefore(shop,materialsNav?materialsNav:nav.firstChild);
+    }
+
     if(nav&&!d.getElementById('wbAboutNav')){
       var about=d.createElement('button');
       about.id='wbAboutNav';about.type='button';
