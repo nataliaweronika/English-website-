@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Your downloads | WordBloom</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#f6faf9;color:#173047;font:16px/1.6 system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;padding:20px}.panel{width:min(100%,680px);background:white;border:1px solid #dce9e7;border-radius:22px;padding:clamp(24px,5vw,44px);box-shadow:0 14px 50px #1730470b}h1{font-family:Georgia,serif;font-size:clamp(30px,5vw,42px);line-height:1.15;margin:0 0 12px}.muted{color:#607080}.downloads{display:grid;gap:12px;margin-top:24px}.file{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #dce9e7;border-radius:12px;padding:16px;text-decoration:none;color:#086f75;font-weight:700}.file:hover{background:#eff9f6}.note{font-size:14px;color:#607080;margin-top:24px}.status{padding:14px;border-radius:10px;background:#f2f7f8}
+</style>
+</head>
+<body><main class="panel">
+<p class="muted">EVERYDAY ENGLISH · WORDBLOOM</p>
+<h1>Your learning materials</h1>
+<p id="intro">Checking your payment and preparing your downloads…</p>
+<div id="downloads" class="downloads"></div>
+<p id="status" class="status" role="status">Please keep this page open while your purchase is verified.</p>
+<p class="note">If a download does not work, contact rduchnatalia@gmail.com and include your order confirmation. Never share your checkout link publicly.</p>
+</main>
+<script>
+const params = new URLSearchParams(location.search);
+const sessionId = params.get("session_id");
+const intro = document.getElementById("intro");
+const list = document.getElementById("downloads");
+const status = document.getElementById("status");
+if (!sessionId || !sessionId.startsWith("cs_")) {
+  intro.textContent = "A checkout session was not found.";
+  status.textContent = "If you have paid, please open the link from your Stripe confirmation page or contact support.";
+} else {
+  fetch("/api/download-info?session_id=" + encodeURIComponent(sessionId))
+    .then(async response => { const data = await response.json(); if (!response.ok) throw new Error(data.error || "Could not verify purchase."); return data; })
+    .then(data => {
+      intro.textContent = "Thank you for your purchase of " + data.title + ". Choose each file below to download it.";
+      list.replaceChildren();
+      data.files.forEach((file, index) => {
+        const link = document.createElement("a");
+        link.className = "file";
+        link.href = "/api/download?session_id=" + encodeURIComponent(sessionId) + "&file=" + index;
+        link.textContent = file.name + "  ↓";
+        link.setAttribute("download", "");
+        list.appendChild(link);
+      });
+      status.textContent = "Payment verified. Your downloads are ready.";
+    })
+    .catch(error => {
+      intro.textContent = "We couldn't prepare your downloads yet.";
+      status.textContent = error.message + " If you have just paid, contact rduchnatalia@gmail.com.";
+    });
+}
+</script>
+</body></html>
