@@ -39,7 +39,7 @@ footer{color:var(--muted);font-size:13px}
 <div class="tools"><input id="search" type="search" placeholder="Search packs / Szukaj pakietów…" aria-label="Search products"><select id="category" aria-label="Filter by category"><option value="">All categories / Wszystkie</option></select></div>
 <div id="status" class="notice" role="status">Loading resources…</div>
 <section id="products" class="products" aria-live="polite"></section>
-<div class="notice">Digital products are delivered by the checkout provider after successful payment. Please check the product description before buying. Annual packs and term packs may cover overlapping content.</div>
+<div class="notice">During the Stripe migration, packs whose files have not yet been moved remain available through Gumroad. Once a pack is migrated to secure storage, its button will automatically use Stripe Checkout and the download page. Please check the product description before buying; annual packs and term packs may cover overlapping content.</div>
 </main>
 <footer>© WordBloom · Questions? Contact the website owner using the contact details on the main site.</footer>
 <script>
@@ -57,8 +57,24 @@ footer{color:var(--muted);font-size:13px}
    const title=document.createElement('h2');title.textContent=p.title;
    const desc=document.createElement('p');desc.textContent=p.description||'English learning material.';
    const price=document.createElement('div');price.className='price';price.textContent=new Intl.NumberFormat('pl-PL',{style:'currency',currency:p.currency||'PLN',maximumFractionDigits:2}).format(Number(p.price)||0);
-   const a=document.createElement('a');a.className='buy';a.textContent='Buy pack / Kup pakiet';a.href=p.stripePaymentLink||p.checkoutUrl||'#';a.target='_blank';a.rel='noopener noreferrer';
-   if(!(p.stripePaymentLink||p.checkoutUrl)){a.textContent='Checkout link coming soon';a.removeAttribute('target');a.style.opacity='.55';a.style.pointerEvents='none'}
+   const a=document.createElement('a');a.className='buy';a.textContent='Buy pack / Kup pakiet';
+   if(p.stripeReady===true && Array.isArray(p.files) && p.files.length){
+    a.href='#';a.removeAttribute('target');
+    a.addEventListener('click',async ev=>{
+     ev.preventDefault();a.style.opacity='.65';a.textContent='Opening secure checkout…';
+     try{
+      const response=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({productId:p.id})});
+      const result=await response.json();
+      if(!response.ok||!result.url)throw new Error(result.error||'Checkout is not available yet.');
+      location.href=result.url;
+     }catch(error){alert(error.message);a.textContent='Try again / Spróbuj ponownie';a.style.opacity='1'}
+    });
+   }else if(p.checkoutUrl){
+    a.href=p.checkoutUrl;a.target='_blank';a.rel='noopener noreferrer';
+    a.title='Current Gumroad checkout remains active while Stripe delivery is migrated.';
+   }else{
+    a.href='#';a.textContent='Checkout setup in progress';a.style.opacity='.55';a.style.pointerEvents='none';
+   }
    card.append(cat,title,desc,price,a);container.appendChild(card);
   });
  }
