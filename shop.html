@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shop English Materials | WordBloom</title>
+<meta name="description" content="Browse English teaching resources and downloadable learning packs from WordBloom.">
+<style>
+:root{--ink:#173047;--muted:#5c6b7e;--teal:#078389;--mint:#e5f6f1;--line:#dfe7eb;--paper:#faf8fc}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 system-ui,-apple-system,sans-serif}
+header,main,footer{max-width:1120px;margin:auto;padding:22px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font:italic 29px Georgia,serif;color:var(--ink);text-decoration:none}
+nav a{color:var(--teal);text-decoration:none;font-weight:700;margin-left:16px}
+.hero{padding:clamp(24px,5vw,48px);border-radius:24px;background:linear-gradient(120deg,#e5f6f1,#e8efff);margin:8px 0 28px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal)}
+h1,h2{font-family:Georgia,serif;line-height:1.15}h1{font-size:clamp(34px,5vw,54px);margin:8px 0 14px}h2{font-size:23px;margin:0 0 8px}
+.hero p{max-width:680px;color:#405468}
+.tools{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0}
+input,select{font:inherit;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+input{flex:1;min-width:220px}
+.products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.product{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;min-height:290px;box-shadow:0 5px 18px #1730470a}
+.category{font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.product p{color:var(--muted);margin:6px 0 18px}
+.price{font-size:27px;font-weight:800;margin-top:auto;padding-top:12px}
+.buy{display:inline-block;text-align:center;text-decoration:none;background:var(--teal);color:#fff;font-weight:800;padding:12px 16px;border-radius:10px;margin-top:12px}
+.buy:hover{filter:brightness(.93)}
+.notice{padding:14px 16px;background:#fff;border:1px solid var(--line);border-radius:14px;color:var(--muted);font-size:14px;margin:20px 0}
+.empty{padding:28px;background:#fff;border-radius:16px;color:var(--muted)}
+footer{color:var(--muted);font-size:13px}
+@media(max-width:850px){.products{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:580px){header{align-items:flex-start;flex-direction:column}.products{grid-template-columns:1fr}nav a{margin:0 14px 0 0}.hero{padding:24px}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="/">WordBloom</a><nav><a href="/materials.html">Resources / Materiały</a><a href="/">Learning platform</a></nav></header>
+<main>
+<section class="hero"><div class="eyebrow">WordBloom resources</div><h1>Find your next English pack.</h1><p>Practical English materials for teachers and learners. Browse the packs, compare what is included, and choose the resource that suits your class.</p><p>Materiały do nauki angielskiego dla nauczycieli i uczniów. Wybierz pakiet odpowiedni dla swojej grupy.</p></section>
+<div class="tools"><input id="search" type="search" placeholder="Search packs / Szukaj pakietów…" aria-label="Search products"><select id="category" aria-label="Filter by category"><option value="">All categories / Wszystkie</option></select></div>
+<div id="status" class="notice" role="status">Loading resources…</div>
+<section id="products" class="products" aria-live="polite"></section>
+<div class="notice">Digital products are delivered by the checkout provider after successful payment. Please check the product description before buying. Annual packs and term packs may cover overlapping content.</div>
+</main>
+<footer>© WordBloom · Questions? Contact the website owner using the contact details on the main site.</footer>
+<script>
+(async function(){
+ const container=document.getElementById('products'),status=document.getElementById('status'),search=document.getElementById('search'),category=document.getElementById('category');
+ let products=[];
+ function render(){
+  const q=search.value.trim().toLowerCase(),c=category.value;
+  const filtered=products.filter(p=>p.active!==false&&(!c||p.category===c)&&(!q||[p.title,p.description,p.category].join(' ').toLowerCase().includes(q)));
+  container.innerHTML='';
+  if(!filtered.length){container.innerHTML='<div class="empty">No packs match your search. Try another word or category.</div>';return}
+  filtered.forEach(p=>{
+   const card=document.createElement('article');card.className='product';
+   const cat=document.createElement('div');cat.className='category';cat.textContent=p.category||'English materials';
+   const title=document.createElement('h2');title.textContent=p.title;
+   const desc=document.createElement('p');desc.textContent=p.description||'English learning material.';
+   const price=document.createElement('div');price.className='price';price.textContent=new Intl.NumberFormat('pl-PL',{style:'currency',currency:p.currency||'PLN',maximumFractionDigits:2}).format(Number(p.price)||0);
+   const a=document.createElement('a');a.className='buy';a.textContent='Buy pack / Kup pakiet';a.href=p.stripePaymentLink||p.checkoutUrl||'#';a.target='_blank';a.rel='noopener noreferrer';
+   if(!(p.stripePaymentLink||p.checkoutUrl)){a.textContent='Checkout link coming soon';a.removeAttribute('target');a.style.opacity='.55';a.style.pointerEvents='none'}
+   card.append(cat,title,desc,price,a);container.appendChild(card);
+  });
+ }
+ try{
+  const response=await fetch('/shop-products.json',{cache:'no-store'});if(!response.ok)throw new Error('Product catalogue could not be loaded.');
+  const data=await response.json();products=Array.isArray(data.products)?data.products:[];
+  const cats=[...new Set(products.filter(p=>p.active!==false).map(p=>p.category).filter(Boolean))].sort();
+  cats.forEach(c=>{const option=document.createElement('option');option.value=c;option.textContent=c;category.appendChild(option)});
+  status.textContent=products.length+' resources in the catalogue. Prices shown in the currency listed for each pack.';
+  render();
+ }catch(e){status.textContent='The shop catalogue could not be loaded. Please try again later.'}
+ search.addEventListener('input',render);category.addEventListener('change',render);
+})();
+</script>
+</body></html>
