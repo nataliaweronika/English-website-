@@ -3,7 +3,7 @@
 // This function checks with Stripe that the session is really paid and was bought
 // through the matching payment link, then shows the link to that class's materials.
 //
-// Needs one environment variable in Vercel: STRIPE_SECRET_KEY (a restricted key with
+// Needs one environment variable in Vercel: STRIPE_SECRET_KEY (or "key") (a restricted key with
 // read access to Checkout Sessions is enough).
 
 const PRODUCTS = {
@@ -47,7 +47,7 @@ module.exports = async (req, res) => {
 
   try {
     const r = await fetch(`https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(session_id)}`, {
-      headers: { Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}` },
+      headers: { Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY || process.env.key}` },
     });
     const s = await r.json();
     const ok = r.ok && s.payment_status === 'paid' && s.payment_link === product.link;
