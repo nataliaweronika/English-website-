@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/pobierz", "destination": "/api/pobierz" }
+  ]
+}
