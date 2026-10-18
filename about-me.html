@@ -32,4 +32,9 @@
 <script>
 (function(){function setLang(lang){document.documentElement.lang=lang;document.querySelectorAll('[data-copy]').forEach(function(e){e.hidden=e.dataset.copy!==lang});document.querySelectorAll('[data-lang]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.lang===lang))});document.title=lang==='pl'?'O Natalii | WordBloom':'About Natalia | WordBloom';}document.querySelectorAll('[data-lang]').forEach(function(b){b.onclick=function(){setLang(b.dataset.lang)}});})();
 </script>
+<!-- Vercel Web Analytics -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </body></html>

@@ -262,4 +262,9 @@ async function setUserRole(id,role){
   if(error)alert(error.message); else renderAdmin();
 }
 function progress(){a.textContent=st.a||0;c.textContent=st.c||0;w.textContent=st.w||0;s.textContent=st.s||0;pg.style.width=Math.min(100,(st.g||0)*3)+'%';ps.style.width=Math.min(100,(st.s||0)*5)+'%';pw.style.width=Math.min(100,(st.w||0)*8)+'%'}progress();function mode(m){document.body.className=m+'-mode';tm.classList.toggle('active',m==='teacher');sm.classList.toggle('active',m==='student');document.querySelectorAll('.teacher-only').forEach(x=>{if(x.id!=='adminNav')x.style.display=m==='teacher'?'':'none'});show(m==='teacher'?'teacher':'home');if(window.eeUpdateLogin)window.eeUpdateLogin()}tm.onclick=()=>mode('teacher');sm.onclick=()=>mode('student');search.oninput=e=>{let q=e.target.value.toLowerCase().trim();if(!q)return;let x=GRAM.find(t=>t.join(' ').toLowerCase().includes(q));if(x){show('grammar');setF('gf',x[0]);renderG(x[0])}};mode('student');
-</script></body></html>
+</script><!-- Vercel Web Analytics -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body></html>
