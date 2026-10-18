@@ -15,6 +15,8 @@ const PRODUCTS = {
   'k6-pakiet': { name: 'Klasa 6 · Pakiet na cały rok', link: 'plink_1UQcsoJxbitbq8VlqltJWoya', url: 'https://drive.google.com/drive/folders/1iqGIbkMMtu7rj5cdBZptYtFjxLBlzCuS' },
   'k7-pakiet': { name: 'Klasa 7 · Pakiet na cały rok', link: 'plink_1UQcssJxbitbq8Vl8kSeaeqx', url: 'https://drive.google.com/drive/folders/129cWNeCE9GTl9CQ6SVM7UYVb3JDCkdGE' },
   'k8-pakiet': { name: 'Klasa 8 · Pakiet na cały rok', link: 'plink_1UQcswJxbitbq8VlgWyVTNZZ', url: 'https://drive.google.com/drive/folders/1WUUseGK4KQYVuYj_IVFM_1JQwEoBcDSU' },
+  // Files kept in the private Vercel Blob store "wordbloom-paid-packs"; served only after the payment check.
+  'speaking-30': { name: '30 Days of Speaking · wersja interaktywna', link: 'plink_1US1sPJxbitbq8VluhUkoBOw', file: '30-days-of-speaking-interactive.pdf', licence: 'Licencja dla jednego ucznia – prosimy nie udostępniać pliku dalej.' },
 };
 
 const CONTACT = 'rduchnatalia@gmail.com';
@@ -36,7 +38,7 @@ module.exports = async (req, res) => {
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('Cache-Control', 'no-store');
 
-  const { produkt, session_id } = req.query || {};
+  const { produkt, session_id, plik } = req.query || {};
   const product = PRODUCTS[produkt];
   const help = `<p><small>Problem? Napisz: <a href="mailto:${CONTACT}">${CONTACT}</a></small></p>`;
 
@@ -57,12 +59,34 @@ module.exports = async (req, res) => {
       return;
     }
 
+    if (product.file && plik) {
+      // Stream the private file straight to the buyer.
+      const { get } = require('@vercel/blob');
+      const { Readable } = require('stream');
+      const result = await get(product.file, { access: 'private' });
+      if (!result || !result.stream) {
+        res.status(404).send(page('Brak pliku', `<h1>Nie znaleźliśmy pliku</h1><p>Napisz do mnie – wyślę go e-mailem.</p>${help}`));
+        return;
+      }
+      res.setHeader('Content-Type', result.blob.contentType || 'application/pdf');
+      if (result.blob.size) res.setHeader('Content-Length', String(result.blob.size));
+      res.setHeader('Content-Disposition', `attachment; filename="${product.file}"`);
+      res.setHeader('Cache-Control', 'private, no-store');
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.status(200);
+      Readable.fromWeb(result.stream).pipe(res);
+      return;
+    }
+
+    const href = product.file
+      ? `/pobierz?produkt=${encodeURIComponent(produkt)}&session_id=${encodeURIComponent(session_id)}&plik=1`
+      : product.url;
     res.status(200).send(page('Dziękuję!', `
 <h1>Dziękuję za zakup! 🌱</h1>
 <p><strong>${product.name}</strong></p>
 <p>Twoje materiały są gotowe. Zapisz ten link – możesz wrócić do plików w każdej chwili.</p>
-<p><a class="btn" href="${product.url}" target="_blank" rel="noopener">Pobierz materiały</a></p>
-<p><small>Licencja dla jednego nauczyciela – prosimy nie udostępniać linku dalej.</small></p>
+<p><a class="btn" href="${href}"${product.file ? '' : ' target="_blank" rel="noopener"'}>Pobierz materiały</a></p>
+<p><small>${product.licence || 'Licencja dla jednego nauczyciela – prosimy nie udostępniać linku dalej.'}</small></p>
 ${help}`));
   } catch (e) {
     res.status(500).send(page('Błąd', `<h1>Coś poszło nie tak</h1><p>Spróbuj odświeżyć stronę.</p>${help}`));
