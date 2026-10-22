@@ -7,7 +7,7 @@
     ['A2','Shopping',[['try it on','przymierzyć'],['pay by card','zapłacić kartą'],['a good deal','dobra okazja'],['out of stock','brak w magazynie'],['receipt','paragon']]],
     ['B1','Work',[['meet a deadline','dotrzymać terminu'],['take responsibility','wziąć odpowiedzialność'],['solve a problem','rozwiązać problem'],['work efficiently','pracować wydajnie'],['colleague','współpracownik']]],
     ['B1','Communication',[['make a point','przedstawić argument'],['keep in touch','utrzymywać kontakt'],['bring up a topic','poruszyć temat'],['get the message across','jasno przekazać myśl'],['clarify','wyjaśnić']]],
-    ['B2','Opinions',[['from my perspective','z mojej perspektywy'],['raise a concern','zgłosić obawę'],['take into account','wziąć pod uwagę'],['to some extent','do pewnego stopnia'],['convincing','przekonujący']]],
+    ['B2','Opinions',[['from my perspective','z mojego punktu widzenia'],['raise a concern','zgłosić obawę'],['take into account','wziąć pod uwagę'],['to some extent','do pewnego stopnia'],['convincing','przekonujący']]],
     ['B2','Problem solving',[['identify the cause','zidentyfikować przyczynę'],['find a solution','znaleźć rozwiązanie'],['weigh the options','rozważyć opcje'],['practical approach','praktyczne podejście'],['drawback','wada']]],
     ['C1','Academic & professional',[['draw a conclusion','wyciągnąć wniosek'],['provide evidence','przedstawić dowody'],['address an issue','zająć się problemem'],['raise a question','postawić pytanie'],['relevant','istotny']]],
     ['C1','Nuance',[['arguably','można argumentować, że'],['potential drawback','potencjalna wada'],['in practical terms','w praktyce'],['to a certain extent','do pewnego stopnia'],['underlying','leżący u podstaw']]],
