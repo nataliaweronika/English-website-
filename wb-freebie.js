@@ -4,7 +4,7 @@
  * then shows the download link. If saving fails, the visitor still gets the link.
  */
 (function () {
-  var URL = 'https://ynwumcchbdlejsvwvse.supabase.co/rest/v1/newsletter_signups';
+  var URL = 'https://ynwumcchbhdlejsvwlse.supabase.co/rest/v1/newsletter_signups';
   var KEY = 'sb_publishable_NbLZobLWm-uzdAONUPsbNA_pHrhYVf6';
 
   function init(box) {
