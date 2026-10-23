@@ -1,0 +1,57 @@
+/* WordBloom – shared styles for the public landing pages (SEO pages). */
+*{box-sizing:border-box}
+body{margin:0;background:#faf8fc;color:#173047;font:17px/1.65 system-ui,-apple-system,Segoe UI,sans-serif}
+header,main,footer{max-width:1080px;margin:auto;padding:24px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;font:italic 28px Georgia,serif;text-decoration:none;color:#173047}
+.brand img{width:52px;height:52px}
+nav.top a{margin-left:16px;font-size:15px;font-weight:600;text-decoration:none}
+a{color:#086f75}
+h1,h2,h3{font-family:Georgia,serif;line-height:1.2}
+h1{font-size:clamp(32px,5vw,50px);margin:8px 0 14px}
+h2{font-size:clamp(25px,3.4vw,31px);margin:44px 0 10px}
+h3{font-size:22px;margin:0 0 6px}
+.eyebrow{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#087b80;margin:0}
+.hero{background:linear-gradient(115deg,#e1f2ff,#fce9f3);padding:34px;border-radius:24px}
+.hero p.lead{font-size:19px;max-width:720px;margin:0}
+.button{display:inline-block;padding:13px 20px;background:#078389;color:#fff;text-decoration:none;font-weight:700;border-radius:10px;border:0;cursor:pointer;font-size:16px}
+.button:hover{background:#075e65}
+.button.secondary{background:#fff;color:#086f75;border:1px solid #078389}
+.fine{font-size:14px;color:#5c6b7e}
+.card{background:#fff;border:1px solid #dfe7eb;border-radius:18px;padding:22px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin:20px 0}
+.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.offer{display:grid;grid-template-columns:240px 1fr;gap:26px;align-items:center;background:#fff;border:1px solid #dfe7eb;border-radius:20px;padding:24px;margin:26px 0}
+.cover{position:relative}
+.cover img{display:block;width:100%;border:1px solid #dfe7eb;border-radius:12px;background:#fff}
+.cover .badge{position:absolute;left:10px;top:10px;background:#173047;color:#fff;font-weight:800;font-size:14px;padding:5px 10px;border-radius:30px}
+.price{font:34px Georgia,serif;margin:4px 0}
+.free{border-left:5px solid #078389;background:#e5f6f1;border-radius:14px;padding:20px 22px;margin:22px 0}
+.free h2,.free h3{margin-top:0}
+.terms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.terms ol{margin:0;padding-left:22px}
+.terms li{margin:0 0 12px}
+.terms li span{display:block;font-size:14px;color:#5c6b7e}
+details{padding:16px 18px;background:#fff;border:1px solid #dfe7eb;border-radius:12px;margin:10px 0}
+summary{font-weight:700;cursor:pointer}
+.grade-links{display:flex;flex-wrap:wrap;gap:10px}
+.grade-links a{padding:9px 16px;border:1px solid #078389;border-radius:30px;text-decoration:none;background:#fff;font-weight:600}
+.grade-links a[aria-current]{background:#078389;color:#fff}
+.q{background:#fff;border:1px solid #dfe7eb;border-radius:14px;padding:16px 18px;margin:10px 0}
+.q b{display:block}
+.q .pl{font-size:14px;color:#5c6b7e}
+/* free-download e-mail form */
+.wb-freebie{background:#fff4dd;border:1px solid #f1d9a6;border-radius:20px;padding:24px;margin:28px 0}
+.wb-freebie h2,.wb-freebie h3{margin-top:0}
+.wb-freebie form{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.wb-freebie input[type=email]{flex:1 1 240px;padding:13px 14px;font:inherit;border:1px solid #c9b48a;border-radius:10px;background:#fff;color:#173047}
+.wb-freebie label.consent{flex-basis:100%;font-size:13px;color:#5c6b7e;display:flex;gap:8px;align-items:flex-start}
+.wb-freebie label.consent input{margin-top:4px}
+.wb-freebie .ok{display:none;margin-top:12px}
+.wb-freebie.done form{display:none}
+.wb-freebie.done .ok{display:block}
+footer{font-size:14px;border-top:1px solid #dfe7eb;margin-top:40px;color:#5c6b7e}
+@media(max-width:800px){.grid,.grid.three,.terms{grid-template-columns:1fr}.grid.four{grid-template-columns:repeat(2,minmax(0,1fr))}.offer{grid-template-columns:1fr}.offer .cover{max-width:260px}}
+@media(max-width:650px){header,main,footer{padding:16px}.hero{padding:22px}.button{display:block;text-align:center}nav.top a{margin:0 14px 0 0}}
+.cover.txt{aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,#e1f2ff,#fce9f3);border:1px solid #dfe7eb;border-radius:12px;font:700 28px/1.2 Georgia,serif;color:#173047;padding:16px}

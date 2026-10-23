@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /api/
+Disallow: /poem-wall-admin.html
+
+Sitemap: https://wordbloom.ca/sitemap.xml

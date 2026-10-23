@@ -217,7 +217,88 @@
   applyAuth();
 })();
 </script><div class="app"><aside class="side"><div class="brand">WordBloom</div><div class="mode"><button id="tm">👩‍🏫 <span>Teacher</span></button><button id="sm" class="active">🎓 <span>Student</span></button></div><nav class="nav"><button class="active" data-page="home">🏠 <label>Home</label></button><button data-page="students">🎯 <label>My Learning</label></button><button data-page="speaking">🗣️ <label>Speaking</label></button><button data-page="listening">🎧 <label>Listening</label></button><button data-page="writing">✍️ <label>Writing</label></button><button data-page="reading">📖 <label>Reading</label></button><button data-page="grammar">📚 <label>Grammar</label></button><button data-page="vocab">🧠 <label>Vocabulary</label></button><button data-page="progress">📈 <label>Progress</label></button><button class="teacher-only" data-page="teacher" style="display:none">👩‍🏫 <label>Teacher resources</label></button><button id="adminNav" class="teacher-only" data-page="admin" style="display:none">🔐 <label>Approve users</label></button></nav></aside><main class="main"><div class="top"><input id="search" class="search" placeholder="Search a topic…"><b>👋 Ready?</b></div>
-<section id="home" class="page active"><div class="hero"><div class="tag">A1 → C2 · WORDBLOOM</div><h1>What would you like to practise today?</h1><p>Choose a level and build your English through speaking, listening, writing, reading, grammar and vocabulary.</p><div class="pl">🇵🇱 Wybierz poziom i rozwijaj mówienie, słuchanie, pisanie, czytanie, gramatykę i słownictwo.</div><button class="btn primary" onclick="show('students')">Start learning →</button></div><div class="section grid"><div class="card"><h3>🎯 15-minute study</h3><p>Vocabulary → grammar → reading → speaking.</p><div class="pl">Słownictwo → gramatyka → czytanie → mówienie.</div><button class="btn primary" onclick="show('vocab')">Start</button></div><div class="card"><h3>🗣️ Speak Now</h3><p>Real questions and 60-second challenges.</p><div class="pl">Prawdziwe pytania i wyzwania 60-sekundowe.</div><button class="btn secondary" onclick="show('speaking')">Speak</button></div><div class="card"><h3>📖 Reading Library</h3><p>Three reading choices at every level.</p><div class="pl">Trzy teksty do wyboru na każdym poziomie.</div><button class="btn secondary" onclick="show('reading')">Read</button></div></div><div class="section"><h2>Choose your level / Wybierz poziom</h2><div class="levels" id="homeLevels"></div></div></section>
+<section id="home" class="page active"><div class="hero"><div class="tag">A1 → C2 · WORDBLOOM</div><h1>What would you like to practise today?</h1><p>Choose a level and build your English through speaking, listening, writing, reading, grammar and vocabulary.</p><div class="pl">🇵🇱 Wybierz poziom i rozwijaj mówienie, słuchanie, pisanie, czytanie, gramatykę i słownictwo.</div><button class="btn primary" onclick="show('students')">Start learning →</button></div><!-- wb-home-shop: Dla nauczycieli / Sklep (homepage) -->
+<style>
+.wbshop{margin-top:25px}
+.wbshop h2{margin:0 0 4px}
+.wbshop .sub{color:#59657e;margin:0 0 14px}
+.wbshop-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.wbshop-card{background:#fff;border:1px solid #e3e8f0;border-radius:18px;padding:16px;display:flex;flex-direction:column}
+.wbshop-card img,.wbshop-card .txtcover{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;object-position:top;border:1px solid #e3e8f0;border-radius:12px;background:#fff}
+.wbshop-card .txtcover{display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,#e1f2ff,#fce9f3);font:700 22px/1.2 Georgia,serif;color:#173047}
+.wbshop-card h3{margin:12px 0 2px;font-size:18px}
+.wbshop-card .price{font:26px Georgia,serif;margin:2px 0 6px;color:#173047}
+.wbshop-card p{margin:0 0 10px;font-size:14px;color:#59657e}
+.wbshop-card .buy{margin-top:auto;display:block;text-align:center;background:#078389;color:#fff;text-decoration:none;font-weight:800;border-radius:24px;padding:10px 14px}
+.wbshop-card .buy:hover{background:#075e65}
+.wbshop-card .more{display:block;text-align:center;font-size:13px;margin-top:8px;color:#086f75}
+.wbshop-classes{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.wbshop-classes a{font-size:13px;font-weight:700;padding:5px 9px;border:1px solid #078389;border-radius:20px;color:#086f75;text-decoration:none;background:#fff}
+.wbshop-classes a:hover{background:#e5f6f1}
+.wbshop .wb-freebie{background:#fff4dd;border:1px solid #f1d9a6;border-radius:18px;padding:18px 20px;margin-top:14px}
+.wbshop .wb-freebie h3{margin:0 0 4px}
+.wbshop .wb-freebie p{margin:0;font-size:14px}
+.wbshop .wb-freebie form{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.wbshop .wb-freebie input[type=email]{flex:1 1 220px;padding:10px 12px;font:inherit;border:1px solid #c9b48a;border-radius:12px}
+.wbshop .wb-freebie button{border:0;border-radius:24px;padding:10px 17px;font-weight:800;cursor:pointer;background:#078389;color:#fff}
+.wbshop .wb-freebie label{flex-basis:100%;font-size:12px;color:#59657e;display:flex;gap:6px;align-items:flex-start}
+.wbshop .wb-freebie .ok{display:none;margin-top:10px}
+.wbshop .wb-freebie.done form{display:none}
+.wbshop .wb-freebie.done .ok{display:block}
+.wbshop .wb-freebie .ok a{display:inline-block;background:#078389;color:#fff;text-decoration:none;font-weight:800;border-radius:24px;padding:10px 17px}
+@media(max-width:1100px){.wbshop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.wbshop-grid{grid-template-columns:1fr}}
+</style>
+<div class="section wbshop" id="sklep">
+<h2>👩‍🏫 Dla nauczycieli / Sklep</h2>
+<p class="sub">Gotowe materiały PDF na cały rok. Najpierw wypróbuj darmowy rozdział. <span style="opacity:.8">· Ready-to-teach printable packs – <a href="/esl-worksheets/" target="_top">in English</a>.</span></p>
+<div class="wbshop-grid">
+<div class="wbshop-card">
+<img src="/img/okladka-klasy-1-3.png" alt="Karty pracy angielski klasy 1–3 – okładka" loading="lazy">
+<h3>Klasy 1–3 · pakiet roczny</h3>
+<div class="price">50 zł <span style="font-size:14px;font-family:system-ui">/ klasa</span></div>
+<p>10 rozdziałów na cały rok, PDF do druku. Kup pakiet dla klasy:</p>
+<div class="wbshop-classes"><a href="https://buy.stripe.com/3cIcN62ltdyheJi3ga4sE0I" target="_top">Klasa 1</a><a href="https://buy.stripe.com/14A8wQe4b2TDeJibMG4sE0J" target="_top">Klasa 2</a><a href="https://buy.stripe.com/6oU5kE7FN0Lvat2cQK4sE0K" target="_top">Klasa 3</a></div>
+<a class="buy" href="https://j5svubndmhemfeau.public.blob.vercel-storage.com/sample-grades-13.pdf" target="_top">Darmowy rozdział 1 · PDF</a>
+<a class="more" href="/karty-pracy-angielski-klasa-1/" target="_top">Zobacz, co jest w pakiecie →</a>
+</div>
+<div class="wbshop-card">
+<img src="/img/okladka-klasy-4-8.png" alt="Karty pracy angielski klasy 4–8 – okładka" loading="lazy">
+<h3>Klasy 4–8 · pakiet roczny</h3>
+<div class="price">50 zł <span style="font-size:14px;font-family:system-ui">/ klasa</span></div>
+<p>10 rozdziałów na cały rok, PDF do druku. Kup pakiet dla klasy:</p>
+<div class="wbshop-classes"><a href="https://buy.stripe.com/dRm7sM6BJ2TD9oYg2W4sE0L" target="_top">Klasa 4</a><a href="https://buy.stripe.com/00weVe5xF65P8kU1824sE0M" target="_top">Klasa 5</a><a href="https://buy.stripe.com/14AaEYgcj79T9oY4ke4sE0N" target="_top">Klasa 6</a><a href="https://buy.stripe.com/bJeaEYd07bq90SseYS4sE0O" target="_top">Klasa 7</a><a href="https://buy.stripe.com/fZu4gAgcjcud58I7wq4sE0P" target="_top">Klasa 8</a></div>
+<a class="buy" href="https://j5svubndmhemfeau.public.blob.vercel-storage.com/sample-grades-48.pdf" target="_top">Darmowy rozdział 1 · PDF</a>
+<a class="more" href="/karty-pracy-angielski-klasa-4/" target="_top">Zobacz, co jest w pakiecie →</a>
+</div>
+<div class="wbshop-card">
+<img src="/img/okladka-matura-2027.jpg" alt="Zeszyt ćwiczeń Matura 2027 – okładka" loading="lazy">
+<h3>Matura 2027 · jesienny zeszyt</h3>
+<div class="price">30 zł</div>
+<p>Mówienie, czytanie, pisanie, słuchanie. Licencja nauczyciela.</p>
+<a class="buy" href="https://buy.stripe.com/00w7sMgcj9i16cM6sm4sE00" target="_top">Kup teraz · 30 zł</a>
+<a class="more" href="/matura-ustna-angielski-2027/" target="_top">Matura ustna – pytania do ćwiczeń →</a>
+</div>
+<div class="wbshop-card">
+<div class="txtcover">30 Days<br>of Speaking</div>
+<h3>30 Days of Speaking</h3>
+<div class="price">30 zł</div>
+<p>Codzienne rozmowy – interaktywny PDF, 41 stron. Pobierasz od razu.</p>
+<a class="buy" href="https://buy.stripe.com/28EeVe0dl8dX44E5oi4sE0Q" target="_top">Kup teraz · 30 zł</a>
+<a class="more" href="/sample-speaking/" target="_top">Darmowa próbka →</a>
+</div>
+</div>
+<div class="wb-freebie" data-source="matura-autumn-home" data-lang="pl">
+<h3>🎁 Darmowe: 4 strony z zeszytu Matura 2027</h3>
+<p>Wpisz e-mail – link do pobrania pojawi się od razu.</p>
+<form><input type="email" required placeholder="Twój e-mail" aria-label="E-mail"><button type="submit">Pobierz za darmo</button>
+<label><input type="checkbox" name="consent" required> Zgadzam się na e-maile od WordBloom (nowe materiały i promocje). Mogę wypisać się w każdej chwili. Administrator danych: Natalia Rduch, rduchnatalia@gmail.com.</label></form>
+<div class="ok"><p><b>Dziękuję!</b></p><a href="/sample-matura-autumn.html" target="_top">Otwórz darmowe strony →</a></div>
+</div>
+</div>
+<script src="/wb-freebie.js" defer></script>
+<!-- /wb-home-shop -->
+<div class="section grid"><div class="card"><h3>🎯 15-minute study</h3><p>Vocabulary → grammar → reading → speaking.</p><div class="pl">Słownictwo → gramatyka → czytanie → mówienie.</div><button class="btn primary" onclick="show('vocab')">Start</button></div><div class="card"><h3>🗣️ Speak Now</h3><p>Real questions and 60-second challenges.</p><div class="pl">Prawdziwe pytania i wyzwania 60-sekundowe.</div><button class="btn secondary" onclick="show('speaking')">Speak</button></div><div class="card"><h3>📖 Reading Library</h3><p>Three reading choices at every level.</p><div class="pl">Trzy teksty do wyboru na każdym poziomie.</div><button class="btn secondary" onclick="show('reading')">Read</button></div></div><div class="section"><h2>Choose your level / Wybierz poziom</h2><div class="levels" id="homeLevels"></div></div></section>
 <section id="students" class="page"><div class="tag">MY LEARNING</div><h1>Your learning library / Twoja biblioteka</h1><div class="panel"><p>Pick your level first. Every skill below has study material, practice and a small task.</p><div class="pl">Najpierw wybierz poziom. Każda umiejętność zawiera materiał, ćwiczenie i krótkie zadanie.</div><div class="levels" id="studentLevels"></div></div><div class="section grid"><div class="card"><h3>🗣️ Speaking</h3><p>Questions, role-plays and 60-second challenges.</p></div><div class="card"><h3>🎧 Listening</h3><p>Short texts with playback, slower speed and questions.</p></div><div class="card"><h3>✍️ Writing</h3><p>Prompts, useful language and self-checklists.</p></div><div class="card"><h3>📖 Reading</h3><p>Three texts per level: everyday, information, and ideas & opinions.</p></div><div class="card"><h3>📚 Grammar</h3><p>Explanations, examples, quick checks and end-of-level reviews.</p></div><div class="card"><h3>🧠 Vocabulary</h3><p>Topic sets, English–Polish meanings and sentence practice.</p></div></div></section>
 <section id="speaking" class="page"><div class="tag">SPEAKING</div><h1>Speaking Studio 🗣️</h1><p>Use the pattern <b>answer → reason → example → follow-up</b>.</p><div class="pl">Odpowiedź → powód → przykład → pytanie dodatkowe.</div><div class="filters" id="sf"></div><div id="speak" class="grid"></div></section>
 <section id="listening" class="page"><div class="tag">LISTENING</div><h1>Listening Studio 🎧</h1><p>Read the short script, answer the question, then check the transcript.</p><div class="pl">Przeczytaj krótki tekst, odpowiedz na pytanie i sprawdź transkrypcję.</div><div class="filters" id="lf"></div><div id="listen" class="grid"></div></section>
