@@ -17,6 +17,7 @@ const PRODUCTS = {
   'k8-pakiet': { name: 'Klasa 8 · Pakiet na cały rok', link: 'plink_1UQcswJxbitbq8VlgWyVTNZZ', url: 'https://drive.google.com/drive/folders/1WUUseGK4KQYVuYj_IVFM_1JQwEoBcDSU' },
   'matura-2027': { name: 'Matura 2027 · Pełny zeszyt (licencja nauczyciela)', link: 'plink_1UQYvCJxbitbq8VlPe76oQUa', url: 'https://drive.google.com/file/d/1idTUj1akbrQ7pyipL1jogRAUbINcxi0A/view', licence: 'Licencja dla jednego nauczyciela – możesz drukować kopie dla swoich klas, prosimy nie udostępniać pliku dalej.' },
   // Files kept in the private Vercel Blob store "wordbloom-paid-packs"; served only after the payment check.
+  'e8-level-up': { name: 'E8 Level Up! · Egzamin ósmoklasisty 2027 · pełna wersja', link: 'plink_1UTnnfJxbitbq8Vlp0YOHyBm', file: 'e8-level-up-pelna-wersja.pdf', licence: 'Licencja dla jednego ucznia – prosimy nie udostępniać pliku dalej.' },
   'speaking-30': { name: '30 Days of Speaking · wersja interaktywna', link: 'plink_1US1sPJxbitbq8VluhUkoBOw', file: '30-days-of-speaking-interactive.pdf', licence: 'Licencja dla jednego ucznia – prosimy nie udostępniać pliku dalej.' },
 };
 
