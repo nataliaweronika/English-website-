@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/pobierz", "destination": "/api/pobierz" }
+    { "source": "/pobierz", "destination": "/api/pobierz" },
+    { "source": "/e8-level-up-darmowa-probka.pdf", "destination": "https://j5svubndmhemfeau.public.blob.vercel-storage.com/e8-level-up-darmowa-probka.pdf" }
   ]
 }
