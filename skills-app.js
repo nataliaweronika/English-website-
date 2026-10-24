@@ -21,7 +21,14 @@ var CFG = {
   },
   /* Paste each Stripe payment link here (buy.stripe.com/...). After payment, set the link's
      confirmation page to: https://wordbloom.ca/api/plan?plan=uczen-1m&session_id={CHECKOUT_SESSION_ID} */
-  payLinks: { 'uczen-1m': '', 'uczen-3m': '', 'uczen-6m': '', 'klasa-1m': '', 'klasa-3m': '', 'klasa-6m': '' }
+  payLinks: {
+    'uczen-1m': 'https://buy.stripe.com/00wfZi0dlbq98kUeYS4sE0S',
+    'uczen-3m': 'https://buy.stripe.com/eVq6oI5xFeClgRq3ga4sE0T',
+    'uczen-6m': 'https://buy.stripe.com/aFa6oIbW30Lv44EbMG4sE0U',
+    'klasa-1m': 'https://buy.stripe.com/eVq9AUaRZ51Lat24ke4sE0V',
+    'klasa-3m': 'https://buy.stripe.com/28EbJ2d079i19oY7wq4sE0W',
+    'klasa-6m': 'https://buy.stripe.com/3cIeVebW31Pz8kU4ke4sE0X'
+  }
 };
 
 /* ====================== helpers ====================== */
