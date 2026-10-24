@@ -1,6 +1,12 @@
 {
   "rewrites": [
     { "source": "/pobierz", "destination": "/api/pobierz" },
-    { "source": "/e8-level-up-darmowa-probka.pdf", "destination": "https://j5svubndmhemfeau.public.blob.vercel-storage.com/e8-level-up-darmowa-probka.pdf" }
+    { "source": "/e8-level-up-darmowa-probka.pdf", "destination": "https://j5svubndmhemfeau.public.blob.vercel-storage.com/e8-level-up-darmowa-probka.pdf" },
+    { "source": "/sample-grades-13.pdf", "destination": "https://j5svubndmhemfeau.public.blob.vercel-storage.com/sample-grades-13.pdf" },
+    { "source": "/sample-grades-48.pdf", "destination": "https://j5svubndmhemfeau.public.blob.vercel-storage.com/sample-grades-48.pdf" },
+    { "source": "/4-Sample_A4_print-bfa68ee1.pdf", "destination": "https://j5svubndmhemfeau.public.blob.vercel-storage.com/4-Sample_A4_print-bfa68ee1.pdf" },
+    { "source": "/4-WordBloom-Speaking-Sample-iPad-REFINED.pdf", "destination": "https://j5svubndmhemfeau.public.blob.vercel-storage.com/4-WordBloom-Speaking-Sample-iPad-REFINED.pdf" },
+    { "source": "/5-WordBloom-Speaking-Sample-phone-REFINED.pdf", "destination": "https://j5svubndmhemfeau.public.blob.vercel-storage.com/5-WordBloom-Speaking-Sample-phone-REFINED.pdf" },
+    { "source": "/6-WordBloom-Speaking-Sample-desktop-REFINED.pdf", "destination": "https://j5svubndmhemfeau.public.blob.vercel-storage.com/6-WordBloom-Speaking-Sample-desktop-REFINED.pdf" }
   ]
 }
