@@ -13,12 +13,12 @@ const CONTACT = 'rduchnatalia@gmail.com';
 
 // Keep in sync with CFG.plans in skills-app.js. `link` (plink_...) is optional but recommended.
 const PLANS = {
-  'uczen-1m': { kind: 'student', months: 1, price: 19, label: 'Plan ucznia · 1 miesiąc', link: '' },
-  'uczen-3m': { kind: 'student', months: 3, price: 49, label: 'Plan ucznia · 3 miesiące', link: '' },
-  'uczen-6m': { kind: 'student', months: 6, price: 89, label: 'Plan ucznia · 6 miesięcy', link: '' },
-  'klasa-1m': { kind: 'teacher', months: 1, price: 59, label: 'Plan klasowy · 1 miesiąc', link: '' },
-  'klasa-3m': { kind: 'teacher', months: 3, price: 149, label: 'Plan klasowy · 3 miesiące', link: '' },
-  'klasa-6m': { kind: 'teacher', months: 6, price: 269, label: 'Plan klasowy · 6 miesięcy', link: '' },
+  'uczen-1m': { kind: 'student', months: 1, price: 19, label: 'Plan ucznia · 1 miesiąc', link: 'plink_1UUCURJxbitbq8Vl5wkXurTn' },
+  'uczen-3m': { kind: 'student', months: 3, price: 49, label: 'Plan ucznia · 3 miesiące', link: 'plink_1UUCWIJxbitbq8VlciGK6YyS' },
+  'uczen-6m': { kind: 'student', months: 6, price: 89, label: 'Plan ucznia · 6 miesięcy', link: 'plink_1UUCXwJxbitbq8VlH9qRM61V' },
+  'klasa-1m': { kind: 'teacher', months: 1, price: 59, label: 'Plan klasowy · 1 miesiąc', link: 'plink_1UUCZKJxbitbq8VlGcyWSPkg' },
+  'klasa-3m': { kind: 'teacher', months: 3, price: 149, label: 'Plan klasowy · 3 miesiące', link: 'plink_1UUCanJxbitbq8VlswLNG1Rf' },
+  'klasa-6m': { kind: 'teacher', months: 6, price: 269, label: 'Plan klasowy · 6 miesięcy', link: 'plink_1UUCcDJxbitbq8VlwwD3NZw1' },
 };
 
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
