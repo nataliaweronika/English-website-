@@ -53,6 +53,19 @@ iframe{display:block;width:100%;height:100%;border:0}
     }
 
 
+    // Reading, Listening, Speaking and Writing now live in the redesigned Skills Studio.
+    var SKILL_PAGES={reading:1,listening:1,speaking:1,writing:1};
+    d.addEventListener('click',function(e){
+      var b=e.target.closest&&e.target.closest('.nav button[data-page]');
+      if(b&&SKILL_PAGES[b.getAttribute('data-page')]){e.preventDefault();e.stopImmediatePropagation();window.location.href='skills.html#'+b.getAttribute('data-page');}
+    },true);
+    var fw=frame.contentWindow;
+    if(fw&&typeof fw.show==='function'&&!fw.show.__skills){var orig=fw.show;fw.show=function(p){if(SKILL_PAGES[p]){window.location.href='skills.html#'+p;return;}return orig.apply(this,arguments);};fw.show.__skills=true;}
+    if(nav&&!d.getElementById('wbSkillsNew')){
+      var $sk=nav.querySelector('button[data-page="speaking"]');
+      if($sk){var tag=d.createElement('span');tag.id='wbSkillsNew';tag.textContent='NEW';tag.style.cssText='margin-left:6px;font:800 10px Inter,system-ui,sans-serif;background:#5968e8;color:#fff;border-radius:99px;padding:2px 6px;vertical-align:middle';$sk.appendChild(tag);}
+    }
+
     // Keep Home first; My Words has its own public sample and personal-code gate.
     var homeButton=nav&&nav.querySelector('button[data-page="home"]');
     if(homeButton)nav.insertBefore(homeButton,nav.firstChild);
