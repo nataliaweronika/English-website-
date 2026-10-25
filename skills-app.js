@@ -271,6 +271,14 @@ function garden() {
   var s = ''; for (var i = 0; i < Math.min(n, 24); i++) s += fl[(i * 3) % fl.length];
   return s + (n > 24 ? ' <span style="font-size:15px">+' + (n - 24) + '</span>' : '');
 }
+var LESSON_URL = 'https://buy.stripe.com/8x2dRa9NV51L30Ag2W4sE10';
+function lessonCard() {
+  if (P.band !== 'adult') return '';
+  return '<div class="card" style="margin-top:18px;background:#fdf1dc;border:2px solid #f0c987;display:flex;gap:16px;align-items:center;flex-wrap:wrap">' +
+    '<div style="font-size:42px">📅</div><div style="flex:1;min-width:220px"><b style="font-size:20px">Chcesz mówić swobodniej? Zarezerwuj lekcję online</b>' +
+    '<p style="margin:4px 0 0">Indywidualna lekcja angielskiego dla dorosłych: rozmowa, praca, podróże, rozmowy o pracę. 60 minut · 80 zł.</p></div>' +
+    '<a class="btn" href="' + LESSON_URL + '" target="_blank" rel="noopener">Zarezerwuj lekcję online</a></div>';
+}
 function viewHome() {
   var b = D.bands[P.band], wk = weekLog().length, name = P.name || (A.kind === 'pupil' ? A.name : '');
   var h = '';
@@ -287,6 +295,7 @@ function viewHome() {
     h += '<div class="card assign" style="margin-top:18px"><div class="eyebrow" style="color:#9a5b00">📌 Zadanie od nauczyciela · Homework</div>' + (A.assignment.note ? '<p style="margin:6px 0 10px"><b>' + esc(A.assignment.note) + '</b></p>' : '') + '<div class="today">' +
       A.assignment.ids.filter(function (id) { return ALL[id]; }).map(function (id) { return todoRow(ALL[id].act, ALL[id].skill); }).join('') + '</div></div>';
   }
+  h += lessonCard();
   var plan = SKILLS.map(function (s) { var a = nextFor(s); return a ? todoRow(a, s) : ''; }).join('');
   h += '<div class="grid g2" style="margin-top:18px;align-items:start"><div class="card"><div class="eyebrow">Na dziś · Today</div><h2 style="font-size:26px;margin:4px 0 12px">Twój plan na dziś</h2><div class="today">' + (plan || '<p>🎉 Wszystko zrobione na tym poziomie! Spróbuj ponownie, aby zdobyć 3 gwiazdki, albo wybierz wyższy poziom.</p>') + '</div></div>' +
     '<div class="grid g2 keep2">' + SKILLS.map(function (s) { var k = D.skills[s], st = skillStats(s); return '<a class="skilltile" href="#' + s + '" style="text-decoration:none;color:inherit"><div class="ic" style="background:' + k.soft + '">' + k.emoji + '</div><h3>' + k.en + '</h3><div class="pl" style="margin-top:-6px">' + k.pl + '</div><small style="font-weight:700;color:var(--muted)">' + st.done + ' / ' + st.total + ' ćwiczeń</small><div class="bar"><i style="width:' + (st.done / st.total * 100) + '%;background:' + k.color + '"></i></div></a>'; }).join('') + '</div></div>';
@@ -314,6 +323,7 @@ function viewSkill(s) {
     return '<button class="act' + (open ? '' : ' locked') + '" data-open="' + a.id + '"><span class="type" style="color:' + k.color + '">' + t[0] + '</span><small class="pl" style="margin-top:-6px">' + t[1] + '</small><h3>' + esc(a.title) + '</h3><span class="pl">' + esc(a.pl || '') + '</span>' +
       '<div class="foot">' + (d ? starsHtml(d.stars) : starsHtml(0)) + (assigned ? '<span class="badge task">📌 zadanie</span>' : !A.full && i === 0 ? '<span class="badge free">Za darmo</span>' : open ? '' : '<span class="badge lock">🔒 Pełna wersja</span>') + '</div></button>';
   }).join('') + '</div>';
+  h += lessonCard();
   h += '<div class="card" style="margin-top:20px"><b>Inne poziomy · Other levels</b><div class="bands" style="margin-top:10px">' + Object.keys(D.bands).map(function (x) { var y = D.bands[x]; return '<button class="band' + (x === P.band ? ' on' : '') + '" data-band="' + x + '"><b>' + y.emoji + ' ' + y.name + '</b><small>' + y.level + '</small></button>'; }).join('') + '</div></div>';
   if (!A.full) h += '<div class="card lockcta" style="margin-top:16px"><div class="row" style="justify-content:space-between"><div><h3 style="font-size:22px">Odblokuj wszystkie ćwiczenia</h3><div class="pl">60 interaktywnych ćwiczeń w 3 poziomach · od 19 zł / miesiąc</div></div><div class="row"><button class="btn light" data-code>🔑 Mam kod</button><a class="btn" href="#plans">Zobacz plany</a></div></div></div>';
   $('#v-skill').innerHTML = h;

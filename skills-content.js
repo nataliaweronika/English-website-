@@ -1,12 +1,14 @@
 /* WordBloom Skills Studio – activity content.
-   Three school bands: k13 (Klasa 1–3, Pre-A1/A1), k46 (Klasa 4–6, A1–A2), k78 (Klasa 7–8, A2–B1, E8).
+   Three school bands: k13 (Klasa 1–3, Pre-A1/A1), k46 (Klasa 4–6, A1–A2), k78 (Klasa 7–8, A2–B1, E8),
+   plus one adult band: adult (Dorośli, A2–B2, everyday English, work and travel).
    Each skill has 5 activities of different types. The FIRST activity in every skill is a free sample.
    To add an activity: copy one block of the same "type" and change the text. */
 window.WB_SKILLS = {
 bands: {
   k13: { name: 'Klasa 1–3', en: 'Little Learners', level: 'Pre-A1 · A1', emoji: '🐣' },
   k46: { name: 'Klasa 4–6', en: 'Explorers', level: 'A1 · A2', emoji: '🧭' },
-  k78: { name: 'Klasa 7–8', en: 'Achievers · E8', level: 'A2 · B1', emoji: '🚀' }
+  k78: { name: 'Klasa 7–8', en: 'Achievers · E8', level: 'A2 · B1', emoji: '🚀' },
+  adult: { name: 'Dorośli', en: 'Adults · Everyday English', level: 'A2 · B2', emoji: '☕' }
 },
 skills: {
   reading:   { en: 'Reading',   pl: 'Czytanie',  emoji: '📖', color: '#2f9e6e', soft: '#e3f6ec', tip: 'Read slowly. Tap any underlined word to see it in Polish.', tipPl: 'Czytaj powoli. Dotknij podkreślonego słowa, aby zobaczyć tłumaczenie.' },
@@ -196,6 +198,60 @@ writing: [
    prompt:'You are organising a picnic for your class. Write an email to your friend from England: 1) say why you are organising it, 2) invite them and say when it is, 3) ask them to bring something.', promptPl:'Organizujesz piknik klasowy. Napisz e-mail do kolegi/koleżanki z Anglii: 1) napisz, dlaczego go organizujesz, 2) zaproś i podaj termin, 3) poproś, aby coś przyniósł/przyniosła.',
    frames:['Hi …,','I\'m writing to tell you that…','We are organising it because…','Would you like to come? It\'s on…','Could you bring…?','Hope to see you there!','Best wishes,'], words:['because','would you like','could you'],
    model:'Hi Emma,\nI\'m writing to tell you that my class is organising a picnic. We are organising it because it\'s the end of the school year and we want to celebrate. Would you like to come? It\'s on Saturday, 20 June, at 12 in the city park. Could you bring some sandwiches or a frisbee? Hope to see you there!\nBest wishes,\nKasia' }
+]
+},
+/* ============================== DOROŚLI (ADULTS) ============================== */
+adult: {
+reading: [
+ { id:'rad-1', type:'story', title:'A new job in Toronto', pl:'Nowa praca w Toronto',
+   text:['Marta moved from Wrocław to Toronto two years ago. At first, she worked in a café, even though she had a degree in accounting.','Her English was good enough for everyday life, but job interviews made her nervous. She started practising with an online teacher twice a week and recorded herself answering typical interview questions.','Six months later, she got a job as an assistant accountant. "The grammar wasn\'t the problem," she says. "Confidence was. Once I stopped translating everything in my head, I started to enjoy speaking."'],
+   gloss:{moved:'przeprowadziła się','even though':'mimo że',degree:'dyplom',accounting:'księgowość','good enough':'wystarczająco dobry',nervous:'zdenerwowana',typical:'typowe',assistant:'asystent/ka',confidence:'pewność siebie',translating:'tłumaczenie',enjoy:'cieszyć się'},
+   q:[['What did Marta study?',['tourism','accounting','English'],1],['What was difficult for her?',['everyday shopping','job interviews','writing emails'],1],['How did she practise?',['with an online teacher','at evening school','with her children'],0],['According to Marta, the main problem was…',['grammar','confidence','vocabulary'],1]] },
+ { id:'rad-2', type:'match', title:'Everyday phrases at work', pl:'Zwroty w pracy', pairs:[['Could you send me the file?','Możesz mi wysłać plik?'],['I\'ll get back to you.','Odezwę się do Ciebie.'],['Let\'s schedule a meeting.','Umówmy spotkanie.'],['I\'m running late.','Spóźnię się.'],['Sorry, I didn\'t catch that.','Przepraszam, nie dosłyszałem/am.'],['It\'s up to you.','To zależy od Ciebie.']] },
+ { id:'rad-3', type:'tf', title:'Hotel information', pl:'Informacja hotelowa',
+   text:'Welcome to the Riverside Hotel. Breakfast is served from 7 to 10 a.m. in the restaurant on the ground floor. Check-out is at 11 a.m.; late check-out until 2 p.m. is available for an extra 20 euros. Free Wi-Fi is available in all rooms – the password is on your key card. The gym on the top floor is open 24 hours a day.',
+   items:[['Breakfast finishes at 10 a.m.',true],['The restaurant is on the top floor.',false],['Late check-out is free.',false],['The Wi-Fi password is on the key card.',true],['The gym closes at night.',false]] },
+ { id:'rad-4', type:'gap', title:'An email to a landlord', pl:'E-mail do właściciela mieszkania',
+   text:'Dear Mr Brown, I am writing to [let] you know that the heating in my flat [has] not been working since Monday. Could you [arrange] for someone to repair it as soon as possible? I am at home [every] evening after 6 p.m. I look forward to [hearing] from you. Kind regards, Anna Nowak',
+   extra:['make','hear','each'] },
+ { id:'rad-5', type:'order', title:'At the doctor\'s', pl:'U lekarza', intro:'Put the conversation in order. / Ułóż rozmowę po kolei.',
+   items:['Good morning. What seems to be the problem?','I\'ve had a sore throat and a headache for three days.','Have you got a temperature?','Yes, about 38 degrees last night.','OK, I\'ll write you a prescription. Drink plenty of water and rest.','Thank you, doctor.'] }
+],
+listening: [
+ { id:'lad-1', type:'lmcq', title:'Booking a table', pl:'Rezerwacja stolika',
+   script:[['Waiter','Good evening, Bella Roma. How can I help?'],['Kasia','Hi, I\'d like to book a table for Friday evening, please.'],['Waiter','Certainly. For how many people?'],['Kasia','For four. At about half past seven?'],['Waiter','I\'m afraid we\'re fully booked at seven thirty. Would eight o\'clock be OK?'],['Kasia','Yes, that\'s fine. Could we have a table by the window?'],['Waiter','Of course. Can I take your name and phone number?']],
+   q:[['When does Kasia want to eat?',['Friday','Saturday','Thursday'],0],['How many people are coming?',['two','four','six'],1],['What time is the booking?',['7:00','7:30','8:00'],2],['What does Kasia ask for?',['a quiet corner','a table by the window','a vegetarian menu'],1]] },
+ { id:'lad-2', type:'ltf', title:'Airport announcement', pl:'Komunikat na lotnisku',
+   script:'Attention, please. Passengers on flight LO 281 to Warsaw are informed that the flight has been delayed by forty-five minutes due to bad weather. Boarding will now begin at ten fifteen from gate B twelve. Passengers are kindly asked to have their boarding passes and passports ready. We apologise for any inconvenience.',
+   items:[['The flight is going to Warsaw.',true],['The delay is one hour.',false],['The delay is because of the weather.',true],['Boarding is from gate B20.',false]] },
+ { id:'lad-3', type:'dict', title:'Everyday dictation', pl:'Dyktando z życia codziennego', items:['Could you tell me how to get to the station?','I\'d like to make an appointment for next Tuesday.','We\'ve been living here for almost three years.','If I had more time, I would travel more.'] },
+ { id:'lad-4', type:'pick', title:'Where are they?', pl:'Gdzie oni są?',
+   items:[{say:'Would you like a receipt? And do you need a bag?',a:'🛒 a shop',opts:['🛒 a shop','🏦 a bank','🏥 a hospital']},{say:'Your room is on the third floor. Here is your key card.',a:'🏨 a hotel',opts:['🚉 a station','🏨 a hotel','🍽️ a restaurant']},{say:'A single to Manchester, please. Which platform is it?',a:'🚉 a station',opts:['✈️ an airport','🚉 a station','🛒 a shop']},{say:'Are you ready to order, or do you need a few more minutes?',a:'🍽️ a restaurant',opts:['🍽️ a restaurant','🏨 a hotel','🏦 a bank']},{say:'I\'d like to open a savings account, please.',a:'🏦 a bank',opts:['🏥 a hospital','🛒 a shop','🏦 a bank']}] },
+ { id:'lad-5', type:'lorder', title:'A busy Monday', pl:'Pracowity poniedziałek',
+   script:'On Monday, Piotr overslept and missed his usual bus, so he took a taxi to work. As soon as he arrived, he had a meeting with a new client. At lunchtime, he called the garage about his car. In the afternoon, he finished a long report. Finally, in the evening, he went to his English lesson online.',
+   items:['😴 He overslept','🚕 He took a taxi','🤝 He met a new client','📞 He called the garage','📄 He finished a report','💻 He had an English lesson'] }
+],
+speaking: [
+ { id:'sad-1', type:'challenge', title:'Small talk', pl:'Small talk – rozmowa na luzie', seconds:60,
+   qs:['What do you do, and what do you like about your job?','How do you usually spend your weekends?','Tell me about the best holiday you\'ve ever had.','Why are you learning English?'], frames:['I work as… / I\'m a…','What I like most is…','Usually I… but sometimes…','The best trip I\'ve ever had was…','I\'m learning English because…'] },
+ { id:'sad-2', type:'roleplay', title:'Job interview', pl:'Rozmowa o pracę', you:'B',
+   lines:[['A','Thank you for coming. Could you tell me a little about yourself?'],['B','Of course. I\'ve worked in customer service for five years.'],['A','Why do you want to work for our company?'],['B','I really like your products, and I\'m looking for new challenges.'],['A','What are your biggest strengths?'],['B','I\'m well organised and I work well in a team.'],['A','Do you have any questions for us?'],['B','Yes. What would a typical day look like?']] },
+ { id:'sad-3', type:'picture', title:'Describe the situation', pl:'Opisz sytuację', scene:'🏢 💻 ☕ 👩‍💼 👨‍💼 📊',
+   prompts:['Describe what you can see.','What do you think the people are talking about?','Do you prefer working from home or in an office? Why?','What makes a good workplace?'], frames:['In the picture I can see…','It looks like they are…','They might be discussing…','Personally, I prefer… because…','For me, a good workplace is…'], seconds:90 },
+ { id:'sad-4', type:'repeat', title:'Polite requests', pl:'Uprzejme prośby', items:['Would you mind opening the window?','Could I possibly leave a bit earlier today?','I was wondering if you could help me.','Do you think you could call me back later?'] },
+ { id:'sad-5', type:'minimal', title:'Sounds Poles mix up', pl:'Dźwięki, które mylą Polacy', items:[['ship','sheep','🚢','🐑'],['think','sink','💭','🚰'],['live','leave','🏠','🚪'],['work','walk','💼','🚶']] }
+],
+writing: [
+ { id:'wad-1', type:'fix', title:'Typical mistakes of adult learners', pl:'Typowe błędy dorosłych',
+   items:[['I am working here since five years.','I have been working here for five years.','Duration up to now → present perfect + "for".'],['Can you explain me this?','Can you explain this to me?','explain something TO someone.'],['I want that you call me.','I want you to call me.','want + person + to + verb.'],['I will send it to you until Friday.','I will send it to you by Friday.','Deadline = "by", not "until".'],['The informations are on the website.','The information is on the website.','"information" is uncountable.']] },
+ { id:'wad-2', type:'unscramble', title:'Polite word order', pl:'Szyk w uprzejmych zdaniach', items:['Could you tell me what time it is?','I would like to book a room for two nights.','Do you know where the nearest pharmacy is?','I have just sent you the report.','We are looking forward to meeting you.'] },
+ { id:'wad-3', type:'wgap', title:'Formal or informal?', pl:'Formalnie czy nieformalnie?', hint:'Write the formal version. / Wpisz wersję formalną.',
+   items:[['Thanks for your email. → Thank you ___ your email.','for'],['Can you help me? → ___ you help me, please?','could|would'],['I want to ask about the job. → I would ___ to ask about the job.','like'],['Write back soon! → I look forward to ___ from you.','hearing'],['Sorry about the delay. → I ___ for the delay.','apologise|apologize']] },
+ { id:'wad-4', type:'spell', title:'Words for work and life', pl:'Słówka do pracy i życia', items:[['📅','appointment'],['🧾','receipt'],['🏠','accommodation'],['💼','colleague'],['📨','address'],['✅','necessary']] },
+ { id:'wad-5', type:'guided', title:'Email: rescheduling a meeting', pl:'E-mail: przełożenie spotkania', min:50,
+   prompt:'You cannot attend a meeting with a colleague on Thursday. Write an email: 1) apologise and explain why, 2) suggest a new day and time, 3) ask them to confirm.', promptPl:'Nie możesz przyjść na spotkanie ze współpracownikiem w czwartek. Napisz e-mail: 1) przeproś i wyjaśnij dlaczego, 2) zaproponuj nowy termin, 3) poproś o potwierdzenie.',
+   frames:['Hi …,','I\'m sorry, but I won\'t be able to…','The reason is that…','Would … at … work for you?','Could you let me know if…?','Best regards,'], words:['sorry','would','could you'],
+   model:'Hi Mark,\nI\'m sorry, but I won\'t be able to make our meeting on Thursday. The reason is that I have to visit a client in Kraków that day. Would Friday at 10 a.m. work for you instead? Could you let me know if that suits you?\nBest regards,\nEwa' }
 ]
 }
 },
