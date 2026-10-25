@@ -15,8 +15,8 @@ var CFG = {
     'uczen-1m':  { kind: 'student', months: 1, price: 19 },
     'uczen-3m':  { kind: 'student', months: 3, price: 49, best: true },
     'uczen-6m':  { kind: 'student', months: 6, price: 89 },
-    'klasa-1m':  { kind: 'teacher', months: 1, price: 59 },
-    'klasa-3m':  { kind: 'teacher', months: 3, price: 149, best: true },
+    'klasa-1m':  { kind: 'teacher', months: 1, price: 50 },
+    'klasa-3m':  { kind: 'teacher', months: 3, price: 135, best: true },
     'klasa-6m':  { kind: 'teacher', months: 6, price: 269 }
   },
   /* Paste each Stripe payment link here (buy.stripe.com/...). After payment, set the link's
@@ -25,8 +25,8 @@ var CFG = {
     'uczen-1m': 'https://buy.stripe.com/00wfZi0dlbq98kUeYS4sE0S',
     'uczen-3m': 'https://buy.stripe.com/eVq6oI5xFeClgRq3ga4sE0T',
     'uczen-6m': 'https://buy.stripe.com/aFa6oIbW30Lv44EbMG4sE0U',
-    'klasa-1m': 'https://buy.stripe.com/eVq9AUaRZ51Lat24ke4sE0V',
-    'klasa-3m': 'https://buy.stripe.com/28EbJ2d079i19oY7wq4sE0W',
+    'klasa-1m': 'https://buy.stripe.com/00w5kEe4bcudat29Ey4sE0Y',
+    'klasa-3m': 'https://buy.stripe.com/6oU7sM3px0Lv44Eg2W4sE0Z',
     'klasa-6m': 'https://buy.stripe.com/3cIeVebW31Pz8kU4ke4sE0X'
   }
 };
