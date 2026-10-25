@@ -249,9 +249,45 @@
 <button type="button" class="wbh-path student" onclick="show('students')"><span class="ico">🎓</span><span><b>I'm learning English</b><span class="what">Speaking, listening, reading, writing, grammar and vocabulary at your level, A1–C2. Matura prep included.</span><span class="go">Start learning →</span></span></button>
 <button type="button" class="wbh-path teacher" onclick="var t=document.getElementById('sklep');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})"><span class="ico">👩‍🏫</span><span><b>I teach English</b><span class="what">Printable worksheets for grades 1–8, Matura 2027, E8 exam prep and speaking packs. Try a free sample first.</span><span class="go">See materials →</span></span></button>
 </div>
-<a class="wbh-lesson" href="https://buy.stripe.com/8x2dRa9NV51L30Ag2W4sE10" target="_blank" rel="noopener">📅 Book &amp; pay for an online lesson <small>· Zarezerwuj i zapłać · 60 min · 80 zł</small></a>
+<a class="wbh-lesson" href="https://buy.stripe.com/8x2dRa9NV51L30Ag2W4sE10" target="_blank" rel="noopener">📅 Zarezerwuj lekcję online <small>· indywidualnie, 60 min</small></a>
 <ul class="wbh-trust"><li>✓ 6 levels, A1–C2</li><li>✓ Speaking, listening, reading &amp; writing</li><li>✓ Free samples before you buy</li><li>✓ Instant PDF download</li><li>🌱 <a href="about-me.html" target="_top">Made by Natalia Rduch</a></li></ul>
-</div><!-- wb-home-shop: Dla nauczycieli / Sklep (homepage) -->
+</div><!-- wb-home-studio: Skills Studio offer on the home page -->
+<style>
+.wbst{margin-top:25px;background:linear-gradient(135deg,#1f2a5c,#3a4bb8);color:#fff;border-radius:24px;padding:26px}
+.wbst .tag{color:#c9d1ff}
+.wbst h2{margin:4px 0 6px;color:#fff}
+.wbst .sub{margin:0 0 4px;opacity:.95}
+.wbst .subpl{margin:0 0 16px;opacity:.75;font-size:14px}
+.wbst-levels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.wbst-level{display:block;background:#fff;color:#173047;text-decoration:none;border-radius:16px;padding:14px 16px;transition:transform .15s}
+.wbst-level:hover,.wbst-level:focus-visible{transform:translateY(-2px)}
+.wbst-level b{display:block;font-size:17px}
+.wbst-level small{color:#59657e;font-weight:600}
+.wbst-level.adult{background:#fdf1dc}
+.wbst-skills{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0;padding:0;list-style:none}
+.wbst-skills li{background:rgba(255,255,255,.14);border-radius:999px;padding:6px 12px;font-weight:700;font-size:14px}
+.wbst-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.wbst-cta a{display:inline-block;flex:0 0 auto;width:auto;border-radius:999px;padding:12px 20px;font-weight:800;text-decoration:none}
+.wbst-cta .wbst-go{background:#fff;color:#1f2a5c}
+.wbst-cta .wbst-alt{background:rgba(255,255,255,.14);color:#fff}
+@media(max-width:800px){.wbst-levels{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<div class="wbst">
+<div class="tag">SKILLS STUDIO · NAUKA KROK PO KROKU</div>
+<h2>Czytanie, słuchanie, mówienie i pisanie – po 5 minut dziennie</h2>
+<p class="sub">Interaktywne ćwiczenia dla dzieci, nastolatków (E8) i dorosłych. Pierwsze ćwiczenie w każdej umiejętności jest za darmo.</p>
+<p class="subpl">Interactive practice for kids, teens and adults. The first activity in every skill is free.</p>
+<div class="wbst-levels">
+<a class="wbst-level" href="skills.html?band=k13#home" target="_top"><b>🐣 Klasa 1–3</b><small>Pre-A1 · A1</small></a>
+<a class="wbst-level" href="skills.html?band=k46#home" target="_top"><b>🧭 Klasa 4–6</b><small>A1 · A2</small></a>
+<a class="wbst-level" href="skills.html?band=k78#home" target="_top"><b>🚀 Klasa 7–8 · E8</b><small>A2 · B1</small></a>
+<a class="wbst-level adult" href="skills.html?band=adult#home" target="_top"><b>☕ Dorośli</b><small>A2 · B2 · praca, podróże, codzienność</small></a>
+</div>
+<ul class="wbst-skills"><li>📖 Czytanie</li><li>🎧 Słuchanie</li><li>🗣️ Mówienie</li><li>✍️ Pisanie</li><li>👪 Widok dla rodzica</li><li>👩‍🏫 Kody klasowe dla nauczycieli</li></ul>
+<div class="wbst-cta"><a class="wbst-go" href="skills.html#home" target="_top">Wypróbuj za darmo →</a><a class="wbst-alt" href="skills.html#plans" target="_top">Zobacz plany i ceny</a></div>
+</div>
+<!-- /wb-home-studio -->
+<!-- wb-home-shop: Dla nauczycieli / Sklep (homepage) -->
 <style>
 .wbshop{margin-top:25px}
 .wbshop h2{margin:0 0 4px}
@@ -354,7 +390,7 @@
 </div>
 <script src="/wb-freebie.js" defer></script>
 <!-- /wb-home-shop -->
-<div class="section grid"><div class="card"><h3>🎯 15-minute study</h3><p>Vocabulary → grammar → reading → speaking.</p><div class="pl">Słownictwo → gramatyka → czytanie → mówienie.</div><button class="btn primary" onclick="show('vocab')">Start</button></div><div class="card"><h3>🗣️ Speak Now</h3><p>Real questions and 60-second challenges.</p><div class="pl">Prawdziwe pytania i wyzwania 60-sekundowe.</div><button class="btn secondary" onclick="show('speaking')">Speak</button></div><div class="card"><h3>📖 Reading Library</h3><p>Three reading choices at every level.</p><div class="pl">Trzy teksty do wyboru na każdym poziomie.</div><button class="btn secondary" onclick="show('reading')">Read</button></div></div><div class="section"><h2>Choose your level / Wybierz poziom</h2><div class="levels" id="homeLevels"></div></div></section>
+<h2 style="margin:28px 0 4px">Szybki trening · Quick practice</h2><div class="section grid" style="margin-top:8px"><div class="card"><h3>🎯 15-minute study</h3><p>Vocabulary → grammar → reading → speaking.</p><div class="pl">Słownictwo → gramatyka → czytanie → mówienie.</div><button class="btn primary" onclick="show('vocab')">Start</button></div><div class="card"><h3>🗣️ Speak Now</h3><p>Real questions and 60-second challenges.</p><div class="pl">Prawdziwe pytania i wyzwania 60-sekundowe.</div><button class="btn secondary" onclick="show('speaking')">Speak</button></div><div class="card"><h3>📖 Reading Library</h3><p>Three reading choices at every level.</p><div class="pl">Trzy teksty do wyboru na każdym poziomie.</div><button class="btn secondary" onclick="show('reading')">Read</button></div></div><div class="section"><h2>Choose your level / Wybierz poziom</h2><div class="levels" id="homeLevels"></div></div></section>
 <section id="students" class="page"><div class="tag">MY LEARNING</div><h1>Your learning library / Twoja biblioteka</h1><div class="panel"><p>Pick your level first. Every skill below has study material, practice and a small task.</p><div class="pl">Najpierw wybierz poziom. Każda umiejętność zawiera materiał, ćwiczenie i krótkie zadanie.</div><div class="levels" id="studentLevels"></div></div><div class="section grid"><div class="card"><h3>🗣️ Speaking</h3><p>Questions, role-plays and 60-second challenges.</p></div><div class="card"><h3>🎧 Listening</h3><p>Short texts with playback, slower speed and questions.</p></div><div class="card"><h3>✍️ Writing</h3><p>Prompts, useful language and self-checklists.</p></div><div class="card"><h3>📖 Reading</h3><p>Three texts per level: everyday, information, and ideas & opinions.</p></div><div class="card"><h3>📚 Grammar</h3><p>Explanations, examples, quick checks and end-of-level reviews.</p></div><div class="card"><h3>🧠 Vocabulary</h3><p>Topic sets, English–Polish meanings and sentence practice.</p></div></div></section>
 <section id="speaking" class="page"><div class="tag">SPEAKING</div><h1>Speaking Studio 🗣️</h1><p>Use the pattern <b>answer → reason → example → follow-up</b>.</p><div class="pl">Odpowiedź → powód → przykład → pytanie dodatkowe.</div><div class="filters" id="sf"></div><div id="speak" class="grid"></div></section>
 <section id="listening" class="page"><div class="tag">LISTENING</div><h1>Listening Studio 🎧</h1><p>Read the short script, answer the question, then check the transcript.</p><div class="pl">Przeczytaj krótki tekst, odpowiedz na pytanie i sprawdź transkrypcję.</div><div class="filters" id="lf"></div><div id="listen" class="grid"></div></section>
