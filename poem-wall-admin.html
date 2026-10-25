@@ -21,4 +21,5 @@ $('poemForm').onsubmit=e=>{e.preventDefault();if(!$('poem').value.trim())return;
 $('publishFinal').onclick=()=>{$('confirm').close();save(true,pending);};$('cancelPublish').onclick=()=>{$('confirm').close();pending=null;};$('draft').onclick=async()=>{if(!$('poem').value.trim()){msg('Add the poem first.',true);return;}if(editing&&rows.find(r=>r.id===editing)?.published&&!await ask('Saving as a draft removes this poem from the public wall. Continue?'))return;save(false);};$('reset').onclick=async()=>{if($('poem').value&&!await ask('Discard this unsaved text?'))return;reset();};$('reload').onclick=()=>list().catch(error);$('logout').onclick=()=>{locked();reset();msg('Signed out.');};
 (async()=>{try{token=sessionStorage.getItem('wbWallToken')||'';if(token&&await rpc('wb_admin_check',{p_token:token})){$('login').hidden=true;$('owner').hidden=false;await list();}else locked();}catch(e){locked();msg('Sign in to manage the wall.');}preview();})();
 })();
-</script></main></body></html>
+</script></main><script defer src="/_vercel/insights/script.js"></script>
+</body></html>
