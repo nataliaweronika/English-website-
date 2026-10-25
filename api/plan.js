@@ -16,8 +16,8 @@ const PLANS = {
   'uczen-1m': { kind: 'student', months: 1, price: 19, label: 'Plan ucznia · 1 miesiąc', link: 'plink_1UUCURJxbitbq8Vl5wkXurTn' },
   'uczen-3m': { kind: 'student', months: 3, price: 49, label: 'Plan ucznia · 3 miesiące', link: 'plink_1UUCWIJxbitbq8VlciGK6YyS' },
   'uczen-6m': { kind: 'student', months: 6, price: 89, label: 'Plan ucznia · 6 miesięcy', link: 'plink_1UUCXwJxbitbq8VlH9qRM61V' },
-  'klasa-1m': { kind: 'teacher', months: 1, price: 59, label: 'Plan klasowy · 1 miesiąc', link: 'plink_1UUCZKJxbitbq8VlGcyWSPkg' },
-  'klasa-3m': { kind: 'teacher', months: 3, price: 149, label: 'Plan klasowy · 3 miesiące', link: 'plink_1UUCanJxbitbq8VlswLNG1Rf' },
+  'klasa-1m': { kind: 'teacher', months: 1, price: 50, label: 'Plan klasowy · 1 miesiąc', link: 'plink_1UUUmIJxbitbq8VlDbCWFIKQ' },
+  'klasa-3m': { kind: 'teacher', months: 3, price: 135, label: 'Plan klasowy · 3 miesiące', link: 'plink_1UUUniJxbitbq8Vl3TO0MSaC' },
   'klasa-6m': { kind: 'teacher', months: 6, price: 269, label: 'Plan klasowy · 6 miesięcy', link: 'plink_1UUCcDJxbitbq8VlwwD3NZw1' },
 };
 
