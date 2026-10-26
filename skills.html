@@ -93,8 +93,8 @@ input.field:focus,textarea.field:focus{border-color:var(--brand);outline:0}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .stat{background:#fff;border-radius:18px;box-shadow:var(--sh);padding:14px;text-align:center}
 .stat b{display:block;font:30px var(--serif)}.stat span{font-size:13px;color:var(--muted);font-weight:700}
-.bands{display:flex;gap:8px;flex-wrap:wrap}
-.band{border:2px solid var(--line);background:#fff;border-radius:16px;padding:10px 14px;text-align:left;min-width:150px}
+.bands{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.band{border:2px solid var(--line);background:#fff;border-radius:16px;padding:10px 14px;text-align:left;min-width:0}
 .band b{display:block}.band small{color:var(--muted);font-weight:600}
 .band.on{border-color:var(--brand);background:var(--brandsoft)}
 .skilltile{border:0;text-align:left;border-radius:22px;padding:20px;background:#fff;box-shadow:var(--sh);display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden;transition:transform .15s}
@@ -285,7 +285,7 @@ table.rep td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align
     <a class="nav" href="#listening" data-v="listening">🎧 Listening <span class="dot" style="background:var(--listening)"></span></a>
     <a class="nav" href="#speaking" data-v="speaking">🗣️ Speaking <span class="dot" style="background:var(--speaking)"></span></a>
     <a class="nav" href="#writing" data-v="writing">✍️ Writing <span class="dot" style="background:var(--writing)"></span></a>
-    <div class="sidelabel">Dorośli · Grown-ups</div>
+    <div class="sidelabel">Rodzice i nauczyciele · Parents &amp; teachers</div>
     <a class="nav" href="#parent" data-v="parent">👪 Dla rodzica</a>
     <a class="nav" href="#teacher" data-v="teacher">👩‍🏫 Dla nauczyciela</a>
     <a class="nav" href="#plans" data-v="plans">💳 Dostęp i ceny</a>

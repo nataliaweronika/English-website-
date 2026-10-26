@@ -267,7 +267,7 @@ function refresh() { route(); }
 function nextFor(skill) { var list = D.activities[P.band][skill]; for (var i = 0; i < list.length; i++) if (!P.done[list[i].id] && canOpen(list[i].id)) return list[i]; for (i = 0; i < list.length; i++) if (canOpen(list[i].id)) return null; return null; }
 function garden() {
   var fl = ['🌷', '🌼', '🌻', '🌸', '🪻', '🌹', '🌺'], n = Object.keys(P.done).length;
-  if (!n) return '🌱 <span style="font-size:14px;opacity:.8;letter-spacing:0">Twój ogród czeka. Każde ćwiczenie to nowy kwiatek! · Every activity grows a flower.</span>';
+  if (!n) return '<span style="display:flex;gap:10px;align-items:center">🌱 <span style="font-size:14px;opacity:.85;letter-spacing:0;line-height:1.4">Twój ogród czeka. Każde ćwiczenie to nowy kwiatek!<br><span style="opacity:.75">Every activity grows a flower.</span></span></span>';
   var s = ''; for (var i = 0; i < Math.min(n, 24); i++) s += fl[(i * 3) % fl.length];
   return s + (n > 24 ? ' <span style="font-size:15px">+' + (n - 24) + '</span>' : '');
 }
