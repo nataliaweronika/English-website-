@@ -276,8 +276,8 @@ function lessonCard() {
   if (P.band !== 'adult') return '';
   return '<div class="card" style="margin-top:18px;background:#fdf1dc;border:2px solid #f0c987;display:flex;gap:16px;align-items:center;flex-wrap:wrap">' +
     '<div style="font-size:42px">📅</div><div style="flex:1;min-width:220px"><b style="font-size:20px">Chcesz mówić swobodniej? Zarezerwuj lekcję online</b>' +
-    '<p style="margin:4px 0 0">Indywidualna lekcja angielskiego dla dorosłych: rozmowa, praca, podróże, rozmowy o pracę.</p></div>' +
-    '<a class="btn" href="' + LESSON_URL + '" target="_blank" rel="noopener">Zarezerwuj lekcję online</a></div>';
+    '<p style="margin:4px 0 0">Indywidualna lekcja angielskiego online: rozmowa, praca, podróże, rozmowy o pracę.</p></div>' +
+    '<a class="btn" href="' + LESSON_URL + '" target="_blank" rel="noopener">Zarezerwuj lekcję</a></div>';
 }
 function viewHome() {
   var b = D.bands[P.band], wk = weekLog().length, name = P.name || (A.kind === 'pupil' ? A.name : '');
