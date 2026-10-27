@@ -16,9 +16,9 @@ const PLANS = {
   'uczen-1m': { kind: 'student', months: 1, price: 19, label: 'Plan ucznia · 1 miesiąc', link: 'plink_1UUCURJxbitbq8Vl5wkXurTn' },
   'uczen-3m': { kind: 'student', months: 3, price: 49, label: 'Plan ucznia · 3 miesiące', link: 'plink_1UUCWIJxbitbq8VlciGK6YyS' },
   'uczen-6m': { kind: 'student', months: 6, price: 89, label: 'Plan ucznia · 6 miesięcy', link: 'plink_1UUCXwJxbitbq8VlH9qRM61V' },
-  'klasa-1m': { kind: 'teacher', months: 1, price: 50, label: 'Plan klasowy · 1 miesiąc', link: 'plink_1UUUmIJxbitbq8VlDbCWFIKQ' },
-  'klasa-3m': { kind: 'teacher', months: 3, price: 135, label: 'Plan klasowy · 3 miesiące', link: 'plink_1UUUniJxbitbq8Vl3TO0MSaC' },
-  'klasa-6m': { kind: 'teacher', months: 6, price: 269, label: 'Plan klasowy · 6 miesięcy', link: 'plink_1UUCcDJxbitbq8VlwwD3NZw1' },
+  'klasa-1m': { kind: 'teacher', months: 1, price: 30, label: 'Plan klasowy · 1 miesiąc', link: 'plink_1UVCrJJxbitbq8VlfkexumR6' },
+  'klasa-3m': { kind: 'teacher', months: 3, price: 80, label: 'Plan klasowy · 3 miesiące', link: 'plink_1UVCtwJxbitbq8VlEjVWpoiG' },
+  'klasa-6m': { kind: 'teacher', months: 6, price: 150, label: 'Plan klasowy · 6 miesięcy', link: 'plink_1UVCyMJxbitbq8Vl9RwBzYxU' },
 };
 
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
