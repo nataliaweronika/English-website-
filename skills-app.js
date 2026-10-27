@@ -15,9 +15,9 @@ var CFG = {
     'uczen-1m':  { kind: 'student', months: 1, price: 19 },
     'uczen-3m':  { kind: 'student', months: 3, price: 49, best: true },
     'uczen-6m':  { kind: 'student', months: 6, price: 89 },
-    'klasa-1m':  { kind: 'teacher', months: 1, price: 50 },
-    'klasa-3m':  { kind: 'teacher', months: 3, price: 135, best: true },
-    'klasa-6m':  { kind: 'teacher', months: 6, price: 269 }
+    'klasa-1m':  { kind: 'teacher', months: 1, price: 30 },
+    'klasa-3m':  { kind: 'teacher', months: 3, price: 80, best: true },
+    'klasa-6m':  { kind: 'teacher', months: 6, price: 150 }
   },
   /* Paste each Stripe payment link here (buy.stripe.com/...). After payment, set the link's
      confirmation page to: https://wordbloom.ca/api/plan?plan=uczen-1m&session_id={CHECKOUT_SESSION_ID} */
@@ -25,9 +25,9 @@ var CFG = {
     'uczen-1m': 'https://buy.stripe.com/00wfZi0dlbq98kUeYS4sE0S',
     'uczen-3m': 'https://buy.stripe.com/eVq6oI5xFeClgRq3ga4sE0T',
     'uczen-6m': 'https://buy.stripe.com/aFa6oIbW30Lv44EbMG4sE0U',
-    'klasa-1m': 'https://buy.stripe.com/00w5kEe4bcudat29Ey4sE0Y',
-    'klasa-3m': 'https://buy.stripe.com/6oU7sM3px0Lv44Eg2W4sE0Z',
-    'klasa-6m': 'https://buy.stripe.com/3cIeVebW31Pz8kU4ke4sE0X'
+    'klasa-1m': 'https://buy.stripe.com/3cIaEY1hpam5bx6aIC4sE11',
+    'klasa-3m': 'https://buy.stripe.com/3cI5kEe4b1Pz44E7wq4sE12',
+    'klasa-6m': 'https://buy.stripe.com/3cI7sM8JRfGpcBa2c64sE13'
   }
 };
 
