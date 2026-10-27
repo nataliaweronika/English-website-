@@ -188,7 +188,7 @@ speaking: [
  { id:'s78-5', type:'minimal', title:'Tricky sounds', pl:'Trudne dźwięki', items:[['thought','taught','💭','👩‍🏫'],['worm','warm','🪱','🔥'],['bad','bed','👎','🛏️'],['full','fool','🍽️','🤡']] }
 ],
 writing: [
- { id:'w78-1', type:'fix', title:'Typical Polish mistakes', pl:'Typowe błędy Polaków',
+ { id:'w78-1', type:'fix', title:'Typical mistakes', pl:'Typowe błędy',
    items:[['I am agree with you.','I agree with you.','"Agree" is a verb – no "am".'],['I have 14 years.','I am 14 years old.','Age in English uses "be".'],['He explained me the problem.','He explained the problem to me.','explain something TO someone.'],['I\'m living here since 2020.','I\'ve been living here since 2020.','"since" → present perfect (continuous).'],['People is very friendly.','People are very friendly.','"people" is plural.']] },
  { id:'w78-2', type:'unscramble', title:'Advanced word order', pl:'Szyk zdania', items:['I have never been to Spain.','She usually goes to bed early.','Could you tell me where the station is?','We were watching TV when the lights went out.','I am not as tall as my brother.'] },
  { id:'w78-3', type:'wgap', title:'Paraphrase (E8 style)', pl:'Parafraza w stylu E8', hint:'Complete so it means the same. / Uzupełnij, aby znaczenie było takie samo.',
