@@ -157,48 +157,69 @@ function askPupilName(classCode, className, teacher) {
   });
 }
 
-/* ====================== audio: text-to-speech ====================== */
-var synth = window.speechSynthesis;
-function voices() {
-  if (!synth) return [];
-  return synth.getVoices().filter(function (v) { return /^en[-_]/i.test(v.lang); }).sort(function (a, b) { return score(b) - score(a); });
-  function score(v) { var n = 0, nm = v.name || ''; if (/natural|enhanced|premium|neural/i.test(nm)) n += 100; if (/google (uk|us) english|microsoft (aria|jenny|guy|sonia|ryan|libby|emma|andrew)|samantha|daniel|serena/i.test(nm)) n += 50; if (/^en[-_]GB$/i.test(v.lang)) n += 10; if (v.default) n += 3; return n; }
-}
-if (synth && synth.onvoiceschanged !== undefined) synth.onvoiceschanged = function () {};
+/* ====================== audio: text-to-speech (shared British voices: wordbloom-voice.js) ====================== */
+var V = window.WBVoice;
+/* calmer speed for the youngest learners, natural speed for adults */
+function bandRate() { return { k13: 0.85, k46: 0.9, k78: 0.95, adult: 1 }[P.band] || 0.92; }
 function speak(text, opt) {
   opt = opt || {};
-  return new Promise(function (res) {
-    if (!synth) { toast('Ta przeglądarka nie odtwarza dźwięku. Spróbuj Chrome lub Safari.'); return res(); }
-    var u = new SpeechSynthesisUtterance(text), vs = voices();
-    var v = vs[opt.voice || 0] || vs[0]; if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'en-GB';
-    u.rate = opt.rate || 0.95; u.pitch = opt.pitch || 1;
-    var done = false; var fin = function () { if (!done) { done = true; res(); } };
-    u.onend = fin; u.onerror = fin; synth.speak(u);
-    setTimeout(fin, 1500 + text.length * 160 / (u.rate || 1));
-  });
+  if (!V || !V.supported) { toast('Ta przeglądarka nie odtwarza dźwięku. Spróbuj Chrome, Edge lub Safari.'); return Promise.resolve(); }
+  var r = opt.rate == null ? bandRate() : opt.rate;
+  if (opt.rate != null && opt.rate >= 0.8) r = opt.rate * bandRate() / 0.92; // keep each activity's relative speed, scaled to the level
+  return V.speak(text, { rate: r, voice: opt.voiceObj, pitch: opt.pitch });
 }
-function stopSpeak() { if (synth) synth.cancel(); }
-function secondVoice() { var vs = voices(); if (vs.length < 2) return { voice: 0, pitch: 1.3 }; var a = vs[0]; for (var i = 1; i < vs.length; i++) if (vs[i].name.split(' ')[0] !== a.name.split(' ')[0] || i > 2) return { voice: i, pitch: 1 }; return { voice: 1, pitch: 1.2 }; }
+function stopSpeak() { if (V) V.stop(); }
 function audioBox(getText, opts) {
   opts = opts || {};
   var box = document.createElement('div'); box.className = 'audio';
-  box.innerHTML = '<button class="play" type="button" aria-label="Odtwórz / Play">▶</button><button class="slow" type="button">🐢 Wolniej · Slow</button><div style="flex:1;min-width:140px"><b>' + (opts.label || 'Posłuchaj · Listen') + '</b><div class="pl">' + (opts.sub || 'Możesz słuchać wiele razy. · Play as many times as you like.') + '</div></div>';
-  var play = $('.play', box), slow = $('.slow', box), busy = false;
-  function run(rate) {
-    if (busy) { stopSpeak(); busy = false; play.classList.remove('on'); play.textContent = '▶'; return; }
-    busy = true; play.classList.add('on'); play.textContent = '■';
-    var t = getText(); var p = Array.isArray(t) ? speakLines(t, rate) : speak(t, { rate: rate });
-    p.then(function () { busy = false; play.classList.remove('on'); play.textContent = '▶'; if (opts.onPlayed) opts.onPlayed(); });
+  box.innerHTML = '<button class="play" type="button" aria-label="Odtwórz / Play">▶</button><button class="slow" type="button">🐢 Wolniej · Slow</button><div style="flex:1;min-width:140px"><b>' + (opts.label || 'Posłuchaj · Listen') + '</b><div class="pl">' + (opts.sub || 'Możesz słuchać wiele razy. · Play as many times as you like.') + '</div></div><button class="slow vpick" type="button" title="Zmień głos · Change voice" aria-label="Zmień głos">🔊 Głos</button>';
+  var play = $('.play', box), slow = $('.slow', box), busy = false, runId = 0;
+  function reset() { busy = false; play.classList.remove('on'); play.textContent = '▶'; }
+  function run(slowMode) {
+    if (busy) { speakLines.stop = true; stopSpeak(); reset(); return; }
+    var id = ++runId; busy = true; play.classList.add('on'); play.textContent = '■';
+    var rate = slowMode ? bandRate() * 0.75 : bandRate();
+    var t = getText(); var p = Array.isArray(t) ? speakLines(t, rate) : V.speak(t, { rate: rate });
+    p.then(function () { if (id !== runId) return; reset(); if (opts.onPlayed) opts.onPlayed(); });
   }
-  play.onclick = function () { run(0.95); }; slow.onclick = function () { run(0.7); };
-  box.autoplay = function () { setTimeout(function () { run(0.95); }, 350); };
+  play.onclick = function () { run(false); }; slow.onclick = function () { run(true); };
+  $('.vpick', box).onclick = voiceModal;
+  box.autoplay = function () { setTimeout(function () { run(false); }, 350); };
   return box;
 }
+/* dialogues: speaker A and speaker B get two different British voices (female + male when possible) */
 function speakLines(lines, rate) {
-  var who = {}, alt = secondVoice(), i = 0;
-  lines.forEach(function (l) { if (!(l[0] in who)) who[l[0]] = Object.keys(who).length % 2 ? alt : { voice: 0, pitch: 1 }; });
+  speakLines.stop = false;
+  var pr = V ? V.pair() : [null, null, 1.25], who = {}, i = 0;
+  lines.forEach(function (l) { if (!(l[0] in who)) who[l[0]] = Object.keys(who).length % 2 ? { v: pr[1], p: pr[2] } : { v: pr[0], p: 1 }; });
   return new Promise(function (res) {
-    (function next() { if (i >= lines.length || speakLines.stop) { speakLines.stop = false; return res(); } var l = lines[i++], v = who[l[0]]; speak(l[1], { rate: rate, voice: v.voice, pitch: v.pitch }).then(function () { setTimeout(next, 250); }); })();
+    (function next() {
+      if (i >= lines.length || speakLines.stop) { speakLines.stop = false; return res(); }
+      var l = lines[i++], w = who[l[0]];
+      V.speak(l[1], { rate: rate || bandRate(), voice: w.v, pitch: w.p }).then(function (ok) { if (ok === false && speakLines.stop) return res(); setTimeout(next, 380); });
+    })();
+  });
+}
+/* voice picker – the choice is remembered on this device and used everywhere on WordBloom */
+function voiceModal() {
+  if (!V || !V.supported) { toast('Ta przeglądarka nie odtwarza dźwięku.'); return; }
+  V.ready().then(function () {
+    var vs = V.list(), cur = V.main(), gb = vs.filter(V.isGB), other = vs.filter(function (v) { return !V.isGB(v); });
+    var sample = 'Hello! I\'m your WordBloom voice. Let\'s practise English together.';
+    function row(v) { var on = cur && v.voiceURI === cur.voiceURI; return '<div class="vrow' + (on ? ' on' : '') + '"><button type="button" class="vsel" data-uri="' + esc(v.voiceURI) + '">' + (on ? '✓ ' : '') + esc(V.label(v)) + '</button><button type="button" class="vtry" data-try="' + esc(v.voiceURI) + '" aria-label="Posłuchaj próbki">▶</button></div>'; }
+    var sp = V.getSpeed();
+    openModal('<h2>Wybierz głos 🔊</h2><p class="pl">Lektor czyta ćwiczenia po angielsku z akcentem brytyjskim. Wybór zapisze się na tym urządzeniu. · Choose a voice.</p>' +
+      '<div style="margin:14px 0 6px"><b>Tempo · Speed</b></div><div class="seg" id="vSpeed">' + [[0.85, '🐢 Wolniej'], [1, 'Normalnie'], [1.12, '🐇 Szybciej']].map(function (x) { return '<button type="button" data-sp="' + x[0] + '" class="' + (Math.abs(sp - x[0]) < .01 ? 'on' : '') + '">' + x[1] + '</button>'; }).join('') + '</div>' +
+      (gb.length ? '<div style="margin:16px 0 6px"><b>🇬🇧 Brytyjskie · British</b></div><div class="vlist">' + gb.map(row).join('') + '</div>' : '<div class="banner warn" style="margin-top:14px">Na tym urządzeniu nie ma brytyjskiego głosu. W Chrome lub Edge będzie ich więcej. Możesz też dodać głos „English (UK)” w ustawieniach systemu.</div>') +
+      (other.length ? '<details style="margin-top:12px"><summary style="font-weight:800;cursor:pointer">Inne akcenty · Other accents (' + other.length + ')</summary><div class="vlist" style="margin-top:8px">' + other.map(row).join('') + '</div></details>' : '') +
+      '<button class="btn big" type="button" style="width:100%;margin-top:16px" data-close>Gotowe · Done</button>' +
+      '<p class="pl" style="margin:10px 0 0;font-size:13px">✨ = najbardziej naturalne głosy. Najlepiej brzmią w Chrome i Edge na komputerze oraz w Safari na iPhonie/iPadzie.</p>');
+    var m = $('#mbox');
+    $$('[data-close]', m).forEach(function (b) { b.onclick = function () { stopSpeak(); closeModal(); }; });
+    $$('[data-sp]', m).forEach(function (b) { b.onclick = function () { V.speed(+b.getAttribute('data-sp')); $$('[data-sp]', m).forEach(function (x) { x.classList.toggle('on', x === b); }); V.speak(sample, { rate: bandRate() }); }; });
+    function find(u) { for (var i = 0; i < vs.length; i++) if (vs[i].voiceURI === u) return vs[i]; return null; }
+    $$('[data-try]', m).forEach(function (b) { b.onclick = function () { V.speak(sample, { rate: bandRate(), voice: find(b.getAttribute('data-try')) }); }; });
+    $$('[data-uri]', m).forEach(function (b) { b.onclick = function () { V.choose(b.getAttribute('data-uri')); toast('Zapisano głos 🔊 ' + V.label(V.main()).split(' · ')[0]); voiceModal(); V.speak(sample, { rate: bandRate() }); }; });
   });
 }
 
@@ -298,7 +319,7 @@ function viewHome() {
   h += lessonCard();
   var plan = SKILLS.map(function (s) { var a = nextFor(s); return a ? todoRow(a, s) : ''; }).join('');
   h += '<div class="grid g2" style="margin-top:18px;align-items:start"><div class="card"><div class="eyebrow">Na dziś · Today</div><h2 style="font-size:26px;margin:4px 0 12px">Twój plan na dziś</h2><div class="today">' + (plan || '<p>🎉 Wszystko zrobione na tym poziomie! Spróbuj ponownie, aby zdobyć 3 gwiazdki, albo wybierz wyższy poziom.</p>') + '</div></div>' +
-    '<div class="grid g2 keep2">' + SKILLS.map(function (s) { var k = D.skills[s], st = skillStats(s); return '<a class="skilltile" href="#' + s + '" style="text-decoration:none;color:inherit"><div class="ic" style="background:' + k.soft + '">' + k.emoji + '</div><h3>' + k.en + '</h3><div class="pl" style="margin-top:-6px">' + k.pl + '</div><small style="font-weight:700;color:var(--muted)">' + st.done + ' / ' + st.total + ' ćwiczeń</small><div class="bar"><i style="width:' + (st.done / st.total * 100) + '%;background:' + k.color + '"></i></div></a>'; }).join('') + '</div></div>';
+    '<div class="grid g2 keep2">' + SKILLS.map(function (s) { var k = D.skills[s], st = skillStats(s); return '<a class="skilltile" href="#' + s + '" style="text-decoration:none;color:inherit"><div class="ic" style="background:' + k.soft + '">' + k.emoji + '</div><h3>' + k.pl + '</h3><div class="pl" style="margin-top:-6px" lang="en">' + k.en + '</div><small style="font-weight:700;color:var(--muted)">' + st.done + ' / ' + st.total + ' ćwiczeń</small><div class="bar"><i style="width:' + (st.done / st.total * 100) + '%;background:' + k.color + '"></i></div></a>'; }).join('') + '</div></div>';
   $('#v-home').innerHTML = h;
   $$('[data-band]', $('#v-home')).forEach(function (b) { b.onclick = function () { P.band = b.getAttribute('data-band'); save(); refresh(); }; });
   bindTodos($('#v-home'));
@@ -306,7 +327,7 @@ function viewHome() {
 }
 function todoRow(a, s) {
   var k = D.skills[s], d = P.done[a.id], t = D.types[a.type];
-  return '<button class="todo' + (d ? ' done' : '') + '" data-open="' + a.id + '"><span class="ic" style="background:' + k.soft + '">' + k.emoji + '</span><span><b>' + esc(a.title) + '</b><small class="pl">' + k.en + ' · ' + t[0] + ' · ' + t[1] + '</small></span><span class="chev">' + (d ? starsHtml(d.stars) : canOpen(a.id) ? '→' : '🔒') + '</span></button>';
+  return '<button class="todo' + (d ? ' done' : '') + '" data-open="' + a.id + '"><span class="ic" style="background:' + k.soft + '">' + k.emoji + '</span><span><b>' + esc(a.title) + '</b><small class="pl">' + k.pl + ' · ' + t[1] + ' <span lang="en">· ' + t[0] + '</span></small></span><span class="chev">' + (d ? starsHtml(d.stars) : canOpen(a.id) ? '→' : '🔒') + '</span></button>';
 }
 function bindTodos(root) { $$('[data-open]', root).forEach(function (b) { b.onclick = function () { openAct(b.getAttribute('data-open')); }; }); $$('[data-code]', root).forEach(function (b) { b.onclick = codeModal; }); }
 function askName() {
@@ -316,11 +337,11 @@ function askName() {
 
 function viewSkill(s) {
   var k = D.skills[s], list = D.activities[P.band][s], st = skillStats(s), b = D.bands[P.band];
-  var h = '<div class="skillhead" style="background:' + k.soft + '"><div class="ic">' + k.emoji + '</div><div style="flex:1;min-width:220px"><div class="eyebrow" style="color:' + k.color + '">' + b.emoji + ' ' + b.name + ' · ' + b.level + '</div><h1>' + k.en + ' <span style="color:var(--muted);font-size:.6em">· ' + k.pl + '</span></h1><p style="margin:6px 0 0">💡 ' + k.tip + '</p><div class="pl">' + k.tipPl + '</div></div>' +
+  var h = '<div class="skillhead" style="background:' + k.soft + '"><div class="ic">' + k.emoji + '</div><div style="flex:1;min-width:220px"><div class="eyebrow" style="color:' + k.color + '">' + b.emoji + ' ' + b.name + ' · ' + b.level + '</div><h1>' + k.pl + ' <span style="color:var(--muted);font-size:.6em" lang="en">· ' + k.en + '</span></h1><p style="margin:6px 0 0">💡 ' + k.tipPl + '</p><div class="pl" lang="en">' + k.tip + '</div></div>' +
     '<div style="min-width:160px"><b style="font:30px var(--serif)">' + st.done + '/' + st.total + '</b><div class="bar" style="margin-top:6px;background:#fff"><i style="width:' + (st.done / st.total * 100) + '%;background:' + k.color + '"></i></div><small class="pl">ukończone · completed</small></div></div>';
   h += '<div class="acts">' + list.map(function (a, i) {
     var t = D.types[a.type], d = P.done[a.id], open = canOpen(a.id), assigned = A.assignment && A.assignment.ids && A.assignment.ids.indexOf(a.id) > -1;
-    return '<button class="act' + (open ? '' : ' locked') + '" data-open="' + a.id + '"><span class="type" style="color:' + k.color + '">' + t[0] + '</span><small class="pl" style="margin-top:-6px">' + t[1] + '</small><h3>' + esc(a.title) + '</h3><span class="pl">' + esc(a.pl || '') + '</span>' +
+    return '<button class="act' + (open ? '' : ' locked') + '" data-open="' + a.id + '"><span class="type" style="color:' + k.color + '">' + t[1] + '</span><small class="pl" style="margin-top:-6px" lang="en">' + t[0] + '</small><h3>' + esc(a.title) + '</h3><span class="pl">' + esc(a.pl || '') + '</span>' +
       '<div class="foot">' + (d ? starsHtml(d.stars) : starsHtml(0)) + (assigned ? '<span class="badge task">📌 zadanie</span>' : !A.full && i === 0 ? '<span class="badge free">Za darmo</span>' : open ? '' : '<span class="badge lock">🔒 Pełna wersja</span>') + '</div></button>';
   }).join('') + '</div>';
   h += lessonCard();
@@ -413,7 +434,7 @@ function loadReport() {
     if (!A.used) { box.innerHTML = '<p>Jeszcze nikt nie dołączył. Udostępnij uczniom kod klasy <b>' + esc(A.classCode) + '</b>.</p>'; return; }
     box.innerHTML = '<table class="rep"><tr><th>Uczeń</th><th>Kod</th><th>Ćw.</th><th>⭐</th>' + SKILLS.map(function (s) { return '<th>' + D.skills[s].emoji + '</th>'; }).join('') + '<th>Ostatnio</th><th></th></tr>' + r.pupils.map(function (p) {
       var g = p.progress || {}, sk = g.skills || {};
-      return '<tr><td><b>' + esc(p.name) + '</b></td><td><code>' + esc(p.code) + '</code></td><td>' + (g.total || 0) + '</td><td>' + (g.stars || 0) + '</td>' + SKILLS.map(function (s) { var x = sk[s] || {}; return '<td title="' + D.skills[s].en + ': ' + (x.done || 0) + ' ćw., śr. ' + (x.avg == null ? '–' : x.avg + '%') + '"><span class="mini"><i style="width:' + Math.min(100, (x.done || 0) * 20) + '%;background:' + D.skills[s].color + '"></i></span></td>'; }).join('') + '<td>' + (g.last ? fmtDate(g.last) : '–') + '</td><td><button class="btn sm ghost" data-rm="' + esc(p.code) + '" title="Usuń ucznia">✕</button></td></tr>';
+      return '<tr><td><b>' + esc(p.name) + '</b></td><td><code>' + esc(p.code) + '</code></td><td>' + (g.total || 0) + '</td><td>' + (g.stars || 0) + '</td>' + SKILLS.map(function (s) { var x = sk[s] || {}; return '<td title="' + D.skills[s].pl + ': ' + (x.done || 0) + ' ćw., śr. ' + (x.avg == null ? '–' : x.avg + '%') + '"><span class="mini"><i style="width:' + Math.min(100, (x.done || 0) * 20) + '%;background:' + D.skills[s].color + '"></i></span></td>'; }).join('') + '<td>' + (g.last ? fmtDate(g.last) : '–') + '</td><td><button class="btn sm ghost" data-rm="' + esc(p.code) + '" title="Usuń ucznia">✕</button></td></tr>';
     }).join('') + '</table>';
     $$('[data-rm]', box).forEach(function (b) { b.onclick = function () { if (!confirm('Usunąć tego ucznia z klasy? Jego kod przestanie działać.')) return; rpc('wb_class_remove_pupil', { p_code: A.code, p_pupil_code: b.getAttribute('data-rm') }).then(function () { loadReport(); }); }; });
   }).catch(function () { box.innerHTML = '<p class="pl">Błąd połączenia – spróbuj odświeżyć.</p>'; });
@@ -479,6 +500,7 @@ function accountModal() {
   $('#logout').onclick = function () { if (!confirm('Wylogować? Postępy zostaną na tym urządzeniu.')) return; ['wbPlanCode', 'wbPlanCache', 'wbClientCode', 'wbClientName', 'wbClientOkAt'].forEach(function (k) { ls(k, null); }); A = { full: false, kind: 'free' }; closeModal(); refresh(); };
 }
 $('#whoBtn').onclick = accountModal;
+$('#voiceBtn').onclick = voiceModal;
 $('#bandChip').onclick = function () {
   openModal('<h2>Wybierz poziom</h2><p class="pl">Choose your level</p><div class="grid" style="margin-top:12px">' + Object.keys(D.bands).map(function (k) { var b = D.bands[k]; return '<button class="band' + (k === P.band ? ' on' : '') + '" data-b="' + k + '" style="width:100%"><b>' + b.emoji + ' ' + b.name + '</b><small>' + b.en + ' · ' + b.level + '</small></button>'; }).join('') + '</div>');
   $$('[data-b]', $('#mbox')).forEach(function (b) { b.onclick = function () { P.band = b.getAttribute('data-b'); save(); closeModal(); refresh(); }; });
@@ -495,7 +517,7 @@ function openAct(id) {
   var a = x.act, k = D.skills[x.skill], t = D.types[a.type];
   CTX = { id: id, act: a, skill: x.skill, start: Date.now(), right: 0, n: 0 };
   $('#pTitle').textContent = k.emoji + ' ' + a.title;
-  $('#pSub').textContent = t[0] + ' · ' + t[1];
+  $('#pSub').textContent = t[1] + ' · ' + t[0];
   $('#pBar').style.background = k.color; setBar(0);
   $('#player').classList.add('on'); document.body.style.overflow = 'hidden';
   var body = $('#pBody'); body.innerHTML = '';
@@ -509,7 +531,7 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'Enter' && !/TEXTAREA|INPUT/.test(document.activeElement.tagName)) { var n = $('#pBody [data-next]'); if (n) { e.preventDefault(); n.click(); } }
 });
 function setBar(f) { $('#pBar').style.width = Math.round(f * 100) + '%'; }
-function instr(en, pl, ic) { return '<div class="instr"><span class="ic">' + (ic || '💡') + '</span><div><b>' + en + '</b><div class="pl">' + pl + '</div></div></div>'; }
+function instr(en, pl, ic) { return '<div class="instr"><span class="ic">' + (ic || '💡') + '</span><div><b>' + (pl || en) + '</b>' + (pl ? '<div class="pl" lang="en">' + en + '</div>' : '') + '</div></div>'; }
 function el(html) { var d = document.createElement('div'); d.innerHTML = html; return d; }
 function praise(ok) { var g = ['Brawo! Great job! 🎉', 'Super! Well done! ⭐', 'Świetnie! Excellent! 🌟', 'Tak jest! That\'s right! ✅'], b = ['Prawie! Not quite. 💪', 'Spróbuj jeszcze! Keep going! 🌱']; var l = ok ? g : b; return l[Math.floor(Math.random() * l.length)]; }
 function nextBtn(label) { return '<div class="pfoot"><button class="btn big" data-next type="button">' + (label || 'Dalej · Next →') + '</button></div>'; }

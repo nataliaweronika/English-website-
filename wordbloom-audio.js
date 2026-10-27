@@ -1,8 +1,10 @@
+(function(){if(window.WBVoice||document.querySelector('script[src$="wordbloom-voice.js"]'))return;var q=document.createElement('script');q.src='/wordbloom-voice.js';document.head.appendChild(q)})();
 (function(){
 'use strict';
 var active=null, repeats=0;
 function esc(s){return String(s||'').trim()}
 function voices(){
+ if(window.WBVoice){var m=WBVoice.main();var l=WBVoice.list();return m?[m].concat(l.filter(function(v){return v!==m})):l}
  var vs=speechSynthesis.getVoices().filter(function(v){return /^en[-_]/i.test(v.lang)});
  // Voice availability varies by browser and device. Prefer enhanced/natural voices,
  // then familiar English voices, while keeping the system default as a fallback.
@@ -17,7 +19,7 @@ function voices(){
  return vs.sort(function(a,b){return score(b)-score(a)});
 }
 function stop(){speechSynthesis.cancel();active=null;document.querySelectorAll('.wb-audio-play,.wb-audio-once').forEach(function(b){b.textContent=b.classList.contains('wb-audio-once')?'Play once / Odtwórz 1×':'▶ Play twice / Odtwórz 2×'})}
-function speak(text,rate,twice,btn){stop();active=btn;repeats=twice?2:1;btn.textContent='■ Stop / Zatrzymaj';function run(){if(!repeats){stop();return}repeats--;var u=new SpeechSynthesisUtterance(text);var vs=voices();u.voice=vs[0]||null;u.lang=u.voice?u.voice.lang:'en-GB';u.rate=rate;u.onend=run;u.onerror=run;speechSynthesis.speak(u)}run()}
+function speak(text,rate,twice,btn){stop();active=btn;repeats=twice?2:1;btn.textContent='■ Stop / Zatrzymaj';function run(){if(!repeats){stop();return}repeats--;var u=new SpeechSynthesisUtterance(text);var vs=voices();u.voice=vs[0]||null;u.lang=u.voice?u.voice.lang:'en-GB';u.rate=rate*(window.WBVoice?WBVoice.getSpeed():1);u.onend=run;u.onerror=run;speechSynthesis.speak(u)}run()}
 function controls(text){var wrap=document.createElement('div');wrap.className='wb-audio';wrap.innerHTML='<button type="button" class="wb-audio-play">▶ Play twice / Odtwórz 2×</button><label>Speed / Tempo <select><option value="0.8">0.8×</option><option value="1" selected>1.0× Normal</option><option value="1.1">1.1×</option></select></label><button type="button" class="wb-audio-once">Play once / Odtwórz 1×</button>';
  var play=wrap.querySelector('.wb-audio-play'),once=wrap.querySelector('.wb-audio-once'),sel=wrap.querySelector('select');play.onclick=function(){if(active===play){stop()}else speak(text,+sel.value,true,play)};once.onclick=function(){if(active===once){stop()}else speak(text,+sel.value,false,once)};return wrap}
 function add(){

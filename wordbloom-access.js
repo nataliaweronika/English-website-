@@ -40,7 +40,7 @@ function css(){if(document.getElementById('wbAccessStyle'))return;var s=document
 '.wbTop{display:flex;justify-content:space-between;align-items:center;gap:10px}'+
 '.nav button.wbNavAccess{margin-top:14px;border-top:1px solid #e5e8f1;padding-top:12px}'+
 'body.wb-locked .nav button[data-wb-locked]::after{content:" \\1F512";font-size:12px;opacity:.7}';
-s.textContent+='body.wb-locked .nav button[data-wb-sample]::after{content:" Free sample";font-size:10px;font-weight:700;color:#4055db;opacity:1}@media(max-width:700px){body.wb-locked .nav button[data-wb-sample]::after{content:" ◦";font-size:14px}}';document.head.appendChild(s);}
+s.textContent+='body.wb-locked .nav button[data-wb-sample]::after{content:" Za darmo";font-size:10px;font-weight:700;color:#4055db;opacity:1}@media(max-width:700px){body.wb-locked .nav button[data-wb-sample]::after{content:" ◦";font-size:14px}}';document.head.appendChild(s);}
 
 /* ---------- client gate ---------- */
 var pending=null;
@@ -88,7 +88,7 @@ function showSample(id,continueAction){
  vocab:'<h3>Daily life</h3><ul><li><b>get up</b> - wstawać</li><li><b>get ready</b> - przygotować się</li><li><b>have breakfast</b> - jeść śniadanie</li><li><b>go to work</b> - iść do pracy</li><li><b>take the bus</b> - jechać autobusem</li></ul><p>Make a sentence with one phrase.</p><label for="wbSampleSentence">Your sentence</label><textarea id="wbSampleSentence" rows="2" style="width:100%;padding:14px;border:1px solid #dfe3ee;border-radius:14px;font:inherit;box-sizing:border-box"></textarea><details><summary>Example</summary><p>I get up at seven and have breakfast at home.</p></details>'
  }[id];
  var m=document.createElement('div');m.id='wbSample';m.style.cssText='position:fixed;inset:0;z-index:2147483099;background:rgba(23,36,75,.35);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;color:#17244b;font-family:Inter,system-ui,sans-serif';
- m.innerHTML='<div class="wbBox wide" role="dialog" aria-modal="true" aria-labelledby="wbSampleTitle" style="width:min(700px,100%);padding:clamp(18px,4vw,30px)"><div class="wbTop"><span class="wbBrand">WordBloom</span><button class="wbBtn light sm" id="wbSampleClose" aria-label="Close sample">Close ✕</button></div><div class="wbPill on" style="margin-top:14px">Free sample · A1 · No code needed</div><h2 id="wbSampleTitle">'+title+'</h2><p>Try one activity before joining the full lesson library.</p><div class="pl">Wypróbuj jedno ćwiczenie bez kodu dostępu.</div><div style="margin:20px 0;text-align:left">'+content+'</div><hr style="border:0;border-top:1px solid #e5e8f1"><button class="wbBtn" id="wbSampleFull">Open full '+title.toLowerCase()+' library →</button><p class="pl" style="margin-top:10px">The rest of the library needs a personal code from Natalia. / Pozostałe lekcje wymagają kodu od Natalii.</p></div>';
+ m.innerHTML='<div class="wbBox wide" role="dialog" aria-modal="true" aria-labelledby="wbSampleTitle" style="width:min(700px,100%);padding:clamp(18px,4vw,30px)"><div class="wbTop"><span class="wbBrand">WordBloom</span><button class="wbBtn light sm" id="wbSampleClose" aria-label="Close sample">Close ✕</button></div><div class="wbPill on" style="margin-top:14px">Darmowa próbka · A1 · bez kodu</div><h2 id="wbSampleTitle">'+title+'</h2><p>Try one activity before joining the full lesson library.</p><div class="pl">Wypróbuj jedno ćwiczenie bez kodu dostępu.</div><div style="margin:20px 0;text-align:left">'+content+'</div><hr style="border:0;border-top:1px solid #e5e8f1"><button class="wbBtn" id="wbSampleFull">Open full '+title.toLowerCase()+' library →</button><p class="pl" style="margin-top:10px">The rest of the library needs a personal code from Natalia. / Pozostałe lekcje wymagają kodu od Natalii.</p></div>';
  document.body.appendChild(m);
  m.querySelector('#wbSampleClose').onclick=closeSample;
  m.querySelector('#wbSampleFull').onclick=function(){closeSample();pending=continueAction;showGate();};
@@ -124,7 +124,7 @@ function navBtn(){var nav=document.querySelector('.nav');if(!nav)return null;var
  b.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();
   if(state.admin)openAdmin();else if(state.unlocked)clientMenu();else{pending=null;showGate();}},true);
  return b;}
-function updateNav(){var b=navBtn();if(!b)return;b.innerHTML=state.admin?'🔑 <label>Admin · client codes</label>':state.unlocked?'✅ <label>'+esc(state.name||'Student')+'</label>':'🔑 <label>Student login</label>';}
+function updateNav(){var b=navBtn();if(!b)return;b.innerHTML=state.admin?'🔑 <label>Admin · kody klientów</label>':state.unlocked?'✅ <label>'+esc(state.name||'Uczeń')+'</label>':'🔑 <label>Logowanie ucznia</label>';}
 function clientMenu(){var g=gateEl();g.classList.add('on');var box=g.querySelector('.wbBox');
  var old=box.innerHTML;box.innerHTML='<div class="wbBrand">WordBloom</div><h2>Hi'+(state.name?', '+esc(state.name):'')+'!</h2><p>Your lessons are unlocked on this device.</p>'+
  '<button class="wbBtn full" id="wbCmClose">Continue / Dalej</button><button class="wbLink" id="wbCmOut">Log out on this device / Wyloguj</button>';
@@ -145,7 +145,7 @@ function renderAdminLogin(){var a=adminEl();a.innerHTML='<div class="wbBox"><div
   rpc('wb_admin_login',{p_password:a.querySelector('#wbAdmPw').value}).then(function(t){if(t){ls(LS.admin,t);setUnlocked(true,true,'Natalia');hideGate();renderAdmin();}else{m.className='wbMsg';m.textContent='Wrong password (or too many tries - wait 15 minutes).';}}).catch(function(){m.className='wbMsg';m.textContent='Could not reach the server. Try again.';});};
  setTimeout(function(){var i=a.querySelector('#wbAdmPw');if(i)i.focus();},50);}
 function fmt(d){if(!d)return '-';var x=new Date(d);return x.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});}
-function clientMsg(c){return 'Hi '+c.client_name+'! Here is your WordBloom access code: '+c.code+'\nOpen '+SITE+' , click any lesson (or "Student login" in the menu) and type the code. It stays unlocked on your device.\n\nCześć! Twój kod dostępu do WordBloom: '+c.code+'\nWejdź na '+SITE+' , kliknij dowolną lekcję i wpisz kod.';}
+function clientMsg(c){return 'Hi '+c.client_name+'! Here is your WordBloom access code: '+c.code+'\nOpen '+SITE+' , click any lesson (or "Logowanie ucznia" in the menu) and type the code. It stays unlocked on your device.\n\nCześć! Twój kod dostępu do WordBloom: '+c.code+'\nWejdź na '+SITE+' , kliknij dowolną lekcję i wpisz kod.';}
 function copy(txt,btn){function done(){if(btn){var o=btn.textContent;btn.textContent='Copied ✓';setTimeout(function(){btn.textContent=o;},1500);}}
  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){fallback();});}else fallback();
  function fallback(){var t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(e){}t.remove();done();}}

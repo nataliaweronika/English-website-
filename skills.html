@@ -254,6 +254,14 @@ table.rep td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align
 .banner{border-radius:16px;padding:12px 16px;font-weight:700;margin-bottom:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .banner.info{background:#e8f0ff;color:#1d4fa0}.banner.warn{background:#fff3d6;color:#8a5400}
 .lockcta{background:linear-gradient(135deg,#eef0fe,#fff);border:1.5px solid #dfe3fd}
+/* ---------- voice picker ---------- */
+.vlist{display:grid;gap:6px}
+.vrow{display:flex;gap:6px;align-items:stretch}
+.vrow .vsel{flex:1;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:10px 12px;font-weight:700;font-size:14px}
+.vrow .vsel:hover{border-color:var(--brand)}
+.vrow.on .vsel{border-color:var(--brand);background:var(--brandsoft)}
+.vrow .vtry{border:0;background:#e3eefc;color:#1d4fa0;border-radius:14px;width:46px;font-weight:800;flex:none}
+#vSpeed{flex-wrap:wrap}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:999px;font-weight:700;opacity:0;transition:.25s;z-index:300;pointer-events:none;max-width:90vw;text-align:center}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -273,6 +281,7 @@ table.rep td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align
     <button class="chip cbtn hide-sm" id="bandChip" type="button" title="Zmień poziom / Change level"></button>
     <span class="chip gold" title="Gwiazdki / Stars">⭐ <b id="starCount">0</b></span>
     <span class="chip hide-sm" title="Seria dni / Day streak">🔥 <b id="streakCount">0</b></span>
+    <button class="chip cbtn" id="voiceBtn" type="button" title="Głos lektora · Voice" aria-label="Wybierz głos lektora">🔊<span class="hide-sm"> Głos</span></button>
     <button class="chip cbtn who" id="whoBtn" type="button"></button>
   </div>
 </header>
@@ -281,10 +290,10 @@ table.rep td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align
   <nav class="side" aria-label="Menu">
     <a class="nav" href="#home" data-v="home">🏠 Start</a>
     <div class="sidelabel">Umiejętności · Skills</div>
-    <a class="nav" href="#reading" data-v="reading">📖 Reading <span class="dot" style="background:var(--reading)"></span></a>
-    <a class="nav" href="#listening" data-v="listening">🎧 Listening <span class="dot" style="background:var(--listening)"></span></a>
-    <a class="nav" href="#speaking" data-v="speaking">🗣️ Speaking <span class="dot" style="background:var(--speaking)"></span></a>
-    <a class="nav" href="#writing" data-v="writing">✍️ Writing <span class="dot" style="background:var(--writing)"></span></a>
+    <a class="nav" href="#reading" data-v="reading">📖 Czytanie <span class="dot" style="background:var(--reading)"></span></a>
+    <a class="nav" href="#listening" data-v="listening">🎧 Słuchanie <span class="dot" style="background:var(--listening)"></span></a>
+    <a class="nav" href="#speaking" data-v="speaking">🗣️ Mówienie <span class="dot" style="background:var(--speaking)"></span></a>
+    <a class="nav" href="#writing" data-v="writing">✍️ Pisanie <span class="dot" style="background:var(--writing)"></span></a>
     <div class="sidelabel">Rodzice i nauczyciele · Parents &amp; teachers</div>
     <a class="nav" href="#parent" data-v="parent">👪 Dla rodzica</a>
     <a class="nav" href="#teacher" data-v="teacher">👩‍🏫 Dla nauczyciela</a>
@@ -303,10 +312,10 @@ table.rep td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align
 
 <nav class="bottom" aria-label="Menu">
   <a href="#home" data-v="home"><span>🏠</span>Start</a>
-  <a href="#reading" data-v="reading"><span>📖</span>Read</a>
-  <a href="#listening" data-v="listening"><span>🎧</span>Listen</a>
-  <a href="#speaking" data-v="speaking"><span>🗣️</span>Speak</a>
-  <a href="#writing" data-v="writing"><span>✍️</span>Write</a>
+  <a href="#reading" data-v="reading"><span>📖</span>Czytaj</a>
+  <a href="#listening" data-v="listening"><span>🎧</span>Słuchaj</a>
+  <a href="#speaking" data-v="speaking"><span>🗣️</span>Mów</a>
+  <a href="#writing" data-v="writing"><span>✍️</span>Pisz</a>
   <a href="#parent" data-v="parent"><span>👪</span>Rodzic</a>
 </nav>
 
@@ -322,6 +331,7 @@ table.rep td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align
 <div class="modal" id="modal"><div class="mbox" id="mbox"></div></div>
 <div class="toast" id="toast"></div>
 
+<script src="wordbloom-voice.js"></script>
 <script src="skills-content.js"></script>
 <script src="skills-app.js"></script>
 <script defer src="/_vercel/insights/script.js"></script>

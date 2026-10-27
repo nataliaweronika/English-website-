@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>About Natalia | WordBloom</title>
@@ -44,7 +44,7 @@
 </main>
 <footer><span>Natalia Rduch · WordBloom</span><span><a href="mailto:rduchnatalia@gmail.com">rduchnatalia@gmail.com</a> · <a href="/"><span lang="en" data-copy="en">Back to WordBloom</span><span lang="pl" data-copy="pl" hidden>Wróć do WordBloom</span></a></span></footer>
 <script>
-(function(){function setLang(lang){document.documentElement.lang=lang;document.querySelectorAll('[data-copy]').forEach(function(e){e.hidden=e.dataset.copy!==lang});document.querySelectorAll('[data-lang]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.lang===lang))});document.title=lang==='pl'?'O Natalii | WordBloom':'About Natalia | WordBloom';}document.querySelectorAll('[data-lang]').forEach(function(b){b.onclick=function(){setLang(b.dataset.lang)}});})();
+(function(){function setLang(lang){document.documentElement.lang=lang;document.querySelectorAll('[data-copy]').forEach(function(e){e.hidden=e.dataset.copy!==lang});document.querySelectorAll('[data-lang]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.lang===lang))});document.title=lang==='pl'?'O Natalii | WordBloom':'About Natalia | WordBloom';}document.querySelectorAll('[data-lang]').forEach(function(b){b.onclick=function(){setLang(b.dataset.lang);try{localStorage.setItem('wbAboutLang',b.dataset.lang)}catch(e){}}});var saved=null;try{saved=localStorage.getItem('wbAboutLang')}catch(e){}setLang(saved==='en'?'en':'pl');})();
 </script>
 <!-- Vercel Web Analytics -->
 <script>
