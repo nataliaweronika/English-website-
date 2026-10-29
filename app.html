@@ -271,7 +271,20 @@
 .wbh-strip .e{font-size:24px}
 .wbh-strip b{display:block}
 .wbh-strip small{color:#59657e}
-@media(max-width:900px){.wbh-hero{padding:30px 22px 28px}.wbh-hero h1{font-size:34px}.wbh-hero h1 span{font-size:19px}.wbh-levels{grid-template-columns:1fr}.wbh-strip{grid-template-columns:1fr}}
+.wbh-plans{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.wbh-plan{background:#fff;border:1px solid #e3e8f0;border-radius:18px;padding:22px 20px;box-shadow:0 6px 22px rgba(30,45,90,.06);display:flex;flex-direction:column}
+.wbh-plan.parent{background:#fff6fa}.wbh-plan.teach{background:#f0fbf5}
+.wbh-plan .e{font-size:30px;line-height:1}
+.wbh-plan h3{font:700 21px/1.2 Georgia,serif;margin:10px 0 2px;color:#17244b}
+.wbh-plan .en{color:#68738d;font-size:13px;margin:0 0 10px}
+.wbh-plan ul{margin:0 0 14px;padding-left:18px;color:#33406a;font-size:14px;line-height:1.6}
+.wbh-prices{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.wbh-prices span{background:#fff;border:1px solid #d9def0;border-radius:12px;padding:6px 10px;font-size:13px;color:#33406a}
+.wbh-prices b{font-size:16px;color:#17244b}
+.wbh-plan .btn-plan{margin-top:auto;align-self:flex-start;display:inline-block;border-radius:999px;padding:12px 20px;font-weight:800;text-decoration:none}
+.wbh-plan.parent .btn-plan{background:#ff9fc8;color:#17244b}.wbh-plan.teach .btn-plan{background:#078389;color:#fff}
+.wbh-plannote{margin:12px 0 0;font-size:13px;color:#59657e}
+@media(max-width:900px){.wbh-hero{padding:30px 22px 28px}.wbh-hero h1{font-size:34px}.wbh-hero h1 span{font-size:19px}.wbh-levels{grid-template-columns:1fr}.wbh-strip{grid-template-columns:1fr}.wbh-plans{grid-template-columns:1fr}}
 </style>
 <div class="wbh">
 <div class="hero wbh-hero"><div class="tag">PLATFORMA DO NAUKI ANGIELSKIEGO · A1 → C2</div>
@@ -291,6 +304,22 @@
 </div>
 <ul class="wbh-skills"><li>📖 Czytanie</li><li>🎧 Słuchanie</li><li>🗣️ Mówienie</li><li>✍️ Pisanie</li><li>📚 Gramatyka</li><li>🧠 Słownictwo</li></ul>
 <details class="wbh-more"><summary>Wszystkie poziomy A1–C2 · All levels</summary><div class="levels" id="homeLevels"></div></details>
+</div>
+
+<div class="wbh-sec" id="wbhPlans">
+<h2>Dla rodziców i nauczycieli <span class="pl" lang="en" style="font-size:.6em">· For parents &amp; teachers</span></h2>
+<p class="sub">Pierwsze ćwiczenie w każdej umiejętności jest za darmo. Pełny dostęp na 1, 3 lub 6 miesięcy – bez automatycznego odnawiania.</p>
+<div class="wbh-plans">
+<div class="wbh-plan parent"><span class="e">👪</span><h3>Uczeń / Rodzic</h3><p class="en" lang="en">Student / Parent</p>
+<ul><li>Wszystkie ćwiczenia: czytanie, słuchanie, mówienie, pisanie</li><li>Kącik rodzica z raportem postępów do druku</li><li>Telefon, tablet i komputer</li></ul>
+<div class="wbh-prices"><span><b>19 zł</b> / 1 mies.</span><span><b>49 zł</b> / 3 mies.</span><span><b>89 zł</b> / 6 mies.</span></div>
+<a class="btn-plan" href="skills.html#plans" target="_top">Wybierz plan →</a></div>
+<div class="wbh-plan teach"><span class="e">👩‍🏫</span><h3>Nauczyciel / Klasa</h3><p class="en" lang="en">Teacher / Class</p>
+<ul><li>Do 30 uczniów z jednym kodem klasy</li><li>Tabela postępów całej klasy i zadania tygodniowe</li><li>Gotowa wiadomość dla rodziców</li></ul>
+<div class="wbh-prices"><span><b>30 zł</b> / 1 mies.</span><span><b>80 zł</b> / 3 mies.</span><span><b>150 zł</b> / 6 mies.</span></div>
+<a class="btn-plan" href="skills.html#plans?teacher" target="_top">Zobacz plany klasowe →</a></div>
+</div>
+<p class="wbh-plannote">Płatność kartą, BLIK-iem lub przelewem. Masz już kod? <a href="skills.html#home" target="_top">Wpisz go w Skills Studio</a>.</p>
 </div>
 
 <div class="wbh-sec">
