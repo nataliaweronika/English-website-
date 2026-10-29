@@ -228,180 +228,82 @@
   applyAuth();
 })();
 </script><div class="app"><aside class="side"><div class="brand">WordBloom</div><div class="mode"><button id="tm">👩‍🏫 <span>Nauczyciel</span></button><button id="sm" class="active">🎓 <span>Uczeń</span></button></div><nav class="nav"><button class="active" data-page="home">🏠 <label>Start</label></button><button data-page="students">🎯 <label>Moja nauka</label></button><button data-page="speaking">🗣️ <label>Mówienie</label></button><button data-page="listening">🎧 <label>Słuchanie</label></button><button data-page="writing">✍️ <label>Pisanie</label></button><button data-page="reading">📖 <label>Czytanie</label></button><button data-page="grammar">📚 <label>Gramatyka</label></button><button data-page="vocab">🧠 <label>Słownictwo</label></button><button data-page="progress">📈 <label>Postępy</label></button><button class="teacher-only" data-page="teacher" style="display:none">👩‍🏫 <label>Dla nauczyciela</label></button><button id="adminNav" class="teacher-only" data-page="admin" style="display:none">🔐 <label>Zatwierdź użytkowników</label></button></nav></aside><main class="main"><div class="top"><input id="search" class="search" placeholder="Szukaj tematu… · Search"><b>👋 Gotowy/a?</b></div>
-<section id="home" class="page active"><!-- wb-home-hero v2 -->
+<section id="home" class="page active"><!-- wb-home v3: clean study-first home (2026-10-29) -->
 <style>
-.wbh-hero{padding:46px 44px 34px;position:relative;overflow:hidden}
+.wbh{max-width:1040px}
+.wbh-hero{padding:48px 44px 40px;position:relative;overflow:hidden}
 .wbh-hero:after{content:"";position:absolute;right:-90px;top:-90px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#ffffffaa,#ffffff00 70%);pointer-events:none}
-.wbh-hero h1{font-size:48px;max-width:760px;margin:12px 0 8px}
-.wbh-hero h1 span{display:block;font-size:24px;font-style:italic;color:#4f5c86;margin-top:10px;font-weight:400}
-.wbh-hero .lead{font-size:17px;max-width:680px;margin:0 0 24px;color:#33406a}
-.wbh-paths{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:880px}
-.wbh-path{all:unset;box-sizing:border-box;cursor:pointer;background:#fff;border:1px solid #e3e8f0;border-radius:18px;padding:18px 20px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 6px 22px rgba(30,45,90,.07);transition:transform .15s,box-shadow .15s}
-.wbh-path:hover,.wbh-path:focus-visible{transform:translateY(-2px);box-shadow:0 10px 28px rgba(30,45,90,.13)}
-.wbh-path:focus-visible{outline:3px solid #5968e8;outline-offset:2px}
-.wbh-path .ico{font-size:28px;line-height:1;flex:none;width:48px;height:48px;border-radius:14px;display:grid;place-items:center}
-.wbh-path.student .ico{background:#ffddea}.wbh-path.teacher .ico{background:#ddf6e8}
-.wbh-path b{display:block;font:700 19px/1.2 Georgia,serif;color:#17244b;margin-bottom:6px}
-.wbh-path small{display:block;color:#68738d;font-size:13px;margin:2px 0 6px}
-.wbh-path .what{display:block;font-size:14px;color:#33406a;line-height:1.45}
-.wbh-path .go{display:inline-block;margin-top:10px;font-weight:800;font-size:14px;border-radius:20px;padding:7px 14px}
-.wbh-path.student .go{background:#ff9fc8;color:#17244b}.wbh-path.teacher .go{background:#078389;color:#fff}
-.wbh-trust{list-style:none;padding:0;margin:22px 0 0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;font-weight:700;color:#4055b4}
-.wbh-trust a{color:inherit}
-.wbh-lesson{display:inline-flex;align-items:center;gap:10px;margin-top:18px;background:#5968e8;color:#fff;text-decoration:none;font-weight:800;font-size:16px;border-radius:999px;padding:13px 22px;box-shadow:0 8px 22px rgba(89,104,232,.28);transition:transform .15s}
-.wbh-lesson:hover,.wbh-lesson:focus-visible{transform:translateY(-2px)}
-.wbh-lesson small{font-weight:600;opacity:.85;font-size:13px}
-@media(max-width:900px){.wbh-paths{grid-template-columns:1fr}.wbh-hero{padding:30px 22px 26px}.wbh-hero h1{font-size:34px}.wbh-hero h1 span{font-size:19px}}
+.wbh-hero h1{font-size:46px;max-width:720px;margin:12px 0 8px}
+.wbh-hero h1 span{display:block;font-size:23px;font-style:italic;color:#4f5c86;margin-top:10px;font-weight:400}
+.wbh-hero .lead{font-size:17px;max-width:620px;margin:0 0 26px;color:#33406a}
+.wbh-hero .lead small{display:block;color:#68738d;font-size:14px;margin-top:4px}
+.wbh-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.wbh-cta a,.wbh-cta button{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:16px;border-radius:999px;padding:14px 24px;transition:transform .15s}
+.wbh-cta a:hover,.wbh-cta button:hover,.wbh-cta a:focus-visible,.wbh-cta button:focus-visible{transform:translateY(-2px)}
+.wbh-cta a:focus-visible,.wbh-cta button:focus-visible{outline:3px solid #5968e8;outline-offset:2px}
+.wbh-cta .wbh-go{background:#5968e8;color:#fff;box-shadow:0 8px 22px rgba(89,104,232,.28)}
+.wbh-cta .wbh-alt{background:#fff;color:#17244b;border:1px solid #d9def0}
+.wbh-trust{list-style:none;padding:0;margin:22px 0 0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;font-weight:700;color:#4055b4}
+.wbh-sec{margin-top:36px}
+.wbh-sec>h2{margin:0 0 4px}
+.wbh-sec>.sub{margin:0 0 16px;color:#59657e}
+.wbh-levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.wbh-level small{display:block}
+.wbh-sub{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.wbh-sub a{font-size:13px;font-weight:800;color:#4055b4;background:#eef0fd;border-radius:999px;padding:6px 11px;text-decoration:none}
+.wbh-sub a:hover{background:#dfe3fc}
+.wbh-go2{display:inline-block;margin-top:12px;font-size:13px;font-weight:800;color:#4055b4}
+.wbh-level.kids{background:#f0f8ff}
+.wbh-level{display:block;background:#fff;border:1px solid #e3e8f0;color:#173047;text-decoration:none;border-radius:18px;padding:20px 18px;box-shadow:0 6px 22px rgba(30,45,90,.06);transition:transform .15s,box-shadow .15s}
+.wbh-level:hover,.wbh-level:focus-visible{transform:translateY(-2px);box-shadow:0 10px 28px rgba(30,45,90,.12)}
+.wbh-level .e{font-size:30px;line-height:1}
+.wbh-level b{display:block;font:700 19px/1.2 Georgia,serif;margin:10px 0 4px}
+.wbh-level small{color:#59657e;font-weight:600}
+.wbh-level.adult{background:#fdf6ea}
+.wbh-skills{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0;padding:0;list-style:none;font-size:14px;font-weight:700;color:#33406a}
+.wbh-skills li{background:#eef0fd;border-radius:999px;padding:6px 12px}
+.wbh-more{margin-top:14px}
+.wbh-more summary{cursor:pointer;font-weight:700;color:#4055b4;font-size:14px}
+.wbh-more .levels{margin-top:12px}
+.wbh-strip{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.wbh-strip a{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid #e3e8f0;border-radius:16px;padding:16px 18px;text-decoration:none;color:#17244b}
+.wbh-strip a:hover{background:#f4f5ff}
+.wbh-strip .e{font-size:24px}
+.wbh-strip b{display:block}
+.wbh-strip small{color:#59657e}
+@media(max-width:900px){.wbh-hero{padding:30px 22px 28px}.wbh-hero h1{font-size:34px}.wbh-hero h1 span{font-size:19px}.wbh-levels{grid-template-columns:1fr}.wbh-strip{grid-template-columns:1fr}}
 </style>
-<div class="hero wbh-hero"><div class="tag">A1 → C2 · ANGIELSKI DLA UCZNIÓW I NAUCZYCIELI</div>
-<h1>Angielski, który rośnie razem z Tobą.<span lang="en">English that grows with you.</span></h1>
-<p class="lead">Interaktywne ćwiczenia dla uczących się i gotowe materiały do druku dla nauczycieli.<br><small lang="en" style="color:#68738d;font-size:14px">Interactive practice for learners and ready-to-print materials for teachers.</small></p>
-<div class="wbh-paths">
-<button type="button" class="wbh-path student" onclick="show('students')"><span class="ico">🎓</span><span><b>Uczę się angielskiego</b><small lang="en">I'm learning English</small><span class="what">Mówienie, słuchanie, czytanie, pisanie, gramatyka i słownictwo na Twoim poziomie, A1–C2. Również przygotowanie do matury.</span><span class="go">Zacznij naukę →</span></span></button>
-<button type="button" class="wbh-path teacher" onclick="var t=document.getElementById('sklep');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})"><span class="ico">👩‍🏫</span><span><b>Uczę angielskiego</b><small lang="en">I teach English</small><span class="what">Karty pracy do druku dla klas 1–8, Matura 2027, egzamin ósmoklasisty (E8) i pakiety do mówienia. Najpierw wypróbuj darmową próbkę.</span><span class="go">Zobacz materiały →</span></span></button>
+<div class="wbh">
+<div class="hero wbh-hero"><div class="tag">PLATFORMA DO NAUKI ANGIELSKIEGO · A1 → C2</div>
+<h1>Ucz się angielskiego krok po kroku.<span lang="en">Learn English step by step.</span></h1>
+<p class="lead">Czytanie, słuchanie, mówienie i pisanie – krótkie ćwiczenia na Twoim poziomie, po 5 minut dziennie.<small lang="en">Short interactive practice at your level – 5 minutes a day.</small></p>
+<div class="wbh-cta"><a class="wbh-go" href="skills.html#home" target="_top">Zacznij naukę za darmo →</a><button type="button" class="wbh-alt" onclick="var t=document.getElementById('wbhLevels');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})">Wybierz poziom ↓</button></div>
+<ul class="wbh-trust"><li>✓ Dla dzieci, nastolatków i dorosłych</li><li>✓ Pierwsze ćwiczenie w każdej umiejętności za darmo</li><li>✓ Sprawdzanie od razu</li></ul>
 </div>
-<a class="wbh-lesson" href="https://buy.stripe.com/8x2dRa9NV51L30Ag2W4sE10" target="_blank" rel="noopener">📅 Zarezerwuj lekcję online <small>· indywidualnie, 60 min</small></a>
-<ul class="wbh-trust"><li>✓ 6 poziomów, A1–C2</li><li>✓ Mówienie, słuchanie, czytanie i pisanie</li><li>✓ Darmowe próbki przed zakupem</li><li>✓ PDF do pobrania od razu</li><li>🌱 <a href="about-me.html" target="_top">Autorka: Natalia Rduch</a></li></ul>
-</div><!-- wb-home-studio: Skills Studio offer on the home page -->
-<style>
-.wbst{margin-top:25px;background:linear-gradient(135deg,#1f2a5c,#3a4bb8);color:#fff;border-radius:24px;padding:26px}
-.wbst .tag{color:#c9d1ff}
-.wbst h2{margin:4px 0 6px;color:#fff}
-.wbst .sub{margin:0 0 4px;opacity:.95}
-.wbst .subpl{margin:0 0 16px;opacity:.75;font-size:14px}
-.wbst-levels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.wbst-level{display:block;background:#fff;color:#173047;text-decoration:none;border-radius:16px;padding:14px 16px;transition:transform .15s}
-.wbst-level:hover,.wbst-level:focus-visible{transform:translateY(-2px)}
-.wbst-level b{display:block;font-size:17px}
-.wbst-level small{color:#59657e;font-weight:600}
-.wbst-level.adult{background:#fdf1dc}
-.wbst-skills{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0;padding:0;list-style:none}
-.wbst-skills li{background:rgba(255,255,255,.14);border-radius:999px;padding:6px 12px;font-weight:700;font-size:14px}
-.wbst-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-.wbst-cta a{display:inline-block;flex:0 0 auto;width:auto;border-radius:999px;padding:12px 20px;font-weight:800;text-decoration:none}
-.wbst-cta .wbst-go{background:#fff;color:#1f2a5c}
-.wbst-cta .wbst-alt{background:rgba(255,255,255,.14);color:#fff}
-@media(max-width:800px){.wbst-levels{grid-template-columns:repeat(2,minmax(0,1fr))}}
-</style>
-<div class="wbst">
-<div class="tag">SKILLS STUDIO · NAUKA KROK PO KROKU</div>
-<h2>Czytanie, słuchanie, mówienie i pisanie – po 5 minut dziennie</h2>
-<p class="sub">Interaktywne ćwiczenia dla dzieci, nastolatków (E8) i dorosłych. Pierwsze ćwiczenie w każdej umiejętności jest za darmo.</p>
-<p class="subpl">Interactive practice for kids, teens and adults. The first activity in every skill is free.</p>
-<div class="wbst-levels">
-<a class="wbst-level" href="skills.html?band=k13#home" target="_top"><b>🐣 Klasa 1–3</b><small>Pre-A1 · A1</small></a>
-<a class="wbst-level" href="skills.html?band=k46#home" target="_top"><b>🧭 Klasa 4–6</b><small>A1 · A2</small></a>
-<a class="wbst-level" href="skills.html?band=k78#home" target="_top"><b>🚀 Klasa 7–8 · E8</b><small>A2 · B1</small></a>
-<a class="wbst-level adult" href="skills.html?band=adult#home" target="_top"><b>☕ Dorośli</b><small>A2 · B2 · praca, podróże, codzienność</small></a>
+
+<div class="wbh-sec" id="wbhLevels">
+<h2>Dla kogo? <span class="pl" lang="en" style="font-size:.6em">· Who is learning?</span></h2>
+<p class="sub">Dla dzieci, młodzieży i dorosłych – wybierz, a ćwiczenia dopasują się do poziomu.</p>
+<div class="wbh-levels">
+<div class="wbh-level kids"><span class="e">🧒</span><b>Dzieci</b><small>ok. 6–12 lat · Pre-A1 – A2</small><span class="wbh-sub"><a href="skills.html?band=k13#home" target="_top">Młodsze · klasa 1–3</a><a href="skills.html?band=k46#home" target="_top">Starsze · klasa 4–6</a></span></div>
+<a class="wbh-level teen" href="skills.html?band=k78#home" target="_top"><span class="e">🚀</span><b>Młodzież</b><small>ok. 13–15 lat · A2 · B1 · egzamin E8</small><span class="wbh-go2">Zaczynam →</span></a>
+<a class="wbh-level adult" href="skills.html?band=adult#home" target="_top"><span class="e">☕</span><b>Dorośli</b><small>A2 · B2 · praca, podróże, codzienność</small><span class="wbh-go2">Zaczynam →</span></a>
 </div>
-<ul class="wbst-skills"><li>📖 Czytanie</li><li>🎧 Słuchanie</li><li>🗣️ Mówienie</li><li>✍️ Pisanie</li><li>👪 Widok dla rodzica</li><li>👩‍🏫 Kody klasowe dla nauczycieli</li></ul>
-<div class="wbst-cta"><a class="wbst-go" href="skills.html#home" target="_top">Wypróbuj za darmo →</a><a class="wbst-alt" href="skills.html#plans" target="_top">Zobacz plany i ceny</a></div>
+<ul class="wbh-skills"><li>📖 Czytanie</li><li>🎧 Słuchanie</li><li>🗣️ Mówienie</li><li>✍️ Pisanie</li><li>📚 Gramatyka</li><li>🧠 Słownictwo</li></ul>
+<details class="wbh-more"><summary>Wszystkie poziomy A1–C2 · All levels</summary><div class="levels" id="homeLevels"></div></details>
 </div>
-<!-- /wb-home-studio -->
-<!-- wb-home-shop: Dla nauczycieli / Sklep (homepage) -->
-<style>
-.wbshop{margin-top:25px}
-.wbshop h2{margin:0 0 4px}
-.wbshop .sub{color:#59657e;margin:0 0 14px}
-.wbshop-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px}
-.wbshop-grid>.wbshop-card{grid-column:span 2}
-.wbshop-grid>.wbshop-card.wide{grid-column:span 3;display:grid;grid-template-columns:40% 1fr;column-gap:18px;align-content:start}
-.wbshop-card.wide>*:not(img){grid-column:2}
-.wbshop-card.wide>img{grid-row:1/span 6;align-self:start}
-.wbshop-card.wide h3{margin-top:0}
-.wbshop-grid>.wbshop-card:not(.wide) img,.wbshop-grid>.wbshop-card:not(.wide) .txtcover{aspect-ratio:1/1}
-.wbshop-card.wide .buy{margin-top:4px}
-.wbshop-card{position:relative;transition:box-shadow .15s}
-.wbshop-card:hover{box-shadow:0 10px 26px rgba(30,45,90,.10)}
-.wbshop-card .badge{position:absolute;top:10px;left:10px;z-index:1;background:#ff9fc8;color:#17244b;font-size:11px;font-weight:900;letter-spacing:.6px;border-radius:20px;padding:4px 10px}
-.wbshop-grid .grp{grid-column:1/-1;margin:8px 0 -4px;font:700 13px system-ui;letter-spacing:1.2px;text-transform:uppercase;color:#4055b4}
-.wbshop-card{background:#fff;border:1px solid #e3e8f0;border-radius:18px;padding:16px;display:flex;flex-direction:column}
-.wbshop-card img,.wbshop-card .txtcover{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;object-position:top;border:1px solid #e3e8f0;border-radius:12px;background:#fff}
-.wbshop-card .txtcover{display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,#e1f2ff,#fce9f3);font:700 22px/1.2 Georgia,serif;color:#173047}
-.wbshop-card h3{margin:12px 0 2px;font-size:18px}
-.wbshop-card .price{font:26px Georgia,serif;margin:2px 0 6px;color:#173047}
-.wbshop-card p{margin:0 0 10px;font-size:14px;color:#59657e}
-.wbshop-card .buy{margin-top:auto;display:block;text-align:center;background:#078389;color:#fff;text-decoration:none;font-weight:800;border-radius:24px;padding:10px 14px}
-.wbshop-card .buy:hover{background:#075e65}
-.wbshop-card .more{display:block;text-align:center;font-size:13px;margin-top:8px;color:#086f75}
-.wbshop-classes{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
-.wbshop-classes a{font-size:13px;font-weight:700;padding:5px 9px;border:1px solid #078389;border-radius:20px;color:#086f75;text-decoration:none;background:#fff}
-.wbshop-classes a:hover{background:#e5f6f1}
-.wbshop .wb-freebie{background:#fff4dd;border:1px solid #f1d9a6;border-radius:18px;padding:18px 20px;margin-top:14px}
-.wbshop .wb-freebie h3{margin:0 0 4px}
-.wbshop .wb-freebie p{margin:0;font-size:14px}
-.wbshop .wb-freebie form{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.wbshop .wb-freebie input[type=email]{flex:1 1 220px;padding:10px 12px;font:inherit;border:1px solid #c9b48a;border-radius:12px}
-.wbshop .wb-freebie button{border:0;border-radius:24px;padding:10px 17px;font-weight:800;cursor:pointer;background:#078389;color:#fff}
-.wbshop .wb-freebie label{flex-basis:100%;font-size:12px;color:#59657e;display:flex;gap:6px;align-items:flex-start}
-.wbshop .wb-freebie .ok{display:none;margin-top:10px}
-.wbshop .wb-freebie.done form{display:none}
-.wbshop .wb-freebie.done .ok{display:block}
-.wbshop .wb-freebie .ok a{display:inline-block;background:#078389;color:#fff;text-decoration:none;font-weight:800;border-radius:24px;padding:10px 17px}
-@media(max-width:1100px){.wbshop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wbshop-grid>.wbshop-card,.wbshop-grid>.wbshop-card.wide{grid-column:span 1}.wbshop-grid>.wbshop-card.wide{display:flex}}
-@media(max-width:560px){.wbshop-grid{grid-template-columns:1fr}}
-@media(min-width:1101px){.wbshop-grid>.wbshop-card:not(.wide) h3{min-height:2.4em}}
-</style>
-<div class="section wbshop" id="sklep">
-<h2>👩‍🏫 Dla nauczycieli / Sklep</h2>
-<p class="sub">Gotowe materiały PDF na cały rok. Najpierw wypróbuj darmowy rozdział. <span style="opacity:.8">· Ready-to-teach printable packs – <a href="/esl-worksheets/" target="_top">in English</a>.</span></p>
-<div class="wbshop-grid">
-<div class="grp">Pakiety roczne · Year packs</div>
-<div class="wbshop-card wide">
-<img src="/img/okladka-klasy-1-3.png" alt="Karty pracy angielski klasy 1–3 – okładka" loading="lazy">
-<h3>Klasy 1–3 · pakiet roczny</h3>
-<div class="price">50 zł <span style="font-size:14px;font-family:system-ui">/ klasa</span></div>
-<p>10 rozdziałów na cały rok, PDF do druku. Kup pakiet dla klasy:</p>
-<div class="wbshop-classes"><a href="https://buy.stripe.com/3cIcN62ltdyheJi3ga4sE0I" target="_top">Klasa 1</a><a href="https://buy.stripe.com/14A8wQe4b2TDeJibMG4sE0J" target="_top">Klasa 2</a><a href="https://buy.stripe.com/6oU5kE7FN0Lvat2cQK4sE0K" target="_top">Klasa 3</a></div>
-<a class="buy" href="/sample-grades-13.pdf" target="_top">Darmowy rozdział 1 · PDF</a>
-<a class="more" href="/karty-pracy-angielski-klasa-1/" target="_top">Zobacz, co jest w pakiecie →</a>
+
+<div class="wbh-sec">
+<h2>Szybki trening <span class="pl" lang="en" style="font-size:.6em">· Quick practice</span></h2>
+<div class="section grid" style="margin-top:8px"><div class="card"><h3>🎯 Nauka w 15 minut</h3><p>Słownictwo → gramatyka → czytanie → mówienie.</p><button class="btn primary" onclick="show('vocab')">Zaczynamy</button></div><div class="card"><h3>🗣️ Mów teraz</h3><p>Prawdziwe pytania i wyzwania 60-sekundowe.</p><button class="btn secondary" onclick="show('speaking')">Mów</button></div><div class="card"><h3>📖 Biblioteka tekstów</h3><p>Trzy teksty do wyboru na każdym poziomie.</p><button class="btn secondary" onclick="show('reading')">Czytaj</button></div></div>
 </div>
-<div class="wbshop-card wide">
-<img src="/img/okladka-klasy-4-8.png" alt="Karty pracy angielski klasy 4–8 – okładka" loading="lazy">
-<h3>Klasy 4–8 · pakiet roczny</h3>
-<div class="price">50 zł <span style="font-size:14px;font-family:system-ui">/ klasa</span></div>
-<p>10 rozdziałów na cały rok, PDF do druku. Kup pakiet dla klasy:</p>
-<div class="wbshop-classes"><a href="https://buy.stripe.com/dRm7sM6BJ2TD9oYg2W4sE0L" target="_top">Klasa 4</a><a href="https://buy.stripe.com/00weVe5xF65P8kU1824sE0M" target="_top">Klasa 5</a><a href="https://buy.stripe.com/14AaEYgcj79T9oY4ke4sE0N" target="_top">Klasa 6</a><a href="https://buy.stripe.com/bJeaEYd07bq90SseYS4sE0O" target="_top">Klasa 7</a><a href="https://buy.stripe.com/fZu4gAgcjcud58I7wq4sE0P" target="_top">Klasa 8</a></div>
-<a class="buy" href="/sample-grades-48.pdf" target="_top">Darmowy rozdział 1 · PDF</a>
-<a class="more" href="/karty-pracy-angielski-klasa-4/" target="_top">Zobacz, co jest w pakiecie →</a>
-</div>
-<div class="grp">Egzaminy i mówienie · Exams &amp; speaking</div>
-<div class="wbshop-card">
-<img src="/img/okladka-matura-2027.jpg" alt="Zeszyt ćwiczeń Matura 2027 – okładka" loading="lazy">
-<h3>Matura 2027 · jesienny zeszyt</h3>
-<div class="price">30 zł</div>
-<p>Mówienie, czytanie, pisanie, słuchanie. Licencja nauczyciela.</p>
-<a class="buy" href="https://buy.stripe.com/00w7sMgcj9i16cM6sm4sE00" target="_top">Kup teraz · 30 zł</a>
-<a class="more" href="/matura-ustna-angielski-2027/" target="_top">Matura ustna – pytania do ćwiczeń →</a>
-</div>
-<div class="wbshop-card"><span class="badge">NOWOŚĆ</span>
-<img src="/img/okladka-e8-level-up.jpg" alt="E8 Level Up! – zeszyt ćwiczeń do egzaminu ósmoklasisty z angielskiego 2027 – okładka" loading="lazy">
-<h3>E8 Level Up! · egzamin ósmoklasisty 2027</h3>
-<div class="price">25 zł</div>
-<p>16 stron zadań w formacie CKE: słuchanie, czytanie, funkcje, środki językowe, pisanie + klucz. Pobierasz od razu.</p>
-<a class="buy" href="https://buy.stripe.com/7sYfZi1hpbq98kU8Au4sE0R" target="_top">Kup teraz · 25 zł</a>
-<a class="more" href="/e8-level-up-darmowa-probka.pdf" target="_blank" rel="noopener">Darmowa próbka · 4 strony PDF →</a>
-</div>
-<div class="wbshop-card">
-<div class="txtcover">30 Days<br>of Speaking</div>
-<h3>30 Days of Speaking</h3>
-<div class="price">30 zł</div>
-<p>Codzienne rozmowy – interaktywny PDF, 41 stron. Pobierasz od razu.</p>
-<a class="buy" href="https://buy.stripe.com/28EeVe0dl8dX44E5oi4sE0Q" target="_top">Kup teraz · 30 zł</a>
-<a class="more" href="/sample-speaking/" target="_top">Darmowa próbka →</a>
+
+<div class="wbh-sec wbh-strip">
+<a href="materials.html" target="_top"><span class="e">👩‍🏫</span><span><b>Jesteś nauczycielem?</b><small>Karty pracy klas 1–8, Matura 2027, E8 – darmowe próbki →</small></span></a>
+<a href="https://buy.stripe.com/8x2dRa9NV51L30Ag2W4sE10" target="_blank" rel="noopener"><span class="e">📅</span><span><b>Lekcja online 1:1 z Natalią</b><small>60 min, rozmowa, praca, podróże →</small></span></a>
 </div>
 </div>
-<div class="wb-freebie" data-source="matura-autumn-home" data-lang="pl">
-<h3>🎁 Darmowe: 4 strony z zeszytu Matura 2027</h3>
-<p>Wpisz e-mail – link do pobrania pojawi się od razu.</p>
-<form><input type="email" required placeholder="Twój e-mail" aria-label="E-mail"><button type="submit">Pobierz za darmo</button>
-<label><input type="checkbox" name="consent" required> Zgadzam się na e-maile od WordBloom (nowe materiały i promocje). Mogę wypisać się w każdej chwili. Administrator danych: Natalia Rduch, rduchnatalia@gmail.com.</label></form>
-<div class="ok"><p><b>Dziękuję!</b></p><a href="/sample-matura-autumn.html" target="_top">Otwórz darmowe strony →</a></div>
-</div>
-</div>
-<script src="/wb-freebie.js" defer></script>
-<!-- /wb-home-shop -->
-<h2 style="margin:28px 0 4px">Szybki trening <span class="pl" lang="en" style="font-size:.6em">· Quick practice</span></h2><div class="section grid" style="margin-top:8px"><div class="card"><h3>🎯 Nauka w 15 minut</h3><p>Słownictwo → gramatyka → czytanie → mówienie.</p><div class="pl" lang="en">Vocabulary → grammar → reading → speaking.</div><button class="btn primary" onclick="show('vocab')">Zaczynamy</button></div><div class="card"><h3>🗣️ Mów teraz</h3><p>Prawdziwe pytania i wyzwania 60-sekundowe.</p><div class="pl" lang="en">Real questions and 60-second challenges.</div><button class="btn secondary" onclick="show('speaking')">Mów</button></div><div class="card"><h3>📖 Biblioteka tekstów</h3><p>Trzy teksty do wyboru na każdym poziomie.</p><div class="pl" lang="en">Three reading choices at every level.</div><button class="btn secondary" onclick="show('reading')">Czytaj</button></div></div><div class="section"><h2>Wybierz poziom <span class="pl" lang="en" style="font-size:.6em">· Choose your level</span></h2><div class="levels" id="homeLevels"></div></div></section>
+</section>
 <section id="students" class="page"><div class="tag">MOJA NAUKA · MY LEARNING</div><h1>Twoja biblioteka <span class="pl" lang="en" style="font-size:.5em">· Your learning library</span></h1><div class="panel"><p>Najpierw wybierz poziom. Każda umiejętność zawiera materiał, ćwiczenie i krótkie zadanie.</p><div class="pl" lang="en">Pick your level first. Every skill below has study material, practice and a small task.</div><div class="levels" id="studentLevels"></div></div><div class="section grid"><div class="card"><h3>🗣️ Mówienie</h3><p>Pytania, scenki i wyzwania 60-sekundowe.</p></div><div class="card"><h3>🎧 Słuchanie</h3><p>Krótkie nagrania z odtwarzaniem, wolniejszym tempem i pytaniami.</p></div><div class="card"><h3>✍️ Pisanie</h3><p>Tematy, przydatne zwroty i listy do samosprawdzenia.</p></div><div class="card"><h3>📖 Czytanie</h3><p>Trzy teksty na każdym poziomie: codzienny, informacyjny oraz idee i opinie.</p></div><div class="card"><h3>📚 Gramatyka</h3><p>Wyjaśnienia, przykłady, szybkie sprawdziany i powtórki poziomu.</p></div><div class="card"><h3>🧠 Słownictwo</h3><p>Zestawy tematyczne, znaczenia angielsko-polskie i ćwiczenia w zdaniach.</p></div></div></section>
 <section id="speaking" class="page"><div class="tag">MÓWIENIE · SPEAKING</div><h1>Studio mówienia 🗣️</h1><p>Mów według wzoru: <b>odpowiedź → powód → przykład → pytanie dodatkowe</b>.</p><div class="pl" lang="en">Use the pattern answer → reason → example → follow-up.</div><div class="filters" id="sf"></div><div id="speak" class="grid"></div></section>
 <section id="listening" class="page"><div class="tag">SŁUCHANIE · LISTENING</div><h1>Studio słuchania 🎧</h1><p>Przeczytaj krótki tekst, odpowiedz na pytanie i sprawdź transkrypcję.</p><div class="pl" lang="en">Read the short script, answer the question, then check the transcript.</div><div class="filters" id="lf"></div><div id="listen" class="grid"></div></section>
