@@ -315,7 +315,8 @@ a:hover>.wbh-arrow,button:hover>.wbh-arrow,a:focus-visible>.wbh-arrow{transform:
 .wbh-strip a:hover{background:#f4f5ff;transform:translateY(-2px)}
 .wbh-strip .e{font-size:24px;display:inline-block}
 .wbh-strip b{display:block}.wbh-strip small{color:var(--wbh-soft)}
-.wbh-links{margin-top:40px;padding-top:24px;border-top:1px solid #e3e8f0}.wbh-links h2{font-size:18px;margin:0 0 10px}.wbh-links ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}.wbh-links a{display:inline-block;font-size:13px;font-weight:700;color:#4055b4;background:#fff;border:1px solid #e3e8f0;border-radius:999px;padding:6px 12px;text-decoration:none}.wbh-links a:hover{background:#eef0fd}
+.wbh-links{margin-top:44px;padding-top:18px;border-top:1px solid #e3e8f0;font-size:13px;color:#8a93ab;line-height:1.9}.wbh-links p{margin:0}.wbh-links a{color:#59657e;text-decoration:none}.wbh-links a:hover{color:#4055b4;text-decoration:underline}
+body:has(#home.page.active) #eeMaturaBtn{display:none}
 /* motion */
 @keyframes wbhFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(-14px,12px)}}
 @keyframes wbhShine{0%,70%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
@@ -340,15 +341,6 @@ a:hover>.wbh-arrow,button:hover>.wbh-arrow,a:focus-visible>.wbh-arrow{transform:
 <ul class="wbh-trust"><li>✓ Dla dzieci, nastolatków i dorosłych</li><li>✓ Pierwsze ćwiczenie w każdej umiejętności za darmo</li><li>✓ Sprawdzanie od razu</li></ul>
 </div>
 
-<div class="wbh-sec wbh-reveal">
-<h2>Jak to działa? <span class="wbh-en" lang="en">· How it works</span></h2>
-<ol class="wbh-steps wbh-stagger">
-<li><b>Wybierz poziom</b>Dzieci, młodzież albo dorośli – od A1 do C2.</li>
-<li><b>Ćwicz 5 minut dziennie</b>Czytanie, słuchanie, mówienie i pisanie ze sprawdzaniem od razu.</li>
-<li><b>Śledź postępy</b>Gwiazdki za ćwiczenia i raport postępów dla rodzica.</li>
-</ol>
-</div>
-
 <div class="wbh-sec wbh-reveal" id="wbhLevels">
 <h2>Dla kogo? <span class="wbh-en" lang="en">· Who is learning?</span></h2>
 <p class="sub">Wybierz grupę, a ćwiczenia dopasują się do poziomu.</p>
@@ -357,15 +349,14 @@ a:hover>.wbh-arrow,button:hover>.wbh-arrow,a:focus-visible>.wbh-arrow{transform:
 <a class="wbh-level teen" href="skills.html?band=k78#home" target="_top"><span class="e">🚀</span><b>Młodzież</b><small>ok. 13–15 lat · A2 · B1 · egzamin E8</small><span class="wbh-pick"><span>Zaczynam →</span></span></a>
 <a class="wbh-level adult" href="skills.html?band=adult#home" target="_top"><span class="e">☕</span><b>Dorośli</b><small>A2 · B2 · praca, podróże, codzienność</small><span class="wbh-pick"><span>Zaczynam →</span></span></a>
 </div>
-<ul class="wbh-skills"><li><a href="skills.html#reading" target="_top">📖 Czytanie</a></li><li><a href="skills.html#listening" target="_top">🎧 Słuchanie</a></li><li><a href="skills.html#speaking" target="_top">🗣️ Mówienie</a></li><li><a href="skills.html#writing" target="_top">✍️ Pisanie</a></li><li><a href="#" onclick="show('grammar');return false">📚 Gramatyka</a></li><li><a href="#" onclick="show('vocab');return false">🧠 Słownictwo</a></li></ul>
-<details class="wbh-more"><summary>Wszystkie poziomy A1–C2 · All levels</summary><div class="levels" id="homeLevels"></div></details>
+<div id="homeLevels" hidden></div>
 </div>
 
 <div class="wbh-sec wbh-reveal">
 <h2>Wypróbuj teraz <span class="wbh-en" lang="en">· Quick practice</span></h2>
 <p class="sub">Bez logowania – jedno krótkie ćwiczenie na start.</p>
 <div class="section grid wbh-stagger" style="margin-top:8px"><div class="card"><h3>🎯 Nauka w 15 minut</h3><p>Słownictwo → gramatyka → czytanie → mówienie.</p><button class="btn primary" onclick="show('vocab')">Zaczynamy</button></div><div class="card"><h3>🗣️ Mów teraz</h3><p>Prawdziwe pytania i wyzwania 60-sekundowe.</p><button class="btn secondary" onclick="show('speaking')">Mów</button></div><div class="card"><h3>📖 Biblioteka tekstów</h3><p>Trzy teksty do wyboru na każdym poziomie.</p><button class="btn secondary" onclick="show('reading')">Czytaj</button></div>
-<div class="card" id="eeMaturaHome"><div><h3>🎓 Matura z angielskiego 2027 <span style="font:800 11px/1 Inter,system-ui,sans-serif;background:#e3f7ec;color:#1c6b3f;border-radius:999px;padding:4px 8px;vertical-align:middle">Za darmo na start</span></h3><p>Wszystkie części egzaminu: zadania ze sprawdzaniem, nagrania odtwarzane dwa razy i wzorcowe odpowiedzi. Pierwsze zadanie w każdej części za darmo, pełny dostęp do 31 maja 2027 – 60 zł.</p><div class="pl" lang="en">Every exam part explained, with exam-style tasks and model answers.</div></div><button class="btn" type="button" onclick="var b=document.getElementById('eeMaturaBtn');if(b)b.click()">Wypróbuj za darmo →</button></div>
+<div class="card" id="eeMaturaHome"><div><h3>🎓 Matura z angielskiego 2027 <span style="font:800 11px/1 Inter,system-ui,sans-serif;background:#e3f7ec;color:#1c6b3f;border-radius:999px;padding:4px 8px;vertical-align:middle">Za darmo na start</span></h3><p>Wszystkie części egzaminu ze sprawdzaniem i wzorcowymi odpowiedziami. Pierwsze zadanie w każdej części za darmo, pełny dostęp 60 zł.</p></div><button class="btn" type="button" onclick="var b=document.getElementById('eeMaturaBtn');if(b)b.click()">Wypróbuj za darmo →</button></div>
 </div>
 </div>
 
@@ -386,10 +377,10 @@ a:hover>.wbh-arrow,button:hover>.wbh-arrow,a:focus-visible>.wbh-arrow{transform:
 </div>
 
 <div class="wbh-sec wbh-strip wbh-reveal">
-<a href="materials.html" target="_top"><span class="e">👩‍🏫</span><span><b>Jesteś nauczycielem?</b><small>Karty pracy klas 1–8, Matura 2027, E8 – darmowe próbki →</small></span></a>
+<a href="materials.html" target="_top"><span class="e">🛍️</span><span><b>Materiały i sklep</b><small>Karty pracy PDF klas 1–8, Matura 2027, E8 – darmowe próbki →</small></span></a>
 <a href="https://buy.stripe.com/8x2dRa9NV51L30Ag2W4sE10" target="_blank" rel="noopener"><span class="e">📅</span><span><b>Lekcja online 1:1 z Natalią</b><small>60 min · 80 zł · rozmowa, praca, podróże →</small></span></a>
 </div>
-<nav class="wbh-links" aria-label="Więcej na WordBloom"><h2>Więcej na WordBloom <span class="wbh-en" lang="en">· Explore</span></h2><ul><li><a href="/skills.html" target="_top">Skills Studio – czytanie, słuchanie, mówienie, pisanie</a></li><li><a href="/materials.html" target="_top">Materiały i karty pracy</a></li><li><a href="/karty-pracy-angielski-klasa-1/" target="_top">Karty pracy klasa 1</a></li><li><a href="/karty-pracy-angielski-klasa-2/" target="_top">Karty pracy klasa 2</a></li><li><a href="/karty-pracy-angielski-klasa-3/" target="_top">Karty pracy klasa 3</a></li><li><a href="/karty-pracy-angielski-klasa-4/" target="_top">Karty pracy klasa 4</a></li><li><a href="/karty-pracy-angielski-klasa-5/" target="_top">Karty pracy klasa 5</a></li><li><a href="/karty-pracy-angielski-klasa-6/" target="_top">Karty pracy klasa 6</a></li><li><a href="/karty-pracy-angielski-klasa-7/" target="_top">Karty pracy klasa 7</a></li><li><a href="/karty-pracy-angielski-klasa-8/" target="_top">Karty pracy klasa 8</a></li><li><a href="/matura-ustna-angielski-2027/" target="_top">Matura ustna angielski 2027</a></li><li><a href="/esl-worksheets/" target="_top">ESL worksheets grades 1–8</a></li><li><a href="/esl-speaking-activities/" target="_top">ESL speaking activities</a></li><li><a href="/about-me.html" target="_top">O mnie – lekcje 1:1</a></li></ul></nav>
+<nav class="wbh-links" aria-label="Więcej na WordBloom"><p><a href="/skills.html" target="_top">Skills Studio</a> · <a href="/materials.html" target="_top">Materiały i sklep</a> · <a href="/matura-ustna-angielski-2027/" target="_top">Matura ustna angielski 2027</a> · <a href="/esl-worksheets/" target="_top">ESL worksheets grades 1–8</a> · <a href="/esl-speaking-activities/" target="_top">ESL speaking activities</a> · <a href="/about-me.html" target="_top">O mnie</a></p><p>Karty pracy: <a href="/karty-pracy-angielski-klasa-1/" target="_top">klasa 1</a> · <a href="/karty-pracy-angielski-klasa-2/" target="_top">klasa 2</a> · <a href="/karty-pracy-angielski-klasa-3/" target="_top">klasa 3</a> · <a href="/karty-pracy-angielski-klasa-4/" target="_top">klasa 4</a> · <a href="/karty-pracy-angielski-klasa-5/" target="_top">klasa 5</a> · <a href="/karty-pracy-angielski-klasa-6/" target="_top">klasa 6</a> · <a href="/karty-pracy-angielski-klasa-7/" target="_top">klasa 7</a> · <a href="/karty-pracy-angielski-klasa-8/" target="_top">klasa 8</a></p></nav>
 <script>
 (function(){var root=document.querySelector('.wbh');if(!root)return;
  var els=root.querySelectorAll('.wbh-reveal');
@@ -459,8 +450,8 @@ function progress(){a.textContent=st.a||0;c.textContent=st.c||0;w.textContent=st
       var materials=d.createElement('button');
       materials.id='wbMaterialsNav';
       materials.type='button';
-      materials.innerHTML='📎 <label>Materiały</label>';
-      materials.setAttribute('aria-label','Materiały · Resources');
+      materials.innerHTML='🛍️ <label>Materiały i sklep</label>';
+      materials.setAttribute('aria-label','Materiały i sklep · Shop');
       materials.onclick=function(){window.location.href='materials.html';};
       nav.insertBefore(materials,nav.firstChild);
     }
