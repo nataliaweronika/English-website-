@@ -318,7 +318,7 @@ function open(){var m=document.getElementById('eeMaturaModal');if(!m){m=document
 document.addEventListener('keydown',function(e){if(e.key!=='Escape')return;var m=document.getElementById('eeMaturaModal');if(m&&m.style.display!=='none')close()});
 WBM.open=open;
 
-function init(){injectStyle();if(document.getElementById('eeMaturaBtn'))return;var b=document.createElement('button');b.id='eeMaturaBtn';b.type='button';b.textContent='🎓 Matura z angielskiego';b.setAttribute('aria-label','Open Matura – English EAL exam preparation / Otwórz przygotowanie do matury');b.onclick=open;document.body.appendChild(b);homeCard()}
+function init(){injectStyle();if(/^#matura\b/.test(location.hash))setTimeout(open,300);if(document.getElementById('eeMaturaBtn'))return;var b=document.createElement('button');b.id='eeMaturaBtn';b.type='button';b.textContent='🎓 Matura z angielskiego';b.setAttribute('aria-label','Open Matura – English EAL exam preparation / Otwórz przygotowanie do matury');b.onclick=open;document.body.appendChild(b);homeCard()}
 /* Matura card on the Home page */
 function homeCard(){var g=document.querySelector('#home .section.grid');if(!g){setTimeout(homeCard,300);return}if(document.getElementById('eeMaturaHome'))return;
  var st=document.createElement('style');st.textContent='#eeMaturaHome{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;background:linear-gradient(90deg,#fff5f6,#fff);border-left:6px solid #b51f2e}#eeMaturaHome h3{margin:0 0 6px}#eeMaturaHome p{margin:0 0 4px}#eeMaturaHome .btn{background:#b51f2e;color:#fff;border:0;white-space:nowrap}';document.head.appendChild(st);
