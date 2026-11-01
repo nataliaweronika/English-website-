@@ -103,19 +103,18 @@ function showSample(id,continueAction){
 }
 document.addEventListener('keydown',function(e){var m=document.getElementById('wbSample');if(!m)return;if(e.key==='Escape'){closeSample();return;}if(e.key==='Tab'){var all=Array.from(m.querySelectorAll('button,input,textarea,select,summary,a[href]')).filter(function(n){return n.getClientRects().length&&!n.disabled;});var first=all[0],last=all[all.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 
+/* Public helpers (used by the Matura trial) */
+window.WBAccess={isUnlocked:function(){return state.unlocked;},gate:function(after){pending=after||null;showGate();}};
 /* intercept navigation to lessons while locked */
 document.addEventListener('click',function(e){if(state.unlocked)return;var t=e.target;if(!t||!t.closest)return;
  var nb=t.closest('.nav button[data-page]');
  if(nb&&isLockedPage(nb.getAttribute('data-page'))){e.preventDefault();e.stopImmediatePropagation();pending=function(){nb.click();};if(SAMPLE_PAGES[nb.getAttribute('data-page')])showSample(nb.getAttribute('data-page'),pending);else showGate();return;}
- var mb=t.closest('#eeMaturaBtn');
- if(mb){e.preventDefault();e.stopImmediatePropagation();pending=function(){mb.click();};showGate();return;}
+ /* Matura hub opens as a free trial – paid tasks are locked inside the hub (matura-prep.js). */
 },true);
 /* safety net: lesson pages opened some other way (home cards, search) */
 setInterval(function(){document.body.classList.toggle('wb-locked',!state.unlocked);if(state.unlocked)return;
  var a=document.querySelector('.page.active');
  if(a&&isLockedPage(a.id)){var id=a.id;goHome();pending=function(){var b=document.querySelector('.nav button[data-page="'+id+'"]');if(b)b.click();};if(SAMPLE_PAGES[id])showSample(id,pending);else showGate();}
- var mm=document.getElementById('eeMaturaModal');
- if(mm&&mm.style.display!=='none'&&getComputedStyle(mm).display!=='none'){mm.style.display='none';document.documentElement.style.overflow='';pending=function(){var b=document.getElementById('eeMaturaBtn');if(b)b.click();};showGate();}
 },400);
 
 /* ---------- sidebar entry ---------- */
