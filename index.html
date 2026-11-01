@@ -103,7 +103,7 @@ iframe{display:block;width:100%;height:100%;border:0}
     if(nav&&!d.getElementById('wbMyWordsNav')){
       var wordsButton=d.createElement('button');
       wordsButton.id='wbMyWordsNav';wordsButton.type='button';
-      wordsButton.innerHTML='<label>Moje słowa</label>';
+      wordsButton.innerHTML='🔤 <label>Moje słowa</label>';
       wordsButton.setAttribute('aria-label','Moje słowa · My Words');
       wordsButton.onclick=function(){window.location.href='my-words.html';};
       nav.insertBefore(wordsButton,homeButton?homeButton.nextSibling:nav.firstChild);
@@ -112,6 +112,26 @@ iframe{display:block;width:100%;height:100%;border:0}
     // About me sits at the top of the menu, right after Home.
     var aboutBtn=d.getElementById('wbAboutNav');
     if(aboutBtn&&homeButton)nav.insertBefore(aboutBtn,homeButton.nextSibling);
+
+    // Clear sidebar: Start + login on top, then "Nauka" and "Więcej" groups.
+    function organizeNav(){
+      if(!nav)return;
+      nav.querySelectorAll('.wb-navlabel').forEach(function(x){x.remove();});
+      function q(sel){return nav.querySelector(sel);}
+      function label(t){var l=d.createElement('div');l.className='wb-navlabel';l.setAttribute('aria-hidden','true');l.textContent=t;return l;}
+      var order=['button[data-page="home"]','#wbNavAccess','#Nauka','button[data-page="students"]','button[data-page="speaking"]','button[data-page="listening"]','button[data-page="writing"]','button[data-page="reading"]','button[data-page="grammar"]','button[data-page="vocab"]','#wbMyWordsNav','button[data-page="progress"]','button[data-page="teacher"]','button[data-page="admin"]','#Więcej','#wbMaterialsNav','#wbPoetryNav','#wbAboutNav'];
+      var placed=[];
+      order.forEach(function(sel){
+        if(sel==='#Nauka'){var l1=label('Nauka');placed.push(l1);return;}
+        if(sel==='#Więcej'){var l2=label('Więcej');placed.push(l2);return;}
+        var el=q(sel);if(el&&placed.indexOf(el)<0)placed.push(el);
+      });
+      var rest=Array.prototype.filter.call(nav.children,function(c){return placed.indexOf(c)<0;});
+      placed.concat(rest).forEach(function(el){nav.appendChild(el);});
+    }
+    organizeNav();
+    // The login button is added by wordbloom-access.js a moment later – re-run once it exists.
+    var tries=0,navTimer=setInterval(function(){tries++;if(d.getElementById('wbNavAccess')||tries>20){clearInterval(navTimer);organizeNav();}},250);
 
     var ac=d.createElement('script');
     ac.src='wordbloom-access.js';

@@ -228,88 +228,148 @@
   applyAuth();
 })();
 </script><div class="app"><aside class="side"><div class="brand">WordBloom</div><div class="mode"><button id="tm">👩‍🏫 <span>Nauczyciel</span></button><button id="sm" class="active">🎓 <span>Uczeń</span></button></div><nav class="nav"><button class="active" data-page="home">🏠 <label>Start</label></button><button data-page="students">🎯 <label>Moja nauka</label></button><button data-page="speaking">🗣️ <label>Mówienie</label></button><button data-page="listening">🎧 <label>Słuchanie</label></button><button data-page="writing">✍️ <label>Pisanie</label></button><button data-page="reading">📖 <label>Czytanie</label></button><button data-page="grammar">📚 <label>Gramatyka</label></button><button data-page="vocab">🧠 <label>Słownictwo</label></button><button data-page="progress">📈 <label>Postępy</label></button><button class="teacher-only" data-page="teacher" style="display:none">👩‍🏫 <label>Dla nauczyciela</label></button><button id="adminNav" class="teacher-only" data-page="admin" style="display:none">🔐 <label>Zatwierdź użytkowników</label></button></nav></aside><main class="main"><div class="top"><input id="search" class="search" placeholder="Szukaj tematu… · Search"><b>👋 Gotowy/a?</b></div>
-<section id="home" class="page active"><!-- wb-home v3: clean study-first home (2026-10-29) -->
+<section id="home" class="page active"><!-- wb-home v4: clearer order + gentle motion (2026-11-01) -->
 <style>
-.wbh{max-width:1040px}
-.wbh-hero{padding:48px 44px 40px;position:relative;overflow:hidden}
-.wbh-hero:after{content:"";position:absolute;right:-90px;top:-90px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#ffffffaa,#ffffff00 70%);pointer-events:none}
+/* ---- layout fixes shared by the whole app ---- */
+.side{overflow-y:auto;overscroll-behavior:contain}
+.main{padding-bottom:140px}
+.nav .wb-navlabel{display:block;margin:16px 10px 4px;font:800 10px/1 Inter,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8a93ab}
+@media(max-width:720px){.nav .wb-navlabel{display:block;height:1px;margin:10px 8px;background:#e5e8f1;font-size:0}}
+/* ---- home ---- */
+.wbh{max-width:1040px;--wbh-ink:#17244b;--wbh-soft:#59657e;--wbh-blue:#5968e8;--wbh-blue2:#4055b4}
+.wbh-hero{padding:52px 44px 42px;position:relative;overflow:hidden;isolation:isolate}
+.wbh-blob{position:absolute;border-radius:50%;filter:blur(2px);z-index:-1;pointer-events:none}
+.wbh-blob.b1{right:-80px;top:-90px;width:300px;height:300px;background:radial-gradient(circle,#ffffffcc,#ffffff00 70%);animation:wbhFloat 9s ease-in-out infinite}
+.wbh-blob.b2{right:120px;bottom:-120px;width:240px;height:240px;background:radial-gradient(circle,#c9cffb88,#c9cffb00 70%);animation:wbhFloat 12s ease-in-out infinite reverse}
+.wbh-blob.b3{left:52%;top:30px;width:120px;height:120px;background:radial-gradient(circle,#ffd6e888,#ffd6e800 70%);animation:wbhFloat 10s ease-in-out infinite 1s}
 .wbh-hero h1{font-size:46px;max-width:720px;margin:12px 0 8px}
 .wbh-hero h1 span{display:block;font-size:23px;font-style:italic;color:#4f5c86;margin-top:10px;font-weight:400}
 .wbh-hero .lead{font-size:17px;max-width:620px;margin:0 0 26px;color:#33406a}
 .wbh-hero .lead small{display:block;color:#68738d;font-size:14px;margin-top:4px}
 .wbh-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.wbh-cta a,.wbh-cta button{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:16px;border-radius:999px;padding:14px 24px;transition:transform .15s}
+.wbh-cta a,.wbh-cta button{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:16px;border-radius:999px;padding:14px 24px;transition:transform .2s,box-shadow .2s}
 .wbh-cta a:hover,.wbh-cta button:hover,.wbh-cta a:focus-visible,.wbh-cta button:focus-visible{transform:translateY(-2px)}
-.wbh-cta a:focus-visible,.wbh-cta button:focus-visible{outline:3px solid #5968e8;outline-offset:2px}
-.wbh-cta .wbh-go{background:#5968e8;color:#fff;box-shadow:0 8px 22px rgba(89,104,232,.28)}
-.wbh-cta .wbh-alt{background:#fff;color:#17244b;border:1px solid #d9def0}
-.wbh-trust{list-style:none;padding:0;margin:22px 0 0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;font-weight:700;color:#4055b4}
-.wbh-sec{margin-top:36px}
+.wbh-cta a:focus-visible,.wbh-cta button:focus-visible{outline:3px solid var(--wbh-blue);outline-offset:2px}
+.wbh-cta .wbh-go{background:var(--wbh-blue);color:#fff;box-shadow:0 8px 22px rgba(89,104,232,.28);position:relative;overflow:hidden}
+.wbh-cta .wbh-go:hover{box-shadow:0 12px 28px rgba(89,104,232,.38)}
+.wbh-cta .wbh-go:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,#ffffff55 50%,transparent 65%);transform:translateX(-100%);animation:wbhShine 4.5s ease-in-out 1.2s infinite}
+.wbh-cta .wbh-alt{background:#fff;color:var(--wbh-ink);border:1px solid #d9def0}
+.wbh-arrow{display:inline-block;transition:transform .2s}
+a:hover>.wbh-arrow,button:hover>.wbh-arrow,a:focus-visible>.wbh-arrow{transform:translateX(4px)}
+.wbh-alt:hover>.wbh-arrow{transform:translateY(3px)}
+.wbh-trust{list-style:none;padding:0;margin:22px 0 0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;font-weight:700;color:var(--wbh-blue2)}
+.wbh-sec{margin-top:40px;scroll-margin-top:80px}
 .wbh-sec>h2{margin:0 0 4px}
-.wbh-sec>.sub{margin:0 0 16px;color:#59657e}
+.wbh-sec>.sub{margin:0 0 16px;color:var(--wbh-soft)}
+.wbh-en{font-size:.6em;color:#8a93ab;font-weight:400}
+/* how it works */
+.wbh-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;counter-reset:s}
+.wbh-steps li{counter-increment:s;background:#fff;border:1px solid #e3e8f0;border-radius:16px;padding:16px 18px 16px 62px;position:relative;color:#33406a;font-size:14px;line-height:1.45}
+.wbh-steps li:before{content:counter(s);position:absolute;left:16px;top:16px;width:32px;height:32px;border-radius:50%;background:#eef0fd;color:var(--wbh-blue2);font:800 15px/32px Inter,system-ui,sans-serif;text-align:center}
+.wbh-steps b{display:block;color:var(--wbh-ink);font-size:15px;margin-bottom:2px}
+/* who */
 .wbh-levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.wbh-level small{display:block}
-.wbh-sub{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.wbh-sub a{font-size:13px;font-weight:800;color:#4055b4;background:#eef0fd;border-radius:999px;padding:6px 11px;text-decoration:none}
-.wbh-sub a:hover{background:#dfe3fc}
-.wbh-go2{display:inline-block;margin-top:12px;font-size:13px;font-weight:800;color:#4055b4}
-.wbh-level.kids{background:#f0f8ff}
-.wbh-level{display:block;background:#fff;border:1px solid #e3e8f0;color:#173047;text-decoration:none;border-radius:18px;padding:20px 18px;box-shadow:0 6px 22px rgba(30,45,90,.06);transition:transform .15s,box-shadow .15s}
-.wbh-level:hover,.wbh-level:focus-visible{transform:translateY(-2px);box-shadow:0 10px 28px rgba(30,45,90,.12)}
-.wbh-level .e{font-size:30px;line-height:1}
+.wbh-level{display:flex;flex-direction:column;background:#fff;border:1px solid #e3e8f0;color:#173047;text-decoration:none;border-radius:18px;padding:20px 18px;box-shadow:0 6px 22px rgba(30,45,90,.06);transition:transform .2s,box-shadow .2s}
+.wbh-level:hover,.wbh-level:focus-within,.wbh-level:focus-visible{transform:translateY(-3px);box-shadow:0 12px 30px rgba(30,45,90,.12)}
+.wbh-level.kids{background:#f0f8ff}.wbh-level.teen{background:#f6f3ff}.wbh-level.adult{background:#fdf6ea}
+.wbh-level .e,.wbh-plan .e{font-size:30px;line-height:1;display:inline-block;transform-origin:50% 80%}
+.wbh-level:hover .e,.wbh-plan:hover .e,.wbh-strip a:hover .e{animation:wbhWiggle .6s ease}
 .wbh-level b{display:block;font:700 19px/1.2 Georgia,serif;margin:10px 0 4px}
-.wbh-level small{color:#59657e;font-weight:600}
-.wbh-level.adult{background:#fdf6ea}
-.wbh-skills{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0;padding:0;list-style:none;font-size:14px;font-weight:700;color:#33406a}
-.wbh-skills li{background:#eef0fd;border-radius:999px;padding:6px 12px}
+.wbh-level small{display:block;color:var(--wbh-soft);font-weight:600}
+.wbh-pick{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:14px}
+.wbh-pick a,.wbh-pick span{font-size:13px;font-weight:800;color:#fff;background:var(--wbh-blue);border-radius:999px;padding:7px 13px;text-decoration:none;transition:background .2s}
+.wbh-pick a:hover{background:var(--wbh-blue2)}
+.wbh-level:hover .wbh-pick span{background:var(--wbh-blue2)}
+.wbh-skills{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0;padding:0;list-style:none;font-size:14px;font-weight:700}
+.wbh-skills a{display:inline-block;background:#eef0fd;color:#33406a;border-radius:999px;padding:7px 13px;text-decoration:none;transition:background .2s,transform .2s}
+.wbh-skills a:hover{background:#dfe3fc;transform:translateY(-2px)}
 .wbh-more{margin-top:14px}
-.wbh-more summary{cursor:pointer;font-weight:700;color:#4055b4;font-size:14px}
+.wbh-more summary{cursor:pointer;font-weight:700;color:var(--wbh-blue2);font-size:14px}
 .wbh-more .levels{margin-top:12px}
-.wbh-strip{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.wbh-strip a{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid #e3e8f0;border-radius:16px;padding:16px 18px;text-decoration:none;color:#17244b}
-.wbh-strip a:hover{background:#f4f5ff}
-.wbh-strip .e{font-size:24px}
-.wbh-strip b{display:block}
-.wbh-strip small{color:#59657e}
+/* quick practice + matura */
+#home #eeMaturaHome{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;background:linear-gradient(90deg,#fff5f6,#fff);border-left:6px solid #b51f2e}
+#home #eeMaturaHome h3{margin:0 0 6px}#home #eeMaturaHome p{margin:0 0 4px}
+#home #eeMaturaHome .btn{background:#b51f2e;color:#fff;border:0;white-space:nowrap}
+#home .section.grid .card{transition:transform .2s,box-shadow .2s}
+#home .section.grid .card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(30,45,90,.12)}
+/* plans */
 .wbh-plans{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.wbh-plan{background:#fff;border:1px solid #e3e8f0;border-radius:18px;padding:22px 20px;box-shadow:0 6px 22px rgba(30,45,90,.06);display:flex;flex-direction:column}
+.wbh-plan{background:#fff;border:1px solid #e3e8f0;border-radius:18px;padding:22px 20px;box-shadow:0 6px 22px rgba(30,45,90,.06);display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
+.wbh-plan:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(30,45,90,.12)}
 .wbh-plan.parent{background:#fff6fa}.wbh-plan.teach{background:#f0fbf5}
-.wbh-plan .e{font-size:30px;line-height:1}
-.wbh-plan h3{font:700 21px/1.2 Georgia,serif;margin:10px 0 2px;color:#17244b}
+.wbh-plan h3{font:700 21px/1.2 Georgia,serif;margin:10px 0 2px;color:var(--wbh-ink)}
 .wbh-plan .en{color:#68738d;font-size:13px;margin:0 0 10px}
 .wbh-plan ul{margin:0 0 14px;padding-left:18px;color:#33406a;font-size:14px;line-height:1.6}
 .wbh-prices{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
 .wbh-prices span{background:#fff;border:1px solid #d9def0;border-radius:12px;padding:6px 10px;font-size:13px;color:#33406a}
-.wbh-prices b{font-size:16px;color:#17244b}
-.wbh-plan .btn-plan{margin-top:auto;align-self:flex-start;display:inline-block;border-radius:999px;padding:12px 20px;font-weight:800;text-decoration:none}
-.wbh-plan.parent .btn-plan{background:#ff9fc8;color:#17244b}.wbh-plan.teach .btn-plan{background:#078389;color:#fff}
-.wbh-plannote{margin:12px 0 0;font-size:13px;color:#59657e}
-@media(max-width:900px){.wbh-hero{padding:30px 22px 28px}.wbh-hero h1{font-size:34px}.wbh-hero h1 span{font-size:19px}.wbh-levels{grid-template-columns:1fr}.wbh-strip{grid-template-columns:1fr}.wbh-plans{grid-template-columns:1fr}}
+.wbh-prices b{font-size:16px;color:var(--wbh-ink)}
+.wbh-plan .btn-plan{margin-top:auto;align-self:flex-start;display:inline-block;border-radius:999px;padding:12px 20px;font-weight:800;text-decoration:none;transition:transform .2s}
+.wbh-plan .btn-plan:hover{transform:translateY(-2px)}
+.wbh-plan.parent .btn-plan{background:#ff9fc8;color:var(--wbh-ink)}.wbh-plan.teach .btn-plan{background:#078389;color:#fff}
+.wbh-plannote{margin:12px 0 0;font-size:13px;color:var(--wbh-soft)}
+/* strip */
+.wbh-strip{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.wbh-strip a{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid #e3e8f0;border-radius:16px;padding:16px 18px;text-decoration:none;color:var(--wbh-ink);transition:background .2s,transform .2s}
+.wbh-strip a:hover{background:#f4f5ff;transform:translateY(-2px)}
+.wbh-strip .e{font-size:24px;display:inline-block}
+.wbh-strip b{display:block}.wbh-strip small{color:var(--wbh-soft)}
+/* motion */
+@keyframes wbhFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(-14px,12px)}}
+@keyframes wbhShine{0%,70%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+@keyframes wbhWiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg)}60%{transform:rotate(9deg)}}
+@keyframes wbhUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.wbh-hero>.tag,.wbh-hero>h1,.wbh-hero>.lead,.wbh-hero>.wbh-cta,.wbh-hero>.wbh-trust{animation:wbhUp .6s cubic-bezier(.2,.7,.2,1) both}
+.wbh-hero>h1{animation-delay:.08s}.wbh-hero>.lead{animation-delay:.16s}.wbh-hero>.wbh-cta{animation-delay:.24s}.wbh-hero>.wbh-trust{animation-delay:.32s}
+.wbh-js .wbh-reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+.wbh-js .wbh-reveal.in{opacity:1;transform:none}
+.wbh-js .wbh-stagger.in>*{animation:wbhUp .55s cubic-bezier(.2,.7,.2,1) both}
+.wbh-js .wbh-stagger.in>*:nth-child(2){animation-delay:.08s}.wbh-js .wbh-stagger.in>*:nth-child(3){animation-delay:.16s}.wbh-js .wbh-stagger.in>*:nth-child(4){animation-delay:.24s}
+@media(prefers-reduced-motion:reduce){.wbh *,.wbh *:before,.wbh *:after{animation:none!important;transition:none!important}.wbh-js .wbh-reveal{opacity:1;transform:none}}
+@media(max-width:900px){.wbh-hero{padding:30px 22px 28px}.wbh-hero h1{font-size:34px}.wbh-hero h1 span{font-size:19px}.wbh-levels,.wbh-steps,.wbh-strip,.wbh-plans{grid-template-columns:1fr}}
 </style>
 <div class="wbh">
-<div class="hero wbh-hero"><div class="tag">PLATFORMA DO NAUKI ANGIELSKIEGO · A1 → C2</div>
+
+<div class="hero wbh-hero"><span class="wbh-blob b1"></span><span class="wbh-blob b2"></span><span class="wbh-blob b3"></span>
+<div class="tag">PLATFORMA DO NAUKI ANGIELSKIEGO · A1 → C2</div>
 <h1>Ucz się angielskiego krok po kroku.<span lang="en">Learn English step by step.</span></h1>
 <p class="lead">Czytanie, słuchanie, mówienie i pisanie – krótkie ćwiczenia na Twoim poziomie, po 5 minut dziennie.<small lang="en">Short interactive practice at your level – 5 minutes a day.</small></p>
-<div class="wbh-cta"><a class="wbh-go" href="skills.html#home" target="_top">Zacznij naukę za darmo →</a><button type="button" class="wbh-alt" onclick="var t=document.getElementById('wbhLevels');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})">Wybierz poziom ↓</button></div>
+<div class="wbh-cta"><a class="wbh-go" href="skills.html#home" target="_top">Zacznij naukę za darmo <span class="wbh-arrow">→</span></a><button type="button" class="wbh-alt" onclick="var t=document.getElementById('wbhLevels');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})">Wybierz poziom <span class="wbh-arrow">↓</span></button></div>
 <ul class="wbh-trust"><li>✓ Dla dzieci, nastolatków i dorosłych</li><li>✓ Pierwsze ćwiczenie w każdej umiejętności za darmo</li><li>✓ Sprawdzanie od razu</li></ul>
 </div>
 
-<div class="wbh-sec" id="wbhLevels">
-<h2>Dla kogo? <span class="pl" lang="en" style="font-size:.6em">· Who is learning?</span></h2>
-<p class="sub">Dla dzieci, młodzieży i dorosłych – wybierz, a ćwiczenia dopasują się do poziomu.</p>
-<div class="wbh-levels">
-<div class="wbh-level kids"><span class="e">🧒</span><b>Dzieci</b><small>ok. 6–12 lat · Pre-A1 – A2</small><span class="wbh-sub"><a href="skills.html?band=k13#home" target="_top">Młodsze · klasa 1–3</a><a href="skills.html?band=k46#home" target="_top">Starsze · klasa 4–6</a></span></div>
-<a class="wbh-level teen" href="skills.html?band=k78#home" target="_top"><span class="e">🚀</span><b>Młodzież</b><small>ok. 13–15 lat · A2 · B1 · egzamin E8</small><span class="wbh-go2">Zaczynam →</span></a>
-<a class="wbh-level adult" href="skills.html?band=adult#home" target="_top"><span class="e">☕</span><b>Dorośli</b><small>A2 · B2 · praca, podróże, codzienność</small><span class="wbh-go2">Zaczynam →</span></a>
+<div class="wbh-sec wbh-reveal">
+<h2>Jak to działa? <span class="wbh-en" lang="en">· How it works</span></h2>
+<ol class="wbh-steps wbh-stagger">
+<li><b>Wybierz poziom</b>Dzieci, młodzież albo dorośli – od A1 do C2.</li>
+<li><b>Ćwicz 5 minut dziennie</b>Czytanie, słuchanie, mówienie i pisanie ze sprawdzaniem od razu.</li>
+<li><b>Śledź postępy</b>Gwiazdki za ćwiczenia i raport postępów dla rodzica.</li>
+</ol>
 </div>
-<ul class="wbh-skills"><li>📖 Czytanie</li><li>🎧 Słuchanie</li><li>🗣️ Mówienie</li><li>✍️ Pisanie</li><li>📚 Gramatyka</li><li>🧠 Słownictwo</li></ul>
+
+<div class="wbh-sec wbh-reveal" id="wbhLevels">
+<h2>Dla kogo? <span class="wbh-en" lang="en">· Who is learning?</span></h2>
+<p class="sub">Wybierz grupę, a ćwiczenia dopasują się do poziomu.</p>
+<div class="wbh-levels wbh-stagger">
+<div class="wbh-level kids"><span class="e">🧒</span><b>Dzieci</b><small>ok. 6–12 lat · Pre-A1 – A2</small><span class="wbh-pick"><a href="skills.html?band=k13#home" target="_top">Klasy 1–3 →</a><a href="skills.html?band=k46#home" target="_top">Klasy 4–6 →</a></span></div>
+<a class="wbh-level teen" href="skills.html?band=k78#home" target="_top"><span class="e">🚀</span><b>Młodzież</b><small>ok. 13–15 lat · A2 · B1 · egzamin E8</small><span class="wbh-pick"><span>Zaczynam →</span></span></a>
+<a class="wbh-level adult" href="skills.html?band=adult#home" target="_top"><span class="e">☕</span><b>Dorośli</b><small>A2 · B2 · praca, podróże, codzienność</small><span class="wbh-pick"><span>Zaczynam →</span></span></a>
+</div>
+<ul class="wbh-skills"><li><a href="skills.html#reading" target="_top">📖 Czytanie</a></li><li><a href="skills.html#listening" target="_top">🎧 Słuchanie</a></li><li><a href="skills.html#speaking" target="_top">🗣️ Mówienie</a></li><li><a href="skills.html#writing" target="_top">✍️ Pisanie</a></li><li><a href="#" onclick="show('grammar');return false">📚 Gramatyka</a></li><li><a href="#" onclick="show('vocab');return false">🧠 Słownictwo</a></li></ul>
 <details class="wbh-more"><summary>Wszystkie poziomy A1–C2 · All levels</summary><div class="levels" id="homeLevels"></div></details>
 </div>
 
-<div class="wbh-sec" id="wbhPlans">
-<h2>Dla rodziców i nauczycieli <span class="pl" lang="en" style="font-size:.6em">· For parents &amp; teachers</span></h2>
-<p class="sub">Pierwsze ćwiczenie w każdej umiejętności jest za darmo. Pełny dostęp na 1, 3 lub 6 miesięcy – bez automatycznego odnawiania.</p>
-<div class="wbh-plans">
+<div class="wbh-sec wbh-reveal">
+<h2>Wypróbuj teraz <span class="wbh-en" lang="en">· Quick practice</span></h2>
+<p class="sub">Bez logowania – jedno krótkie ćwiczenie na start.</p>
+<div class="section grid wbh-stagger" style="margin-top:8px"><div class="card"><h3>🎯 Nauka w 15 minut</h3><p>Słownictwo → gramatyka → czytanie → mówienie.</p><button class="btn primary" onclick="show('vocab')">Zaczynamy</button></div><div class="card"><h3>🗣️ Mów teraz</h3><p>Prawdziwe pytania i wyzwania 60-sekundowe.</p><button class="btn secondary" onclick="show('speaking')">Mów</button></div><div class="card"><h3>📖 Biblioteka tekstów</h3><p>Trzy teksty do wyboru na każdym poziomie.</p><button class="btn secondary" onclick="show('reading')">Czytaj</button></div>
+<div class="card" id="eeMaturaHome"><div><h3>🎓 Matura z angielskiego 2027</h3><p>Wszystkie części egzaminu: zadania ze sprawdzaniem, nagrania odtwarzane dwa razy i wzorcowe odpowiedzi.</p><div class="pl" lang="en">Every exam part explained, with exam-style tasks and model answers.</div></div><button class="btn" type="button" onclick="var b=document.getElementById('eeMaturaBtn');if(b)b.click()">Przygotuj się →</button></div>
+</div>
+</div>
+
+<div class="wbh-sec wbh-reveal" id="wbhPlans">
+<h2>Pełny dostęp <span class="wbh-en" lang="en">· Plans for parents &amp; teachers</span></h2>
+<p class="sub">Na 1, 3 lub 6 miesięcy – bez automatycznego odnawiania.</p>
+<div class="wbh-plans wbh-stagger">
 <div class="wbh-plan parent"><span class="e">👪</span><h3>Uczeń / Rodzic</h3><p class="en" lang="en">Student / Parent</p>
 <ul><li>Wszystkie ćwiczenia: czytanie, słuchanie, mówienie, pisanie</li><li>Kącik rodzica z raportem postępów do druku</li><li>Telefon, tablet i komputer</li></ul>
 <div class="wbh-prices"><span><b>19 zł</b> / 1 mies.</span><span><b>49 zł</b> / 3 mies.</span><span><b>89 zł</b> / 6 mies.</span></div>
@@ -322,15 +382,20 @@
 <p class="wbh-plannote">Płatność kartą, BLIK-iem lub przelewem. Masz już kod? <a href="skills.html#home" target="_top">Wpisz go w Skills Studio</a>.</p>
 </div>
 
-<div class="wbh-sec">
-<h2>Szybki trening <span class="pl" lang="en" style="font-size:.6em">· Quick practice</span></h2>
-<div class="section grid" style="margin-top:8px"><div class="card"><h3>🎯 Nauka w 15 minut</h3><p>Słownictwo → gramatyka → czytanie → mówienie.</p><button class="btn primary" onclick="show('vocab')">Zaczynamy</button></div><div class="card"><h3>🗣️ Mów teraz</h3><p>Prawdziwe pytania i wyzwania 60-sekundowe.</p><button class="btn secondary" onclick="show('speaking')">Mów</button></div><div class="card"><h3>📖 Biblioteka tekstów</h3><p>Trzy teksty do wyboru na każdym poziomie.</p><button class="btn secondary" onclick="show('reading')">Czytaj</button></div></div>
-</div>
-
-<div class="wbh-sec wbh-strip">
+<div class="wbh-sec wbh-strip wbh-reveal">
 <a href="materials.html" target="_top"><span class="e">👩‍🏫</span><span><b>Jesteś nauczycielem?</b><small>Karty pracy klas 1–8, Matura 2027, E8 – darmowe próbki →</small></span></a>
-<a href="https://buy.stripe.com/8x2dRa9NV51L30Ag2W4sE10" target="_blank" rel="noopener"><span class="e">📅</span><span><b>Lekcja online 1:1 z Natalią</b><small>60 min, rozmowa, praca, podróże →</small></span></a>
+<a href="https://buy.stripe.com/8x2dRa9NV51L30Ag2W4sE10" target="_blank" rel="noopener"><span class="e">📅</span><span><b>Lekcja online 1:1 z Natalią</b><small>60 min · 80 zł · rozmowa, praca, podróże →</small></span></a>
 </div>
+<script>
+(function(){var root=document.querySelector('.wbh');if(!root)return;
+ var els=root.querySelectorAll('.wbh-reveal');
+ if(!('IntersectionObserver' in window)||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))return;
+ root.classList.add('wbh-js');
+ var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');e.target.querySelectorAll('.wbh-stagger').forEach(function(s){s.classList.add('in')});io.unobserve(e.target)}})},{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+ els.forEach(function(el){io.observe(el)});
+ setTimeout(function(){els.forEach(function(el){el.classList.add('in');el.querySelectorAll('.wbh-stagger').forEach(function(s){s.classList.add('in')})})},4000);
+})();
+</script>
 </div>
 </section>
 <section id="students" class="page"><div class="tag">MOJA NAUKA · MY LEARNING</div><h1>Twoja biblioteka <span class="pl" lang="en" style="font-size:.5em">· Your learning library</span></h1><div class="panel"><p>Najpierw wybierz poziom. Każda umiejętność zawiera materiał, ćwiczenie i krótkie zadanie.</p><div class="pl" lang="en">Pick your level first. Every skill below has study material, practice and a small task.</div><div class="levels" id="studentLevels"></div></div><div class="section grid"><div class="card"><h3>🗣️ Mówienie</h3><p>Pytania, scenki i wyzwania 60-sekundowe.</p></div><div class="card"><h3>🎧 Słuchanie</h3><p>Krótkie nagrania z odtwarzaniem, wolniejszym tempem i pytaniami.</p></div><div class="card"><h3>✍️ Pisanie</h3><p>Tematy, przydatne zwroty i listy do samosprawdzenia.</p></div><div class="card"><h3>📖 Czytanie</h3><p>Trzy teksty na każdym poziomie: codzienny, informacyjny oraz idee i opinie.</p></div><div class="card"><h3>📚 Gramatyka</h3><p>Wyjaśnienia, przykłady, szybkie sprawdziany i powtórki poziomu.</p></div><div class="card"><h3>🧠 Słownictwo</h3><p>Zestawy tematyczne, znaczenia angielsko-polskie i ćwiczenia w zdaniach.</p></div></div></section>
