@@ -22,12 +22,12 @@ var CFG = {
   /* Paste each Stripe payment link here (buy.stripe.com/...). After payment, set the link's
      confirmation page to: https://wordbloom.ca/api/plan?plan=uczen-1m&session_id={CHECKOUT_SESSION_ID} */
   payLinks: {
-    'uczen-1m': 'https://buy.stripe.com/00wfZi0dlbq98kUeYS4sE0S',
-    'uczen-3m': 'https://buy.stripe.com/eVq6oI5xFeClgRq3ga4sE0T',
-    'uczen-6m': 'https://buy.stripe.com/aFa6oIbW30Lv44EbMG4sE0U',
-    'klasa-1m': 'https://buy.stripe.com/3cIaEY1hpam5bx6aIC4sE11',
-    'klasa-3m': 'https://buy.stripe.com/3cI5kEe4b1Pz44E7wq4sE12',
-    'klasa-6m': 'https://buy.stripe.com/3cI7sM8JRfGpcBa2c64sE13'
+    'uczen-1m': 'https://buy.stripe.com/dRm7sLdkVf5zgNmarCew80c',
+    'uczen-3m': 'https://buy.stripe.com/28E5kD80B3mReFefLWew80d',
+    'uczen-6m': 'https://buy.stripe.com/4gMcN5a8J5uZ9kUbvGew80e',
+    'klasa-1m': 'https://buy.stripe.com/00weVdft3bTn2WwarCew80f',
+    'klasa-3m': 'https://buy.stripe.com/cNi7sLeoZaPjaoY0R2ew80g',
+    'klasa-6m': 'https://buy.stripe.com/cNi7sL80Bf5zdBaeHSew80h'
   }
 };
 
@@ -292,7 +292,7 @@ function garden() {
   var s = ''; for (var i = 0; i < Math.min(n, 24); i++) s += fl[(i * 3) % fl.length];
   return s + (n > 24 ? ' <span style="font-size:15px">+' + (n - 24) + '</span>' : '');
 }
-var LESSON_URL = 'https://buy.stripe.com/8x2dRa9NV51L30Ag2W4sE10';
+var LESSON_URL = 'https://buy.stripe.com/cNiaEXeoZ1eJbt28juew80i';
 function lessonCard() {
   if (P.band !== 'adult') return '';
   return '<div class="card" style="margin-top:18px;background:#fdf1dc;border:2px solid #f0c987;display:flex;gap:16px;align-items:center;flex-wrap:wrap">' +
