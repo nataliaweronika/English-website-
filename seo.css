@@ -1,13 +1,13 @@
 /* WordBloom – shared styles for the public landing pages (SEO pages). */
 *{box-sizing:border-box}
-body{margin:0;background:#faf8fc;color:#173047;font:17px/1.65 system-ui,-apple-system,Segoe UI,sans-serif}
+body{margin:0;background:#faf8fc;color:#173047;font:17px/1.65 Figtree,system-ui,-apple-system,Segoe UI,sans-serif}
 header,main,footer{max-width:1080px;margin:auto;padding:24px}
 header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:12px;font:italic 28px Georgia,serif;text-decoration:none;color:#173047}
+.brand{display:flex;align-items:center;gap:12px;font:italic 28px Fraunces,Georgia,serif;text-decoration:none;color:#173047}
 .brand img{width:52px;height:52px}
 nav.top a{margin-left:16px;font-size:15px;font-weight:600;text-decoration:none}
 a{color:#086f75}
-h1,h2,h3{font-family:Georgia,serif;line-height:1.2}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.2}
 h1{font-size:clamp(32px,5vw,50px);margin:8px 0 14px}
 h2{font-size:clamp(25px,3.4vw,31px);margin:44px 0 10px}
 h3{font-size:22px;margin:0 0 6px}
@@ -26,7 +26,7 @@ h3{font-size:22px;margin:0 0 6px}
 .cover{position:relative}
 .cover img{display:block;width:100%;border:1px solid #dfe7eb;border-radius:12px;background:#fff}
 .cover .badge{position:absolute;left:10px;top:10px;background:#173047;color:#fff;font-weight:800;font-size:14px;padding:5px 10px;border-radius:30px}
-.price{font:34px Georgia,serif;margin:4px 0}
+.price{font:34px Fraunces,Georgia,serif;margin:4px 0}
 .free{border-left:5px solid #078389;background:#e5f6f1;border-radius:14px;padding:20px 22px;margin:22px 0}
 .free h2,.free h3{margin-top:0}
 .terms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
@@ -54,4 +54,4 @@ summary{font-weight:700;cursor:pointer}
 footer{font-size:14px;border-top:1px solid #dfe7eb;margin-top:40px;color:#5c6b7e}
 @media(max-width:800px){.grid,.grid.three,.terms{grid-template-columns:1fr}.grid.four{grid-template-columns:repeat(2,minmax(0,1fr))}.offer{grid-template-columns:1fr}.offer .cover{max-width:260px}}
 @media(max-width:650px){header,main,footer{padding:16px}.hero{padding:22px}.button{display:block;text-align:center}nav.top a{margin:0 14px 0 0}}
-.cover.txt{aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,#e1f2ff,#fce9f3);border:1px solid #dfe7eb;border-radius:12px;font:700 28px/1.2 Georgia,serif;color:#173047;padding:16px}
+.cover.txt{aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,#e1f2ff,#fce9f3);border:1px solid #dfe7eb;border-radius:12px;font:700 28px/1.2 Fraunces,Georgia,serif;color:#173047;padding:16px}

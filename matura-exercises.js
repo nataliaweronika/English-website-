@@ -13,8 +13,8 @@ function style(){var s=document.createElement('style');s.textContent=[
 '.mx-ok{background:#ddf6e8!important}',
 '.mx-bad{background:#fff0f3!important}',
 '.mx-res{font-weight:800;margin-left:10px}',
-'.mx-script{font-family:Georgia;font-size:15.5px;background:#fbfbfe;border-left:4px solid #5968e8;padding:16px;border-radius:10px;line-height:1.6;margin:10px 0}',
-'.mx-model{font-family:Georgia;background:#fbfbfe;border-left:4px solid #ff9fc8;padding:16px;border-radius:10px;line-height:1.65;margin-top:10px;white-space:pre-line}',
+'.mx-script{font-family:Fraunces,Georgia;font-size:15.5px;background:#fbfbfe;border-left:4px solid #5968e8;padding:16px;border-radius:10px;line-height:1.6;margin:10px 0}',
+'.mx-model{font-family:Fraunces,Georgia;background:#fbfbfe;border-left:4px solid #ff9fc8;padding:16px;border-radius:10px;line-height:1.65;margin-top:10px;white-space:pre-line}',
 '.mx-wc{font-size:12px;color:#68738d;margin-top:4px}'
 ].join('');document.head.appendChild(s)}
 
