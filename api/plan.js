@@ -5,7 +5,8 @@
 // then creates (once per session) the plan in Supabase and shows the code.
 //
 // Environment variables in Vercel:
-//   STRIPE_SECRET_KEY            (already used by /pobierz)
+//   STRIPE_SECRET_KEY_PL         (Polish Stripe account – current links)
+//   STRIPE_SECRET_KEY            (old Canadian account – earlier purchases)
 //   SUPABASE_SERVICE_ROLE_KEY    (Supabase → Project settings → API → service_role)
 
 const SUPABASE = 'https://ynwumcchbhdlejsvwlse.supabase.co';
@@ -13,13 +14,26 @@ const CONTACT = 'rduchnatalia@gmail.com';
 
 // Keep in sync with CFG.plans in skills-app.js. `link` (plink_...) is optional but recommended.
 const PLANS = {
-  'uczen-1m': { kind: 'student', months: 1, price: 19, label: 'Plan ucznia · 1 miesiąc', link: 'plink_1UUCURJxbitbq8Vl5wkXurTn' },
-  'uczen-3m': { kind: 'student', months: 3, price: 49, label: 'Plan ucznia · 3 miesiące', link: 'plink_1UUCWIJxbitbq8VlciGK6YyS' },
-  'uczen-6m': { kind: 'student', months: 6, price: 89, label: 'Plan ucznia · 6 miesięcy', link: 'plink_1UUCXwJxbitbq8VlH9qRM61V' },
-  'klasa-1m': { kind: 'teacher', months: 1, price: 30, label: 'Plan klasowy · 1 miesiąc', link: 'plink_1UVCrJJxbitbq8VlfkexumR6' },
-  'klasa-3m': { kind: 'teacher', months: 3, price: 80, label: 'Plan klasowy · 3 miesiące', link: 'plink_1UVCtwJxbitbq8VlEjVWpoiG' },
-  'klasa-6m': { kind: 'teacher', months: 6, price: 150, label: 'Plan klasowy · 6 miesięcy', link: 'plink_1UVCyMJxbitbq8Vl9RwBzYxU' },
+  'uczen-1m': { kind: 'student', months: 1, price: 19, label: 'Plan ucznia · 1 miesiąc', link: 'plink_1UYIRFFT3aB0L7IKqCPeGnhR', oldLinks: ['plink_1UUCURJxbitbq8Vl5wkXurTn'] },
+  'uczen-3m': { kind: 'student', months: 3, price: 49, label: 'Plan ucznia · 3 miesiące', link: 'plink_1UYIRGFT3aB0L7IKjfAIhSGM', oldLinks: ['plink_1UUCWIJxbitbq8VlciGK6YyS'] },
+  'uczen-6m': { kind: 'student', months: 6, price: 89, label: 'Plan ucznia · 6 miesięcy', link: 'plink_1UYIRIFT3aB0L7IKwpumg8eO', oldLinks: ['plink_1UUCXwJxbitbq8VlH9qRM61V'] },
+  'klasa-1m': { kind: 'teacher', months: 1, price: 30, label: 'Plan klasowy · 1 miesiąc', link: 'plink_1UYIRLFT3aB0L7IKfiW33hWI', oldLinks: ['plink_1UVCrJJxbitbq8VlfkexumR6'] },
+  'klasa-3m': { kind: 'teacher', months: 3, price: 80, label: 'Plan klasowy · 3 miesiące', link: 'plink_1UYIRMFT3aB0L7IKtVByBvBe', oldLinks: ['plink_1UVCtwJxbitbq8VlEjVWpoiG'] },
+  'klasa-6m': { kind: 'teacher', months: 6, price: 150, label: 'Plan klasowy · 6 miesięcy', link: 'plink_1UYIROFT3aB0L7IKFttgkOdD', oldLinks: ['plink_1UVCyMJxbitbq8Vl9RwBzYxU'] },
 };
+
+// Payments now go to the Polish Stripe account (WORDBLOOM POLAND). Purchases made earlier went to the
+// Canadian account, so we try every configured key: Polish first, then the old Canadian one.
+async function getSession(sessionId) {
+  const keys = [process.env.STRIPE_SECRET_KEY_PL, process.env.STRIPE_SECRET_KEY || process.env.key].filter(Boolean);
+  for (const k of keys) {
+    const r = await fetch(`https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(sessionId)}`, {
+      headers: { Authorization: `Bearer ${k}` },
+    });
+    if (r.ok) return { ok: true, s: await r.json() };
+  }
+  return { ok: false, s: {} };
+}
 
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -50,11 +64,9 @@ module.exports = async (req, res) => {
     return;
   }
   try {
-    const r = await fetch(`https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(session_id)}`, {
-      headers: { Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY || process.env.key}` },
-    });
-    const s = await r.json();
-    const paid = r.ok && s.payment_status === 'paid' && s.currency === 'pln' && s.amount_total === plan.price * 100 && (!plan.link || s.payment_link === plan.link);
+    const r = await getSession(session_id);
+    const s = r.s;
+    const paid = r.ok && s.payment_status === 'paid' && s.currency === 'pln' && s.amount_total === plan.price * 100 && (!plan.link || [plan.link, ...(plan.oldLinks || [])].includes(s.payment_link));
     if (!paid) {
       res.status(403).send(page('Brak płatności', `<h1>Nie znaleźliśmy płatności</h1><p>Jeśli właśnie zapłaciłeś(-aś), odśwież stronę za chwilę.</p>${help}`));
       return;
