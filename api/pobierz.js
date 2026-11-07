@@ -20,6 +20,8 @@ const PRODUCTS = {
   // Files kept in the private Vercel Blob store "wordbloom-paid-packs"; served only after the payment check.
   'e8-level-up': { name: 'E8 Level Up! · Egzamin ósmoklasisty 2027 · pełna wersja', link: 'plink_1UYIR8FT3aB0L7IKZ4UscdyY', oldLinks: ['plink_1UTnnfJxbitbq8Vlp0YOHyBm', 'plink_1UY9bOJxbitbq8VlBGEiO5xD'], file: 'e8-level-up-pelna-wersja.pdf', licence: 'Licencja dla jednego ucznia – prosimy nie udostępniać pliku dalej.' },
   'speaking-30': { name: '30 Days of Speaking · wersja interaktywna', link: 'plink_1UYIR6FT3aB0L7IK9xDNbWeQ', oldLinks: ['plink_1US1sPJxbitbq8VluhUkoBOw'], file: '30-days-of-speaking-interactive.pdf', licence: 'Licencja dla jednego ucznia – prosimy nie udostępniać pliku dalej.' },
+  'matura-transformacje': { name: 'Matura · Use of English: Transformacje (Basic + Advanced)', link: 'plink_1UYvKTFT3aB0L7IKZW96yooH', file: 'matura-transformacje.pdf', licence: 'Licencja dla jednego nauczyciela – możesz drukować kopie dla swoich klas, prosimy nie udostępniać pliku dalej.' },
+  'e8-czasy': { name: 'Czasy angielskie – E8 w pigułce (PDF + PowerPoint)', link: 'plink_1UYVwRFT3aB0L7IKCO5mGGc9', url: 'https://drive.google.com/file/d/1ACuYKTBQY_Ku4NCrZlNwb2kLN5dkI4Hi/view', label: 'Pobierz PDF', extra: { label: 'Pobierz PowerPoint', url: 'https://drive.google.com/file/d/1v_QSLehwPbXSlKA5r8Erbg8WDDfuj6gN/view' }, licence: 'Licencja dla jednego nauczyciela – możesz używać prezentacji na swoich lekcjach, prosimy nie udostępniać linku dalej.' },
 };
 
 const CONTACT = 'rduchnatalia@gmail.com';
@@ -99,7 +101,8 @@ module.exports = async (req, res) => {
 <h1>Dziękuję za zakup! 🌱</h1>
 <p><strong>${product.name}</strong></p>
 <p>Twoje materiały są gotowe. Zapisz ten link – możesz wrócić do plików w każdej chwili.</p>
-<p><a class="btn" href="${href}"${product.file ? '' : ' target="_blank" rel="noopener"'}>Pobierz materiały</a></p>
+<p><a class="btn" href="${href}"${product.file ? '' : ' target="_blank" rel="noopener"'}>${product.label || 'Pobierz materiały'}</a></p>
+${product.extra ? `<p><a class="btn" href="${product.extra.url}" target="_blank" rel="noopener">${product.extra.label}</a></p>` : ''}
 <p><small>${product.licence || 'Licencja dla jednego nauczyciela – prosimy nie udostępniać linku dalej.'}</small></p>
 ${help}`));
   } catch (e) {
