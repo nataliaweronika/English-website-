@@ -292,13 +292,14 @@ function garden() {
   var s = ''; for (var i = 0; i < Math.min(n, 24); i++) s += fl[(i * 3) % fl.length];
   return s + (n > 24 ? ' <span style="font-size:15px">+' + (n - 24) + '</span>' : '');
 }
-var LESSON_URL = 'mailto:rduchnatalia@gmail.com?subject=Chc%C4%99%20um%C3%B3wi%C4%87%20lekcj%C4%99%20online%201%3A1&body=Dzie%C5%84%20dobry%20Natalio%2C%0A%0Achc%C4%99%20um%C3%B3wi%C4%87%20lekcj%C4%99%20angielskiego%20online%20%2860%20min%29.%0A%0AM%C3%B3j%20poziom%20%28je%C5%9Bli%20wiem%29%3A%0ACo%20chc%C4%99%20%C4%87wiczy%C4%87%20%28rozmowa%2C%20praca%2C%20podr%C3%B3%C5%BCe%2C%20rozmowa%20o%20prac%C4%99%29%3A%0APasuj%C4%85ce%20dni%20i%20godziny%3A%0A%0APozdrawiam%2C%0A';
+var LESSON_URL = 'mailto:rduchnatalia@gmail.com?subject=Chc%C4%99%20um%C3%B3wi%C4%87%20lekcj%C4%99%20online%201%3A1&body=Dzie%C5%84%20dobry%20Natalio%2C%0A%0Achc%C4%99%20um%C3%B3wi%C4%87%20lekcj%C4%99%20angielskiego%20online.%0A%0AD%C5%82ugo%C5%9B%C4%87%20lekcji%20%2830%20/%2045%20/%2060%20min%29%3A%0AM%C3%B3j%20poziom%20%28je%C5%9Bli%20wiem%29%3A%0ACo%20chc%C4%99%20%C4%87wiczy%C4%87%20%28rozmowa%2C%20praca%2C%20podr%C3%B3%C5%BCe%2C%20rozmowa%20o%20prac%C4%99%29%3A%0APasuj%C4%85ce%20dni%20i%20godziny%3A%0A%0APozdrawiam%2C%0A';
 function lessonCard() {
   if (P.band !== 'adult') return '';
   return '<div class="card" style="margin-top:18px;background:#fdf1dc;border:2px solid #f0c987;display:flex;gap:16px;align-items:center;flex-wrap:wrap">' +
     '<div style="font-size:42px">📅</div><div style="flex:1;min-width:220px"><b style="font-size:20px">Chcesz mówić swobodniej? Umów lekcję online</b>' +
-    '<p style="margin:4px 0 0">Indywidualna lekcja angielskiego online: rozmowa, praca, podróże, rozmowy o pracę.</p></div>' +
-    '<a class="btn" href="' + LESSON_URL + '">Chcę umówić lekcję</a></div>';
+    '<p style="margin:4px 0 0">Indywidualna lekcja angielskiego online (30, 45 lub 60 min): rozmowa, praca, podróże, rozmowy o pracę.</p></div>' +
+    '<a class="btn" href="' + LESSON_URL + '">Chcę umówić lekcję</a>' +
+    '<a class="btn" style="background:#fff;color:#0866ff;border:2px solid #0866ff" href="https://m.me/61594964039406" target="_blank" rel="noopener">💬 Messenger</a></div>';
 }
 function viewHome() {
   var b = D.bands[P.band], wk = weekLog().length, name = P.name || (A.kind === 'pupil' ? A.name : '');
