@@ -104,7 +104,7 @@ function showSample(id,continueAction){
 document.addEventListener('keydown',function(e){var m=document.getElementById('wbSample');if(!m)return;if(e.key==='Escape'){closeSample();return;}if(e.key==='Tab'){var all=Array.from(m.querySelectorAll('button,input,textarea,select,summary,a[href]')).filter(function(n){return n.getClientRects().length&&!n.disabled;});var first=all[0],last=all[all.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 
 /* Public helpers (used by the Matura trial) */
-window.WBAccess={isUnlocked:function(){return state.unlocked;},gate:function(after){pending=after||null;showGate();}};
+window.WBAccess={isUnlocked:function(){return state.unlocked;},isAdmin:function(){return state.admin;},gate:function(after){pending=after||null;showGate();}};
 /* intercept navigation to lessons while locked */
 document.addEventListener('click',function(e){if(state.unlocked)return;var t=e.target;if(!t||!t.closest)return;
  var nb=t.closest('.nav button[data-page]');
