@@ -10,8 +10,10 @@ var KEY='sb_publishable_NbLZobLWm-uzdAONUPsbNA_pHrhYVf6';
 var SITE='https://wordbloom.ca/';
 var PUBLIC_PAGES={home:1,teacher:1,'study-with-me':1};
 var GRACE_MS=3*24*3600*1000;
-var LS={code:'wbClientCode',name:'wbClientName',ok:'wbClientOkAt',admin:'wbAdminToken'};
-var state={unlocked:false,admin:false,name:''};
+var LS={code:'wbClientCode',name:'wbClientName',ok:'wbClientOkAt',admin:'wbAdminToken',mat:'wbMaturaCode',matOk:'wbMaturaOkAt'};
+function isMat(n){return /^\s*MATURA\b/i.test(n||'');}
+var gateMode='';
+var state={unlocked:false,admin:false,name:'',matura:false};
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return null;}}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function rpc(fn,body){return fetch(URL+fn,{method:'POST',headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json'},body:JSON.stringify(body||{})}).then(function(r){return r.json().then(function(j){if(!r.ok){var e=new Error((j&&j.message)||('HTTP '+r.status));e.server=true;throw e;}return j;});});}
@@ -58,11 +60,13 @@ g.querySelector('#wbGateHome').onclick=function(){hideGate();goHome();};
 g.querySelector('#wbGateAdmin').onclick=function(){hideGate();openAdmin();};
 return g;}
 function showGate(msg){var g=gateEl();g.classList.add('on');var m=g.querySelector('#wbGateMsg');m.className='wbMsg';m.textContent=msg||'';setTimeout(function(){var i=g.querySelector('#wbGateCode');if(i)i.focus();},50);}
-function hideGate(){var g=document.getElementById('wbGate');if(g)g.classList.remove('on');}
+function hideGate(){var g=document.getElementById('wbGate');if(g)g.classList.remove('on');gateMode='';}
 function goHome(){var b=document.querySelector('.nav button[data-page="home"]');if(b)b.click();}
 function tryCode(v){var m=document.getElementById('wbGateMsg');v=(v||'').trim();if(!v){m.textContent='Please type your code. / Wpisz kod.';return;}
 m.className='wbMsg ok';m.textContent='Checking… / Sprawdzam…';
 rpc('wb_check_code',{p_code:v}).then(function(r){
+ if(r&&r.ok&&isMat(r.name)){ls(LS.mat,r.code);ls(LS.matOk,String(Date.now()));state.matura=true;m.textContent='Matura odblokowana! / Full Matura unlocked.';setTimeout(function(){hideGate();var p=pending;pending=null;gateMode='';if(p)p();},700);return;}
+ if(r&&r.ok&&gateMode==='matura'){m.className='wbMsg';m.textContent='Ten kod jest kodem ucznia i nie obejmuje matury. Pełna matura wymaga osobnego kodu Matura (60 zł). / This student code does not include the Matura.';return;}
  if(r&&r.ok){ls(LS.code,r.code);ls(LS.name,r.name||'');ls(LS.ok,String(Date.now()));setUnlocked(true,false,r.name);m.textContent='Welcome'+(r.name?', '+r.name:'')+'!';setTimeout(function(){hideGate();var p=pending;pending=null;if(p)p();},500);}
  else{m.className='wbMsg';m.textContent=(r&&r.reason==='inactive')?'This code has been switched off. Please contact Natalia. / Ten kod jest nieaktywny.':(r&&r.reason==='too_many')?'Too many tries. Please wait 15 minutes. / Za dużo prób, spróbuj za 15 minut.':'That code doesn\u2019t match. Check it and try again. / Nieprawidłowy kod.';}
 }).catch(function(){m.className='wbMsg';m.textContent='Could not check the code right now. Please try again in a moment. / Spróbuj ponownie za chwilę.';});}
@@ -104,7 +108,7 @@ function showSample(id,continueAction){
 document.addEventListener('keydown',function(e){var m=document.getElementById('wbSample');if(!m)return;if(e.key==='Escape'){closeSample();return;}if(e.key==='Tab'){var all=Array.from(m.querySelectorAll('button,input,textarea,select,summary,a[href]')).filter(function(n){return n.getClientRects().length&&!n.disabled;});var first=all[0],last=all[all.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 
 /* Public helpers (used by the Matura trial) */
-window.WBAccess={isUnlocked:function(){return state.unlocked;},isAdmin:function(){return state.admin;},gate:function(after){pending=after||null;showGate();}};
+window.WBAccess={isUnlocked:function(){return state.unlocked;},isAdmin:function(){return state.admin;},hasMatura:function(){return state.admin||state.matura;},gate:function(after,mode){pending=after||null;gateMode=mode||'';showGate(mode==='matura'?'Wpisz kod Matura. / Enter your Matura pass code.':'');if(mode==='matura'){var mm=document.getElementById('wbGateMsg');if(mm)mm.className='wbMsg ok';}}};
 /* intercept navigation to lessons while locked */
 document.addEventListener('click',function(e){if(state.unlocked)return;var t=e.target;if(!t||!t.closest)return;
  var nb=t.closest('.nav button[data-page]');
@@ -144,14 +148,14 @@ function renderAdminLogin(){var a=adminEl();a.innerHTML='<div class="wbBox"><div
   rpc('wb_admin_login',{p_password:a.querySelector('#wbAdmPw').value}).then(function(t){if(t){ls(LS.admin,t);setUnlocked(true,true,'Natalia');hideGate();renderAdmin();}else{m.className='wbMsg';m.textContent='Wrong password (or too many tries - wait 15 minutes).';}}).catch(function(){m.className='wbMsg';m.textContent='Could not reach the server. Try again.';});};
  setTimeout(function(){var i=a.querySelector('#wbAdmPw');if(i)i.focus();},50);}
 function fmt(d){if(!d)return '-';var x=new Date(d);return x.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});}
-function clientMsg(c){var n=(c.client_name||'').split(' ')[0];return 'Cześć '+n+'! Oto Twój kod dostępu do WordBloom: '+c.code+'\nWejdź na '+SITE+', kliknij dowolną lekcję (albo „Logowanie ucznia” w menu) i wpisz kod. Dostęp pozostanie odblokowany na Twoim urządzeniu.';}
+function clientMsg(c){if(isMat(c.client_name)){var mn=(c.client_name||'').replace(/^\s*MATURA\s*·?\s*/i,'').split(' ')[0];return 'Cześć '+mn+'! Dziękuję za zakup dostępu do matury. Twój kod Matura: '+c.code+'\nWejdź na '+SITE+', otwórz sekcję Matura, kliknij „Mam kod” i wpisz kod. Dostęp do wszystkich zadań maturalnych pozostanie odblokowany na Twoim urządzeniu (do 31 maja 2027).';}var n=(c.client_name||'').split(' ')[0];return 'Cześć '+n+'! Oto Twój kod dostępu do WordBloom: '+c.code+'\nWejdź na '+SITE+', kliknij dowolną lekcję (albo „Logowanie ucznia” w menu) i wpisz kod. Dostęp pozostanie odblokowany na Twoim urządzeniu.';}
 function copy(txt,btn){function done(){if(btn){var o=btn.textContent;btn.textContent='Copied ✓';setTimeout(function(){btn.textContent=o;},1500);}}
  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){fallback();});}else fallback();
  function fallback(){var t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(e){}t.remove();done();}}
 function renderAdmin(newCode){var a=adminEl();
  a.innerHTML='<div class="wbBox wide"><div class="wbTop"><div><div class="wbBrand">WordBloom</div><h2 style="margin:0">Client access codes</h2></div><div><button class="wbBtn light sm" id="wbAdmOut">Sign out</button> <button class="wbBtn light sm" id="wbAdmClose">Close ✕</button></div></div>'+
  '<p style="margin-top:8px">Each student gets their own code. Switch a code off and only that student loses access (next time they open the site).</p>'+
- '<form id="wbNewForm" class="wbRow"><div><label>Student name</label><input id="wbNewName" placeholder="e.g. Ola Nowak" maxlength="80"></div><div><label>Note (optional)</label><input id="wbNewNote" placeholder="e.g. B1, Tuesdays" maxlength="120"></div><div style="flex:0 0 auto"><button class="wbBtn" type="submit">+ Create code</button></div></form>'+
+ '<form id="wbNewForm" class="wbRow"><div><label>Student name</label><input id="wbNewName" placeholder="e.g. Ola Nowak" maxlength="80"></div><div><label>Note (optional)</label><input id="wbNewNote" placeholder="e.g. B1, Tuesdays" maxlength="120"></div><div style="flex:0 0 auto;align-self:flex-end"><label style="display:flex;gap:6px;align-items:center;font-weight:700;white-space:nowrap"><input type="checkbox" id="wbNewMat" style="width:auto;margin:0"> Matura pass (60 zł)</label></div><div style="flex:0 0 auto"><button class="wbBtn" type="submit">+ Create code</button></div></form><p class="pl" style="margin:4px 0 0">Student codes open the lessons only. Tick “Matura pass” for buyers of the 60 zł Matura – that code opens the full Matura only.</p>'+
  '<div id="wbAdmMsg" class="wbMsg"></div>'+
  (newCode?'<div class="wbNew"><strong>New code for '+esc(newCode.client_name)+': <span class="wbCode">'+esc(newCode.code)+'</span></strong><br><br>Message to send:<br>'+esc(clientMsg(newCode))+'<br><button class="wbBtn sm" id="wbCopyNew">Copy message</button> <button class="wbBtn light sm" id="wbCopyNewCode">Copy code only</button></div>':'')+
  '<div id="wbList">Loading…</div></div>';
@@ -160,6 +164,7 @@ function renderAdmin(newCode){var a=adminEl();
  if(newCode){a.querySelector('#wbCopyNew').onclick=function(){copy(clientMsg(newCode),this);};a.querySelector('#wbCopyNewCode').onclick=function(){copy(newCode.code,this);};}
  a.querySelector('#wbNewForm').onsubmit=function(e){e.preventDefault();var n=a.querySelector('#wbNewName').value.trim(),note=a.querySelector('#wbNewNote').value.trim(),m=a.querySelector('#wbAdmMsg');
   if(!n){m.className='wbMsg';m.textContent='Type the student name first.';return;}
+  if(a.querySelector('#wbNewMat').checked&&!isMat(n))n='MATURA · '+n;
   m.className='wbMsg ok';m.textContent='Creating…';
   rpc('wb_admin_create',{p_token:ls(LS.admin),p_name:n,p_note:note||null}).then(function(c){renderAdmin(c);}).catch(adminErr);};
  loadList();}
@@ -182,13 +187,14 @@ function verify(){var tok=ls(LS.admin);
  if(tok){rpc('wb_admin_check',{p_token:tok}).then(function(ok){if(ok)setUnlocked(true,true,'Natalia');else{ls(LS.admin,null);verifyClient();}}).catch(function(){setUnlocked(true,true,'Natalia');});return;}
  verifyClient();}
 function verifyClient(){var code=ls(LS.code);if(!code){setUnlocked(false);return;}
- var okAt=+ls(LS.ok)||0;setUnlocked(Date.now()-okAt<GRACE_MS,false,ls(LS.name));
- rpc('wb_check_code',{p_code:code}).then(function(r){if(r&&r.ok){ls(LS.ok,String(Date.now()));ls(LS.name,r.name||'');setUnlocked(true,false,r.name);}
+ var okAt=+ls(LS.ok)||0;setUnlocked(Date.now()-okAt<GRACE_MS&&!isMat(ls(LS.name)),false,ls(LS.name));
+ rpc('wb_check_code',{p_code:code}).then(function(r){if(r&&r.ok&&isMat(r.name)){ls(LS.mat,r.code);ls(LS.matOk,String(Date.now()));state.matura=true;ls(LS.code,null);ls(LS.name,null);ls(LS.ok,null);setUnlocked(false);return;}if(r&&r.ok){ls(LS.ok,String(Date.now()));ls(LS.name,r.name||'');setUnlocked(true,false,r.name);}
   else if(r&&r.reason!=='too_many'){ls(LS.code,null);ls(LS.name,null);ls(LS.ok,null);setUnlocked(false);var a=document.querySelector('.page.active');if(a&&isLockedPage(a.id)){goHome();}showGate(r.reason==='inactive'?'Your code has been switched off. Please contact Natalia. / Twój kod jest nieaktywny.':'');hideGateIfPublic(r.reason);}
  }).catch(function(){});}
 setInterval(function(){if(state.unlocked&&!state.admin)verifyClient();},15*60*1000);
 function hideGateIfPublic(reason){if(reason!=='inactive')hideGate();}
-function init(){if(!document.body||!document.querySelector('.nav')){setTimeout(init,200);return;}var smB=document.getElementById('sm');if(smB&&!smB.__wb){smB.__wb=1;smB.addEventListener('click',function(){if(!state.unlocked&&!state.admin)setTimeout(function(){pending=null;showGate();},0);});}css();document.body.classList.add('wb-locked');markNav();updateNav();verify();
+function verifyMatura(){var c=ls(LS.mat);if(!c)return;state.matura=Date.now()-(+ls(LS.matOk)||0)<GRACE_MS;rpc('wb_check_code',{p_code:c}).then(function(r){if(r&&r.ok&&isMat(r.name)){state.matura=true;ls(LS.matOk,String(Date.now()));}else if(!(r&&r.reason==='too_many')){state.matura=false;ls(LS.mat,null);ls(LS.matOk,null);}}).catch(function(){});}
+function init(){verifyMatura();if(!document.body||!document.querySelector('.nav')){setTimeout(init,200);return;}var smB=document.getElementById('sm');if(smB&&!smB.__wb){smB.__wb=1;smB.addEventListener('click',function(){if(!state.unlocked&&!state.admin)setTimeout(function(){pending=null;showGate();},0);});}css();document.body.classList.add('wb-locked');markNav();updateNav();verify();
  if(/[?&#]admin\b/.test(String((window.parent||window).location.href)))setTimeout(openAdmin,300);}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();

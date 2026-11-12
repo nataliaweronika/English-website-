@@ -383,7 +383,7 @@ function goHome(){var b=document.querySelector('.nav button[data-page="home"]');
 function tryCode(v){var m=document.getElementById('wbGateMsg');v=(v||'').trim();if(!v){m.textContent='Please type your code. / Wpisz kod.';return;}
 m.className='wbMsg ok';m.textContent='Checking… / Sprawdzam…';
 rpc('wb_check_code',{p_code:v}).then(function(r){
- if(r&&r.ok){ls(LS.code,r.code);ls(LS.name,r.name||'');ls(LS.ok,String(Date.now()));setUnlocked(true,false,r.name);m.textContent='Welcome'+(r.name?', '+r.name:'')+'!';setTimeout(function(){hideGate();var p=pending;pending=null;if(p)p();},500);}
+ if(r&&r.ok&&!/^\s*MATURA\b/i.test(r.name||'')){ls(LS.code,r.code);ls(LS.name,r.name||'');ls(LS.ok,String(Date.now()));setUnlocked(true,false,r.name);m.textContent='Welcome'+(r.name?', '+r.name:'')+'!';setTimeout(function(){hideGate();var p=pending;pending=null;if(p)p();},500);}
  else{m.className='wbMsg';m.textContent=(r&&r.reason==='inactive')?'This code has been switched off. Please contact Natalia. / Ten kod jest nieaktywny.':(r&&r.reason==='too_many')?'Too many tries. Please wait 15 minutes. / Za dużo prób, spróbuj za 15 minut.':'That code doesn\u2019t match. Check it and try again. / Nieprawidłowy kod.';}
 }).catch(function(){m.className='wbMsg';m.textContent='Could not check the code right now. Please try again in a moment. / Spróbuj ponownie za chwilę.';});}
 
@@ -504,8 +504,8 @@ function verify(){var tok=ls(LS.admin);
  if(tok){rpc('wb_admin_check',{p_token:tok}).then(function(ok){if(ok)setUnlocked(true,true,'Natalia');else{ls(LS.admin,null);verifyClient();}}).catch(function(){setUnlocked(true,true,'Natalia');});return;}
  verifyClient();}
 function verifyClient(){var code=ls(LS.code);if(!code){setUnlocked(false);return;}
- var okAt=+ls(LS.ok)||0;setUnlocked(Date.now()-okAt<GRACE_MS,false,ls(LS.name));
- rpc('wb_check_code',{p_code:code}).then(function(r){if(r&&r.ok){ls(LS.ok,String(Date.now()));ls(LS.name,r.name||'');setUnlocked(true,false,r.name);}
+ var okAt=+ls(LS.ok)||0;setUnlocked(Date.now()-okAt<GRACE_MS&&!/^\s*MATURA\b/i.test(ls(LS.name)||''),false,ls(LS.name));
+ rpc('wb_check_code',{p_code:code}).then(function(r){if(r&&r.ok&&!/^\s*MATURA\b/i.test(r.name||'')){ls(LS.ok,String(Date.now()));ls(LS.name,r.name||'');setUnlocked(true,false,r.name);}
   else if(r&&r.reason!=='too_many'){ls(LS.code,null);ls(LS.name,null);ls(LS.ok,null);setUnlocked(false);var a=document.querySelector('.page.active');if(a&&isLockedPage(a.id)){goHome();}showGate(r.reason==='inactive'?'Your code has been switched off. Please contact Natalia. / Twój kod jest nieaktywny.':'');hideGateIfPublic(r.reason);}
  }).catch(function(){});}
 setInterval(function(){if(state.unlocked&&!state.admin)verifyClient();},15*60*1000);

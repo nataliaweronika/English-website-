@@ -112,7 +112,7 @@ function checkAccess() {
     });
   }).then(function (done) {
     if (done || !client) return;
-    return rpc('wb_check_code', { p_code: client }).then(function (r) { if (r && r.ok) A = { full: true, kind: 'client', name: r.name || '' }; }).catch(function () {
+    return rpc('wb_check_code', { p_code: client }).then(function (r) { if (r && r.ok && !/^\s*MATURA\b/i.test(r.name || '')) A = { full: true, kind: 'client', name: r.name || '' }; }).catch(function () {
       var ok = +ls('wbClientOkAt') || 0; if (Date.now() - ok < 3 * 864e5) A = { full: true, kind: 'client', name: ls('wbClientName') || '' };
     });
   });
@@ -128,6 +128,7 @@ function redeem(code, msgEl) {
     if (r && r.reason === 'expired') { say('Ten kod wygasł ' + fmtDate(r.expires_at) + '. Przedłuż dostęp w zakładce „Dostęp i ceny”. · This code has expired.'); return false; }
     if (r && r.reason === 'too_many') { say('Za dużo prób – spróbuj za 15 minut. · Too many tries.'); return false; }
     return rpc('wb_check_code', { p_code: code }).then(function (c) {
+      if (c && c.ok && /^\s*MATURA\b/i.test(c.name || '')) { say('To kod Matura – działa tylko w sekcji Matura na stronie głównej. · This is a Matura-only code.'); return false; }
       if (c && c.ok) { ls('wbClientCode', c.code || code); ls('wbClientName', c.name || ''); ls('wbClientOkAt', String(Date.now())); A = { full: true, kind: 'client', name: c.name || '' }; return 'ok'; }
       say(c && c.reason === 'inactive' ? 'Ten kod jest nieaktywny. Napisz do Natalii. · This code is switched off.' : 'Nie znaleziono kodu. Sprawdź i spróbuj ponownie. · Code not found.');
       return false;
